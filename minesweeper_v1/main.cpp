@@ -18,12 +18,14 @@ void setup() {
   showConsoleCursor(0);
 }
 
-void setupInput() {
+void resetConsoleScreen() {
   setConsoleColor(CONSOLE_BACKGROUND_COLOR, CONSOLE_TEXT_COLOR);
   clearConsole();
 }
 
-void input() { setupInput(); }
+void setupWelcome() { resetConsoleScreen(); }
+
+void welcome() { setupWelcome(); }
 
 void startGame() {
   for (int row = 0; row < MAP_WIDTH; ++row) {
@@ -35,7 +37,7 @@ void startGame() {
 }
 
 void game() {
-  input();
+  welcome();
   startGame();
 }
 
