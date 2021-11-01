@@ -34,8 +34,8 @@
 		</Compiler>
 		<Unit filename="cmanip.cpp" />
 		<Unit filename="cmanip.h" />
-		<Unit filename="cmanip_helper.cpp" />
-		<Unit filename="cmanip_helper.h" />
+		<Unit filename="cmanip_utils.cpp" />
+		<Unit filename="cmanip_utils.h" />
 		<Unit filename="main.cpp" />
 		<Extensions>
 			<lib_finder disable_auto="1" />
