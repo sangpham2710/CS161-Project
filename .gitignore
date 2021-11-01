@@ -1,6 +1,9 @@
 ### SFML ###
 SFML-2.5.1/
 
+### VSCode ###
+.vscode/
+
 ### CodeBlocks ###
 # specific to CodeBlocks IDE
 *.layout
