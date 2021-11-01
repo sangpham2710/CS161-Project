@@ -7,6 +7,6 @@ int main() {
   setWindowSize(30, 20);
   setConsoleCursorPosition(10, 20);
   setConsoleTextColor(YELLOW, RED);
-  std::cout << "Another Test";
+  std::cout << "This is an edited text";
   return 0;
 }
