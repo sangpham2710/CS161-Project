@@ -3,9 +3,10 @@
 #include <conio.h>
 #include <windows.h>
 
+#include <map>
 #include <string>
 
-#include "cmanip_helper.h"
+#include "cmanip_utils.h"
 
 void setWindowName(const std::string& name) {
   std::string tmp = std::string("title ") + name;
@@ -23,8 +24,8 @@ void setWindowSize(const short& width, const short& height) {
 void fixWindowSize() {
   HWND consoleWindow = GetConsoleWindow();
   SetWindowLong(
-      consoleWindow, GWL_STYLE,
-      GetWindowLong(consoleWindow, GWL_STYLE) & ~WS_MAXIMIZEBOX & ~WS_SIZEBOX);
+    consoleWindow, GWL_STYLE,
+    GetWindowLong(consoleWindow, GWL_STYLE) & ~WS_MAXIMIZEBOX & ~WS_SIZEBOX);
 }
 
 void setConsoleColor(const int& backgroundColor, const int& textColor) {
@@ -52,4 +53,27 @@ void setConsoleTextColor(const int& backgroundColor, const int& textColor) {
   SetConsoleTextAttribute(handle, (backgroundColor << 4) | textColor);
 }
 
-void clearConsole() { system("cls"); }
+void clearConsole() {
+  system("cls");
+}
+
+std::map<int, int> inputMap = {
+  {'w', UP},     {'W', UP},     {UP_ARROW_KEY, UP},
+  {'s', DOWN},   {'S', DOWN},   {DOWN_ARROW_KEY, DOWN},
+  {'a', LEFT},   {'A', LEFT},   {LEFT_ARROW_KEY, LEFT},
+  {'d', RIGHT},  {'D', RIGHT},  {RIGHT_ARROW_KEY, RIGHT},
+  {'j', MOUSE1}, {'J', MOUSE1}, {RETURN_KEY, MOUSE1},
+  {'k', MOUSE2}, {'K', MOUSE2}, {'l', MOUSE3},
+  {'L', MOUSE3}, {'y', YES},    {'Y', YES},
+  {'n', NO},     {'N', NO},     {ESCAPE_KEY, ESCAPE},
+};
+
+int getUserAction() {
+  int character = getch();
+  if (character == 0 || character == 224) {
+    // checking if the key is an extended one
+    // to ignore the additional character when dealing with arrow keys
+    character = getch();
+  }
+  return inputMap[character];
+}
