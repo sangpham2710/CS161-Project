@@ -1,0 +1,11 @@
+### SFML ###
+SFML-2.5.1/
+
+### CodeBlocks ###
+# specific to CodeBlocks IDE
+*.layout
+*.layout.save
+*.depend
+# generated directories
+bin/
+obj/
