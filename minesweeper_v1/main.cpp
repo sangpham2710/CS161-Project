@@ -12,7 +12,7 @@
 // *** CONSTANTS ***
 
 const int WINDOW_WIDTH = 50, WINDOW_HEIGHT = 20;
-const int MAX_SIZE = 30;
+const int MAX_BOARD_SIZE = 30;
 
 const int CONSOLE_BACKGROUND_COLOR = BRIGHT_WHITE;
 const int CONSOLE_TEXT_COLOR = BLACK;
@@ -27,8 +27,8 @@ const std::vector<std::string> welcomeOptions = {"New Game", "Leaderboard",
 
 int selectedWelcomeOption = 0;
 
-int MAP_WIDTH, MAP_HEIGHT;
-int MINES;
+int boardWidth, boardHeight;
+int numMines;
 // *** END OF GLOBAL VARIABLES ***
 
 // *** HELPERS ***
@@ -59,22 +59,29 @@ void game();
 
 char indexToChar(int index);
 int charToIndex(char ch);
-void playMinesweeper();
-void displayBoard(char gameBoard[][MAX_SIZE]);
-void clearBoard(char gameBoard[][MAX_SIZE], char mineBoard[][MAX_SIZE]);
-void placeMines(char mineBoard[][MAX_SIZE], int mines);
-void replaceMine(int row, int col, char minBoard[][MAX_SIZE]);
-bool isValid(int row, int col);
-std::vector<std::pair<int, int> > getNeighbors(int row, int col);
-int countNeighborMines(int row, int col, char mineBoard[][MAX_SIZE]);
-void uncoverBoard(char gameBoard[][MAX_SIZE], char mineBoard[][MAX_SIZE],
-                  int row, int col, int *nMoves);
-void revealMines(char gameBoard[][MAX_SIZE], char mineBoard[][MAX_SIZE],
-                 bool won);
-bool revealACell(char gameBoard[][MAX_SIZE], char mineBoard[][MAX_SIZE],
-                 int row, int col, int *totalMove, int totalSafeCell);
-bool revealNeighborCells(char gameBoard[][MAX_SIZE], char mineBoard[][MAX_SIZE],
-                         int row, int col, int *totalMove, int totalSafeCell);
+void startGame();
+void displayBoard(char gameBoard[][MAX_BOARD_SIZE]);
+void resetBoard(char gameBoard[][MAX_BOARD_SIZE],
+                char mineBoard[][MAX_BOARD_SIZE]);
+void generateMineBoard(char mineBoard[][MAX_BOARD_SIZE], int mines);
+void replaceMine(const int &row, const int &col,
+                 char minBoard[][MAX_BOARD_SIZE]);
+bool isValidCell(const int &row, int col);
+std::vector<std::pair<int, int> > getNeighborsPositions(const int &row,
+                                                        const int &col);
+int countNeighboringMines(const int &row, const int &col,
+                          char mineBoard[][MAX_BOARD_SIZE]);
+void uncoverBoard(char gameBoard[][MAX_BOARD_SIZE],
+                  char mineBoard[][MAX_BOARD_SIZE], const int &row,
+                  const int &col, int *nMoves);
+void revealAllMines(char gameBoard[][MAX_BOARD_SIZE],
+                    char mineBoard[][MAX_BOARD_SIZE], bool won);
+bool revealACell(char gameBoard[][MAX_BOARD_SIZE],
+                 char mineBoard[][MAX_BOARD_SIZE], const int &row,
+                 const int &col, int *totalMove, int totalSafeCell);
+bool revealNeighboringCells(char gameBoard[][MAX_BOARD_SIZE],
+                            char mineBoard[][MAX_BOARD_SIZE], const int &row,
+                            const int &col, int *totalMove, int totalSafeCell);
 void waitKeyPressed();
 
 int welcome();
@@ -178,8 +185,8 @@ int welcome() {
 void newGame() {
   resetConsoleScreen();
   std::cout << "Enter width, height, the amound of mines: ";
-  std::cin >> MAP_WIDTH >> MAP_HEIGHT >> MINES;
-  playMinesweeper();
+  std::cin >> boardWidth >> boardHeight >> numMines;
+  startGame();
 }
 
 void continueGame() {
@@ -238,15 +245,16 @@ int charToIndex(char ch) {
 }
 
 // Main Process of the game
-void playMinesweeper() {
+void startGame() {
   // mineBoard to save the actual values of cells (mine or number).
   // gameBoard to save the uncovered cell, the flagged cells, anything on board
   // displayed to player
-  char mineBoard[MAX_SIZE][MAX_SIZE], gameBoard[MAX_SIZE][MAX_SIZE];
-  int totalSafeCell = MAP_HEIGHT * MAP_WIDTH - MINES;
-  int flagsLeft = MINES;
-  clearBoard(gameBoard, mineBoard);
-  placeMines(mineBoard, MINES);
+  char mineBoard[MAX_BOARD_SIZE][MAX_BOARD_SIZE],
+      gameBoard[MAX_BOARD_SIZE][MAX_BOARD_SIZE];
+  int totalSafeCell = boardHeight * boardWidth - numMines;
+  int numFlagsLeft = numMines;
+  resetBoard(gameBoard, mineBoard);
+  generateMineBoard(mineBoard, numMines);
 
   // Game Start
   int totalMove = 0;
@@ -254,7 +262,7 @@ void playMinesweeper() {
 
   while (!endGame) {
     displayBoard(gameBoard);
-    std::cout << flagsLeft << " flag(s) left" << '\n' << '\n';
+    std::cout << numFlagsLeft << " flag(s) left" << '\n' << '\n';
 
     // Get Input
     int row, col;
@@ -263,7 +271,7 @@ void playMinesweeper() {
     do {
       std::cout << "Enter your move, (row, column) -> ";
       std::cin >> row >> col;
-    } while (!isValid(row, col));
+    } while (!isValidCell(row, col));
 
     do {
       std::cout << "Enter your action, " << '\n'
@@ -298,8 +306,8 @@ void playMinesweeper() {
     // ACTION: Flag a Cell
     if (action == 'f') {
       if (gameBoard[row][col] == '.') {
-        if (flagsLeft != 0) {
-          flagsLeft--;
+        if (numFlagsLeft != 0) {
+          numFlagsLeft--;
           gameBoard[row][col] = 'F';
         } else {
           std::cout << '\n' << "No flag left :((  ";
@@ -309,7 +317,7 @@ void playMinesweeper() {
           ch = _getch();
         }
       } else if (gameBoard[row][col] == 'F') {
-        flagsLeft++;
+        numFlagsLeft++;
         gameBoard[row][col] = '.';
       } else {
         std::cout << '\n' << "Illegal move. Cell is revealed. ";
@@ -335,19 +343,20 @@ void playMinesweeper() {
         char ch;
         ch = _getch();
       } else
-        endGame = revealNeighborCells(gameBoard, mineBoard, row, col,
-                                      &totalMove, totalSafeCell);
+        endGame = revealNeighboringCells(gameBoard, mineBoard, row, col,
+                                         &totalMove, totalSafeCell);
     }
   }
 }
 
 // ACTION: Reveal a Cell LINKED With Winning and Losing Callout
-bool revealACell(char gameBoard[][MAX_SIZE], char mineBoard[][MAX_SIZE],
-                 int row, int col, int *totalMove, int totalSafeCell) {
+bool revealACell(char gameBoard[][MAX_BOARD_SIZE],
+                 char mineBoard[][MAX_BOARD_SIZE], const int &row,
+                 const int &col, int *totalMove, int totalSafeCell) {
   if (mineBoard[row][col] == '.') {
     uncoverBoard(gameBoard, mineBoard, row, col, totalMove);
     if ((*totalMove) == totalSafeCell) {
-      revealMines(gameBoard, mineBoard, true);
+      revealAllMines(gameBoard, mineBoard, true);
       displayBoard(gameBoard);
       std::cout << '\n' << "Congratulation! You won!" << '\n';
       return true;
@@ -355,7 +364,7 @@ bool revealACell(char gameBoard[][MAX_SIZE], char mineBoard[][MAX_SIZE],
   } else if (mineBoard[row][col] == '#') {
     gameBoard[row][col] = '#';
     displayBoard(gameBoard);
-    revealMines(gameBoard, mineBoard, false);
+    revealAllMines(gameBoard, mineBoard, false);
     displayBoard(gameBoard);
     std::cout << '\n' << "Umm... Quite a big explosion, right?" << '\n';
     return true;
@@ -365,12 +374,13 @@ bool revealACell(char gameBoard[][MAX_SIZE], char mineBoard[][MAX_SIZE],
 }
 
 // ACTION: Reveal Neighbor Cells
-bool revealNeighborCells(char gameBoard[][MAX_SIZE], char mineBoard[][MAX_SIZE],
-                         int row, int col, int *totalMove, int totalSafeCell) {
-  std::vector<std::pair<int, int> > neighbor = getNeighbors(row, col);
+bool revealNeighboringCells(char gameBoard[][MAX_BOARD_SIZE],
+                            char mineBoard[][MAX_BOARD_SIZE], const int &row,
+                            const int &col, int *totalMove, int totalSafeCell) {
+  std::vector<std::pair<int, int> > neighbor = getNeighborsPositions(row, col);
 
   int countFlag = 0;
-  int countMine = countNeighborMines(row, col, mineBoard);
+  int countMine = countNeighboringMines(row, col, mineBoard);
 
   for (int i = 0; i < neighbor.size(); i++) {
     if (gameBoard[neighbor[i].first][neighbor[i].second] == 'F') countFlag++;
@@ -390,25 +400,26 @@ bool revealNeighborCells(char gameBoard[][MAX_SIZE], char mineBoard[][MAX_SIZE],
 }
 
 // Clean the board for new play.
-void clearBoard(char gameBoard[][MAX_SIZE], char mineBoard[][MAX_SIZE]) {
-  for (int row = 0; row < MAP_HEIGHT; ++row)
-    for (int col = 0; col < MAP_WIDTH; ++col)
+void resetBoard(char gameBoard[][MAX_BOARD_SIZE],
+                char mineBoard[][MAX_BOARD_SIZE]) {
+  for (int row = 0; row < boardHeight; ++row)
+    for (int col = 0; col < boardWidth; ++col)
       gameBoard[row][col] = mineBoard[row][col] = '.';
   return;
 }
 
 // Check whether the cell [row, column] is in the board or not.
-bool isValid(int row, int col) {
-  return (row >= 0) && (row < MAP_HEIGHT) && (col >= 0) && (col < MAP_WIDTH);
+bool isValidCell(const int &row, int col) {
+  return (row >= 0) && (row < boardHeight) && (col >= 0) && (col < boardWidth);
 }
 
 // Obviously placing down mines :V
 // HAVEN'T CHECKED THE CASE WE HAVE TO GUESS
-void placeMines(char mineBoard[][MAX_SIZE], int mines) {
+void generateMineBoard(char mineBoard[][MAX_BOARD_SIZE], int mines) {
   int placed = 0;
   while (placed < mines) {
-    int row = randInt() % MAP_HEIGHT;
-    int col = randInt() % MAP_WIDTH;
+    int row = randInt() % boardHeight;
+    int col = randInt() % boardWidth;
     if (mineBoard[row][col] == '#') continue;  // already a mine
     mineBoard[row][col] = '#';
     placed++;
@@ -416,31 +427,32 @@ void placeMines(char mineBoard[][MAX_SIZE], int mines) {
 }
 
 // First time hit the mine, then move it to somewhere else
-void replaceMine(int row, int col, char mineBoard[][MAX_SIZE]) {
-  placeMines(mineBoard, 1);   // add a new mine
-  mineBoard[row][col] = '.';  // remove the old one
+void replaceMine(const int &row, const int &col,
+                 char mineBoard[][MAX_BOARD_SIZE]) {
+  generateMineBoard(mineBoard, 1);  // add a new mine
+  mineBoard[row][col] = '.';        // remove the old one
   return;
 }
 
-void displayBoard(char gameBoard[][MAX_SIZE]) {
+void displayBoard(char gameBoard[][MAX_BOARD_SIZE]) {
   resetConsoleScreen();
 
   // Number on first line to help player locate the cell
   std::cout << "    ";
-  for (int i = 0; i < MAP_WIDTH; i++) std::cout << i << ' ';
+  for (int i = 0; i < boardWidth; i++) std::cout << i << ' ';
   std::cout << '\n' << '\n';
 
   // The next rows
-  for (int row = 0; row < MAP_HEIGHT; ++row) {
+  for (int row = 0; row < boardHeight; ++row) {
     std::cout << row << "   ";
-    for (int col = 0; col < MAP_WIDTH; ++col)
+    for (int col = 0; col < boardWidth; ++col)
       std::cout << gameBoard[row][col] << " ";
     std::cout << "  " << row << '\n';
   }
 
   // Bottom number line
   std::cout << '\n' << "    ";
-  for (int i = 0; i < MAP_WIDTH; i++) std::cout << i << ' ';
+  for (int i = 0; i < boardWidth; i++) std::cout << i << ' ';
   std::cout << '\n';
 }
 
@@ -453,49 +465,57 @@ void waitKeyPressed() {
 }
 
 // Get the valid neighbor cells
-std::vector<std::pair<int, int> > getNeighbors(int row, int col) {
-  std::vector<std::pair<int, int> > neighbors;
+std::vector<std::pair<int, int> > getNeighborsPositions(const int &row,
+                                                        const int &col) {
+  std::vector<std::pair<int, int> > neighborsPositions;
 
   for (int dx = -1; dx <= 1; dx++)
     for (int dy = -1; dy <= 1; dy++)
       if (dx != 0 || dy != 0)
-        if (isValid(row + dx, col + dy))
-          neighbors.push_back(std::make_pair(row + dx, col + dy));
+        if (isValidCell(row + dx, col + dy))
+          neighborsPositions.push_back({row + dx, col + dy});
 
-  return neighbors;
+  return neighborsPositions;
 }
 
-int countNeighborMines(int row, int col, char mineBoard[][MAX_SIZE]) {
-  std::vector<std::pair<int, int> > neighbors = getNeighbors(row, col);
+int countNeighboringMines(const int &row, const int &col,
+                          char mineBoard[][MAX_BOARD_SIZE]) {
+  std::vector<std::pair<int, int> > neighborsPositions =
+      getNeighborsPositions(row, col);
 
-  int Count = 0;
-  for (int i = 0; i < neighbors.size(); i++)
-    if (mineBoard[neighbors[i].first][neighbors[i].second] == '#') Count++;
+  int cellCount = 0;
+  for (int i = 0; i < neighborsPositions.size(); i++)
+    if (mineBoard[neighborsPositions[i].first][neighborsPositions[i].second] ==
+        '#')
+      cellCount++;
 
-  return Count;
+  return cellCount;
 }
 
-void uncoverBoard(char gameBoard[][MAX_SIZE], char mineBoard[][MAX_SIZE],
-                  int row, int col, int *totalMove) {
+void uncoverBoard(char gameBoard[][MAX_BOARD_SIZE],
+                  char mineBoard[][MAX_BOARD_SIZE], const int &row,
+                  const int &col, int *totalMove) {
   (*totalMove)++;
-  int Count = countNeighborMines(row, col, mineBoard);
-  gameBoard[row][col] = indexToChar(Count);
+  int mineCount = countNeighboringMines(row, col, mineBoard);
+  gameBoard[row][col] = indexToChar(mineCount);
 
-  if (Count == 0) {
-    std::vector<std::pair<int, int> > neighbors = getNeighbors(row, col);
+  if (mineCount == 0) {
+    std::vector<std::pair<int, int> > neighborsPositions =
+        getNeighborsPositions(row, col);
 
-    for (int i = 0; i < neighbors.size(); i++)
-      if (gameBoard[neighbors[i].first][neighbors[i].second] == '.')
-        uncoverBoard(gameBoard, mineBoard, neighbors[i].first,
-                     neighbors[i].second, totalMove);
+    for (int i = 0; i < neighborsPositions.size(); i++)
+      if (gameBoard[neighborsPositions[i].first]
+                   [neighborsPositions[i].second] == '.')
+        uncoverBoard(gameBoard, mineBoard, neighborsPositions[i].first,
+                     neighborsPositions[i].second, totalMove);
   }
 }
 
 // Show all the mines when the game finished
-void revealMines(char gameBoard[][MAX_SIZE], char mineBoard[][MAX_SIZE],
-                 bool won) {
-  for (int row = 0; row < MAP_HEIGHT; row++) {
-    for (int col = 0; col < MAP_WIDTH; col++) {
+void revealAllMines(char gameBoard[][MAX_BOARD_SIZE],
+                    char mineBoard[][MAX_BOARD_SIZE], bool won) {
+  for (int row = 0; row < boardHeight; row++) {
+    for (int col = 0; col < boardWidth; col++) {
       if (gameBoard[row][col] == '.' && mineBoard[row][col] == '#') {
         if (won)
           gameBoard[row][col] = 'F';
