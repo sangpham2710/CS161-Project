@@ -36,9 +36,9 @@ struct {
   int backgroundColor;
   int textColor;
 } cellStateProps[5] = {{'.', GRAY, BLACK},
-                       {'F', BRIGHT_WHITE, YELLOW},
-                       {'?', BRIGHT_WHITE, GREEN},
-                       {'#', BRIGHT_WHITE, RED},
+                       {'F', LIGHT_RED, BRIGHT_WHITE},
+                       {'?', YELLOW, BRIGHT_WHITE},
+                       {'#', RED, BRIGHT_WHITE},
                        {' ', BRIGHT_WHITE, BLACK}};
 const int cellStateCount = 4;
 // *** END OF GLOBAL VARIABLES ***
@@ -269,8 +269,11 @@ void startGame() {
     } while (!isValidCell(row, col));
 
     do {
-      std::cout << "Enter your action, " << '\n'
-                << "safe(s)/flag(f)/revealNeighbor(r) -> ";
+      std::cout << "Enter your action: " << '\n'
+                << "j: reveal; " << '\n'
+                << "k: flag (first time) / question (already flagged); " << '\n'
+                << "l: reveal all neighboring cells. " << '\n'
+                << "-> ";
       action = getUserAction();
     } while (action != MOUSE1 && action != MOUSE2 && action != MOUSE3);
     // Check first move is a mine or not. If yes then move the mine away.
@@ -294,7 +297,7 @@ void startGame() {
       }
     }
 
-    // ACTION: Flag a Cell
+    // ACTION: Flag and Question a Cell
     if (action == MOUSE2) {
       if (gameBoard[row][col] == UNKNOWN) {
         if (numFlagsLeft != 0) {
@@ -306,24 +309,17 @@ void startGame() {
             waitKeyPressed();
         }
       } else if (gameBoard[row][col] == FLAGGED) {
-        numFlagsLeft++;
-        gameBoard[row][col] = UNKNOWN;
-      } else {
-        std::cout << '\n' << "Illegal move. Cell is revealed. ";
-
-        waitKeyPressed();
-      }
+            gameBoard[row][col] = QUESTIONED;
+          } else {
+                numFlagsLeft++;
+                gameBoard[row][col] = UNKNOWN;
+            }
     }
 
     // ACTION: Reveal Neighbor Cell
     if (action == MOUSE3) {
-      if (gameBoard[row][col] == UNKNOWN) {
+      if (gameBoard[row][col] == UNKNOWN || gameBoard[row][col] == FLAGGED) {
         std::cout << '\n' << "Cell must be revealed first!  ";
-
-
-        waitKeyPressed();
-      } else if (gameBoard[row][col] == FLAGGED) {
-        std::cout << '\n' << "Cell is flagged. Unflag to reveal. ";
 
         waitKeyPressed();
       } else
