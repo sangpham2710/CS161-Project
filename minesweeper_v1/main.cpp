@@ -65,8 +65,8 @@ int printCenteredText(const std::string &text, const int &coordY) {
 
 // *** END OF HELPERS ***
 
-void setup();
-void game();
+void Setup();
+void Game();
 
 char intToChar(int index);
 int charToIndex(char ch);
@@ -105,7 +105,7 @@ void ExitGame();
 void Leaderboard();
 void Themes();
 
-void setup() {
+void Setup() {
   setConsoleColor(CONSOLE_BACKGROUND_COLOR, CONSOLE_TEXT_COLOR);
   setWindowName("Minesweeper v1.0");
   setWindowSize(WINDOW_WIDTH, WINDOW_HEIGHT);
@@ -217,7 +217,7 @@ void handleExit() {
       exit(0);
 
     else if (action == NO || action == ESCAPE) {
-      game();
+      Game();
       return;
     }
   }
@@ -527,7 +527,7 @@ void revealAllMines(char gameBoard[][MAX_BOARD_SIZE],
   }
 }
 
-void game() {
+void Game() {
   selectedWelcomeOption = Welcome();
   switch (selectedWelcomeOption) {
     case 0:
@@ -546,8 +546,7 @@ void game() {
 }
 
 int main() {
-  setup();
-  game();
-
+  Setup();
+  Game();
   return 0;
 }
