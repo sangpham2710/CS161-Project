@@ -17,8 +17,8 @@ void setWindowSize(const short& width, const short& height) {
   COORD pos{width, height};
   SMALL_RECT rect{0, 0, width - 1, height - 1};
   HANDLE handle = GetStdHandle(STD_OUTPUT_HANDLE);
-  SetConsoleScreenBufferSize(handle, pos);
   SetConsoleWindowInfo(handle, TRUE, &rect);
+  SetConsoleScreenBufferSize(handle, pos);
 }
 
 void fixWindowSize() {
