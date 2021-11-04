@@ -29,6 +29,17 @@ int selectedWelcomeOption = 0;
 
 int boardWidth, boardHeight;
 int numMines;
+
+enum cellStates { UNKNOWN, FLAGGED, QUESTIONED, MINE };
+struct {
+  char symbol;
+  int backgroundColor;
+  int textColor;
+} cellStateProps[4] = {{'.', BRIGHT_WHITE, BLACK},
+                       {'F', BRIGHT_WHITE, YELLOW},
+                       {'?', BRIGHT_WHITE, GREEN},
+                       {'#', BRIGHT_WHITE, RED}};
+
 // *** END OF GLOBAL VARIABLES ***
 
 // *** HELPERS ***
@@ -537,5 +548,6 @@ void game() {
 int main() {
   setup();
   game();
+
   return 0;
 }
