@@ -301,8 +301,7 @@ void startGame() {
         else
           std::cout << '\n' << "Cell is revealed. ";
 
-        std::cout << '\n' << "Press any key to continue. ";
-        getUserAction();
+        waitKeyPressed();
       }
     }
 
@@ -315,8 +314,7 @@ void startGame() {
         } else {
           std::cout << '\n' << "No flag left :((  ";
 
-          std::cout << '\n' << "Press any key to continue. ";
-          getUserAction();
+            waitKeyPressed();
         }
       } else if (gameBoard[row][col] == 'F') {
         numFlagsLeft++;
@@ -324,8 +322,7 @@ void startGame() {
       } else {
         std::cout << '\n' << "Illegal move. Cell is revealed. ";
 
-        std::cout << '\n' << "Press any key to continue. ";
-        getUserAction();
+        waitKeyPressed();
       }
     }
 
@@ -334,13 +331,12 @@ void startGame() {
       if (gameBoard[row][col] == '.') {
         std::cout << '\n' << "Cell must be revealed first!  ";
 
-        std::cout << '\n' << "Press any key to continue. ";
-        getUserAction();
+
+        waitKeyPressed();
       } else if (gameBoard[row][col] == 'F') {
         std::cout << '\n' << "Cell is flagged. Unflag to reveal. ";
 
-        std::cout << '\n' << "Press any key to continue. ";
-        getUserAction();
+        waitKeyPressed();
       } else
         endGame = revealNeighboringCells(gameBoard, mineBoard, row, col,
                                          &totalMove, totalSafeCell);
@@ -455,13 +451,11 @@ void displayBoard(char gameBoard[][MAX_BOARD_SIZE]) {
   std::cout << '\n';
 }
 
-// NOT WORKING -> INFINITE LOOP
-// SOLUTION: Temporarily using directly
-// void waitKeyPressed() {
-//   std::cout << '\n' << "Press any key to continue. ";
-//   char ch;
-//   ch = _getch();
-// }
+// New Fixed using getUserAction();
+ void waitKeyPressed() {
+   std::cout << '\n' << "Press any key to continue. ";
+   getUserAction();
+ }
 
 // Get the valid neighbor cells
 std::vector<std::pair<int, int> > getNeighborsPositions(const int &row,
