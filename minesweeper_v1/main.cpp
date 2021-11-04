@@ -88,10 +88,11 @@ void revealAllMines(int gameBoard[][MAX_BOARD_SIZE],
                     int mineBoard[][MAX_BOARD_SIZE], bool won);
 bool revealACell(int gameBoard[][MAX_BOARD_SIZE],
                  int mineBoard[][MAX_BOARD_SIZE], const int &row,
-                 const int &col, int *totalMove, int totalSafeCell);
+                 const int &col, int *totalSafelyOpenedCell, int totalSafeCell);
 bool revealNeighboringCells(int gameBoard[][MAX_BOARD_SIZE],
                             int mineBoard[][MAX_BOARD_SIZE], const int &row,
-                            const int &col, int *totalMove, int totalSafeCell);
+                            const int &col, int *totalSafelyOpenedCell,
+                            int totalSafeCell);
 void waitKeyPressed();
 
 int Welcome();
@@ -252,7 +253,7 @@ void startGame() {
   generateMineBoard(mineBoard, numMines);
 
   // Game Start
-  int totalMove = 0;
+  int totalSafelyOpenedCell = 0;
   bool endGame = false;
 
   while (!endGame) {
@@ -277,14 +278,14 @@ void startGame() {
       action = getUserAction();
     } while (action != MOUSE1 && action != MOUSE2 && action != MOUSE3);
     // Check first move is a mine or not. If yes then move the mine away.
-    if (totalMove == 0)
+    if (totalSafelyOpenedCell == 0)
       if (mineBoard[row][col] == MINE) replaceMine(row, col, mineBoard);
 
     // ACTION: Reveal a cell
     if (action == MOUSE1) {
       if (gameBoard[row][col] == UNKNOWN)
-        endGame = revealACell(gameBoard, mineBoard, row, col, &totalMove,
-                              totalSafeCell);
+        endGame = revealACell(gameBoard, mineBoard, row, col,
+                              &totalSafelyOpenedCell, totalSafeCell);
 
       else {
         std::cout << "Illegal move. ";
@@ -324,7 +325,7 @@ void startGame() {
         waitKeyPressed();
       } else
         endGame = revealNeighboringCells(gameBoard, mineBoard, row, col,
-                                         &totalMove, totalSafeCell);
+                                         &totalSafelyOpenedCell, totalSafeCell);
     }
   }
 }
@@ -332,10 +333,11 @@ void startGame() {
 // ACTION: Reveal a Cell LINKED With Winning and Losing Callout
 bool revealACell(int gameBoard[][MAX_BOARD_SIZE],
                  int mineBoard[][MAX_BOARD_SIZE], const int &row,
-                 const int &col, int *totalMove, int totalSafeCell) {
+                 const int &col, int *totalSafelyOpenedCell,
+                 int totalSafeCell) {
   if (mineBoard[row][col] == UNKNOWN) {
-    uncoverBoard(gameBoard, mineBoard, row, col, totalMove);
-    if ((*totalMove) == totalSafeCell) {
+    uncoverBoard(gameBoard, mineBoard, row, col, totalSafelyOpenedCell);
+    if ((*totalSafelyOpenedCell) == totalSafeCell) {
       revealAllMines(gameBoard, mineBoard, true);
       displayBoard(gameBoard);
       std::cout << '\n' << "Congratulation! You won!" << '\n';
@@ -356,22 +358,24 @@ bool revealACell(int gameBoard[][MAX_BOARD_SIZE],
 // ACTION: Reveal Neighbor Cells
 bool revealNeighboringCells(int gameBoard[][MAX_BOARD_SIZE],
                             int mineBoard[][MAX_BOARD_SIZE], const int &row,
-                            const int &col, int *totalMove, int totalSafeCell) {
+                            const int &col, int *totalSafelyOpenedCell,
+                            int totalSafeCell) {
   std::vector<std::pair<int, int> > neighbor = getNeighborsPositions(row, col);
 
-  int countFlag = 0;
-  int countMine = countNeighboringMines(row, col, mineBoard);
+  int flagCount = 0;
+  int mineCount = countNeighboringMines(row, col, mineBoard);
 
   for (int i = 0; i < neighbor.size(); i++) {
     if (gameBoard[neighbor[i].first][neighbor[i].second] == FLAGGED)
-      countFlag++;
+      flagCount++;
   }
 
-  if (countFlag == countMine) {
+  if (flagCount == mineCount) {
     for (int i = 0; i < neighbor.size(); i++)
       if (gameBoard[neighbor[i].first][neighbor[i].second] == UNKNOWN) {
         if (revealACell(gameBoard, mineBoard, neighbor[i].first,
-                        neighbor[i].second, totalMove, totalSafeCell))
+                        neighbor[i].second, totalSafelyOpenedCell,
+                        totalSafeCell))
           return true;
       }
   }
@@ -480,8 +484,8 @@ int countNeighboringMines(const int &row, const int &col,
 
 void uncoverBoard(int gameBoard[][MAX_BOARD_SIZE],
                   int mineBoard[][MAX_BOARD_SIZE], const int &row,
-                  const int &col, int *totalMove) {
-  (*totalMove)++;
+                  const int &col, int *totalSafelyOpenedCell) {
+  (*totalSafelyOpenedCell)++;
   int mineCount = countNeighboringMines(row, col, mineBoard);
   gameBoard[row][col] = BLANK + mineCount;
 
@@ -493,7 +497,7 @@ void uncoverBoard(int gameBoard[][MAX_BOARD_SIZE],
       if (gameBoard[neighborsPositions[i].first]
                    [neighborsPositions[i].second] == UNKNOWN)
         uncoverBoard(gameBoard, mineBoard, neighborsPositions[i].first,
-                     neighborsPositions[i].second, totalMove);
+                     neighborsPositions[i].second, totalSafelyOpenedCell);
   }
 }
 
