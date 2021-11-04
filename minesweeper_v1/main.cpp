@@ -308,11 +308,10 @@ void startGame() {
 
           waitKeyPressed();
         }
-      } else if (gameBoard[row][col] == FLAGGED)
-        gameBoard[row][col] = QUESTIONED;
-
-      else {
+      } else if (gameBoard[row][col] == FLAGGED) {
         numFlagsLeft++;
+        gameBoard[row][col] = QUESTIONED;
+      } else {
         gameBoard[row][col] = UNKNOWN;
       }
     }
