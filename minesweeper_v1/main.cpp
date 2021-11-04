@@ -57,7 +57,7 @@ int printCenteredText(const std::string &text, const int &coordY) {
 void setup();
 void game();
 
-char indexToChar(int index);
+char intToChar(int index);
 int charToIndex(char ch);
 void startGame();
 void displayBoard(char gameBoard[][MAX_BOARD_SIZE]);
@@ -84,15 +84,15 @@ bool revealNeighboringCells(char gameBoard[][MAX_BOARD_SIZE],
                             const int &col, int *totalMove, int totalSafeCell);
 void waitKeyPressed();
 
-int welcome();
+int Welcome();
 void displayWelcomeOptions();
 int handleWelcomeOptions();
 
-void newGame();
-void continueGame();
-void exitGame();
-void leaderboard();
-void themes();
+void NewGame();
+void ContinueGame();
+void ExitGame();
+void Leaderboard();
+void Themes();
 
 void setup() {
   setConsoleColor(CONSOLE_BACKGROUND_COLOR, CONSOLE_TEXT_COLOR);
@@ -176,20 +176,20 @@ int handleWelcomeOptions() {
   return currentWelcomeOption;
 }
 
-int welcome() {
+int Welcome() {
   resetConsoleScreen();
   displayWelcomeOptions();
   return handleWelcomeOptions();
 }
 
-void newGame() {
+void NewGame() {
   resetConsoleScreen();
   std::cout << "Enter width, height, the amound of mines: ";
   std::cin >> boardWidth >> boardHeight >> numMines;
   startGame();
 }
 
-void continueGame() {
+void ContinueGame() {
   resetConsoleScreen();
   std::cout << "Continue Game\n";
 }
@@ -212,17 +212,17 @@ void handleExit() {
   }
 }
 
-void exitGame() {
+void ExitGame() {
   displayExitPrompt();
   handleExit();
 }
 
-void leaderboard() {
+void Leaderboard() {
   resetConsoleScreen();
   std::cout << "Leaderboard\n";
 }
 
-void themes() {
+void Themes() {
   resetConsoleScreen();
   std::cout << "Themes\n";
 }
@@ -230,19 +230,14 @@ void themes() {
 // Game-Logic Here
 
 // Functions to switch between char and int for displaying and checking
-char indexToChar(int index) {
-  if (index < 10)
-    return index + '0';
-  else
-    return 'a' + (index - 10);
-}
+char intToChar(int val) { return val + '0'; }
 
-int charToIndex(char ch) {
-  if (ch <= '9')
-    return ch - '0';
-  else
-    return (ch - 'a') + 10;
-}
+// int charToIndex(char ch) {
+//   if (ch <= '9')
+//     return ch - '0';
+//   else
+//     return (ch - 'a') + 10;
+// }
 
 // Main Process of the game
 void startGame() {
@@ -266,7 +261,7 @@ void startGame() {
 
     // Get Input
     int row, col;
-    char action;
+    int action;
 
     do {
       std::cout << "Enter your move, (row, column) -> ";
@@ -276,16 +271,14 @@ void startGame() {
     do {
       std::cout << "Enter your action, " << '\n'
                 << "safe(s)/flag(f)/revealNeighbor(r) -> ";
-      std::cin >> action;
-      action = tolower(action);
-    } while (action != 's' && action != 'f' && action != 'r');
-
+      action = getUserAction();
+    } while (action != MOUSE1 && action != MOUSE2 && action != MOUSE3);
     // Check first move is a mine or not. If yes then move the mine away.
     if (totalMove == 0)
       if (mineBoard[row][col] == '#') replaceMine(row, col, mineBoard);
 
     // ACTION: Reveal a cell
-    if (action == 's') {
+    if (action == MOUSE1) {
       if (gameBoard[row][col] == '.')
         endGame = revealACell(gameBoard, mineBoard, row, col, &totalMove,
                               totalSafeCell);
@@ -298,13 +291,12 @@ void startGame() {
           std::cout << '\n' << "Cell is revealed. ";
 
         std::cout << '\n' << "Press any key to continue. ";
-        char ch;
-        ch = _getch();
+        getUserAction();
       }
     }
 
     // ACTION: Flag a Cell
-    if (action == 'f') {
+    if (action == MOUSE2) {
       if (gameBoard[row][col] == '.') {
         if (numFlagsLeft != 0) {
           numFlagsLeft--;
@@ -313,8 +305,7 @@ void startGame() {
           std::cout << '\n' << "No flag left :((  ";
 
           std::cout << '\n' << "Press any key to continue. ";
-          char ch;
-          ch = _getch();
+          getUserAction();
         }
       } else if (gameBoard[row][col] == 'F') {
         numFlagsLeft++;
@@ -323,25 +314,22 @@ void startGame() {
         std::cout << '\n' << "Illegal move. Cell is revealed. ";
 
         std::cout << '\n' << "Press any key to continue. ";
-        char ch;
-        ch = _getch();
+        getUserAction();
       }
     }
 
     // ACTION: Reveal Neighbor Cell
-    if (action == 'r') {
+    if (action == MOUSE3) {
       if (gameBoard[row][col] == '.') {
         std::cout << '\n' << "Cell must be revealed first!  ";
 
         std::cout << '\n' << "Press any key to continue. ";
-        char ch;
-        ch = _getch();
+        getUserAction();
       } else if (gameBoard[row][col] == 'F') {
         std::cout << '\n' << "Cell is flagged. Unflag to reveal. ";
 
         std::cout << '\n' << "Press any key to continue. ";
-        char ch;
-        ch = _getch();
+        getUserAction();
       } else
         endGame = revealNeighboringCells(gameBoard, mineBoard, row, col,
                                          &totalMove, totalSafeCell);
@@ -458,11 +446,11 @@ void displayBoard(char gameBoard[][MAX_BOARD_SIZE]) {
 
 // NOT WORKING -> INFINITE LOOP
 // SOLUTION: Temporarily using directly
-void waitKeyPressed() {
-  std::cout << '\n' << "Press any key to continue. ";
-  char ch;
-  ch = _getch();
-}
+// void waitKeyPressed() {
+//   std::cout << '\n' << "Press any key to continue. ";
+//   char ch;
+//   ch = _getch();
+// }
 
 // Get the valid neighbor cells
 std::vector<std::pair<int, int> > getNeighborsPositions(const int &row,
@@ -497,7 +485,7 @@ void uncoverBoard(char gameBoard[][MAX_BOARD_SIZE],
                   const int &col, int *totalMove) {
   (*totalMove)++;
   int mineCount = countNeighboringMines(row, col, mineBoard);
-  gameBoard[row][col] = indexToChar(mineCount);
+  gameBoard[row][col] = intToChar(mineCount);
 
   if (mineCount == 0) {
     std::vector<std::pair<int, int> > neighborsPositions =
@@ -529,19 +517,19 @@ void revealAllMines(char gameBoard[][MAX_BOARD_SIZE],
 }
 
 void game() {
-  selectedWelcomeOption = welcome();
+  selectedWelcomeOption = Welcome();
   switch (selectedWelcomeOption) {
     case 0:
-      newGame();
+      NewGame();
       break;
     case 1:
-      leaderboard();
+      Leaderboard();
       break;
     case 2:
-      themes();
+      Themes();
       break;
     case 3:
-      exitGame();
+      ExitGame();
       break;
   }
 }
