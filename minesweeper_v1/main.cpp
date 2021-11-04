@@ -30,7 +30,7 @@ int selectedWelcomeOption = 0;
 int boardWidth, boardHeight;
 int numMines;
 
-enum cellStates { UNKNOWN, FLAGGED, QUESTIONED, MINE, BLANK };
+enum cellStates { UNKNOWN, FLAGGED, QUESTIONED, MINE, BLANK, NUM_CELL_STATES };
 struct {
   char symbol;
   int backgroundColor;
@@ -40,7 +40,7 @@ struct {
                        {'?', YELLOW, BRIGHT_WHITE},
                        {'#', RED, BRIGHT_WHITE},
                        {' ', BRIGHT_WHITE, BLACK}};
-const int cellStateCount = 4;
+
 // *** END OF GLOBAL VARIABLES ***
 
 // *** HELPERS ***
@@ -306,14 +306,15 @@ void startGame() {
         } else {
           std::cout << '\n' << "No flag left :((  ";
 
-            waitKeyPressed();
+          waitKeyPressed();
         }
-      } else if (gameBoard[row][col] == FLAGGED) {
-            gameBoard[row][col] = QUESTIONED;
-          } else {
-                numFlagsLeft++;
-                gameBoard[row][col] = UNKNOWN;
-            }
+      } else if (gameBoard[row][col] == FLAGGED)
+        gameBoard[row][col] = QUESTIONED;
+
+      else {
+        numFlagsLeft++;
+        gameBoard[row][col] = UNKNOWN;
+      }
     }
 
     // ACTION: Reveal Neighbor Cell
@@ -363,7 +364,8 @@ bool revealNeighboringCells(int gameBoard[][MAX_BOARD_SIZE],
   int countMine = countNeighboringMines(row, col, mineBoard);
 
   for (int i = 0; i < neighbor.size(); i++) {
-    if (gameBoard[neighbor[i].first][neighbor[i].second] == FLAGGED) countFlag++;
+    if (gameBoard[neighbor[i].first][neighbor[i].second] == FLAGGED)
+      countFlag++;
   }
 
   if (countFlag == countMine) {
@@ -408,7 +410,7 @@ void generateMineBoard(int mineBoard[][MAX_BOARD_SIZE], int mines) {
 void replaceMine(const int &row, const int &col,
                  int mineBoard[][MAX_BOARD_SIZE]) {
   generateMineBoard(mineBoard, 1);  // add a new mine
-  mineBoard[row][col] = UNKNOWN;        // remove the old one
+  mineBoard[row][col] = UNKNOWN;    // remove the old one
   return;
 }
 
@@ -424,15 +426,15 @@ void displayBoard(int gameBoard[][MAX_BOARD_SIZE]) {
   for (int row = 0; row < boardHeight; ++row) {
     std::cout << row << "   ";
     for (int col = 0; col < boardWidth; ++col) {
-        if (gameBoard[row][col] <= cellStateCount) {
-            setConsoleTextColor(cellStateProps[gameBoard[row][col]].backgroundColor,
-                              cellStateProps[gameBoard[row][col]].textColor);
+      if (gameBoard[row][col] <= BLANK) {
+        setConsoleTextColor(cellStateProps[gameBoard[row][col]].backgroundColor,
+                            cellStateProps[gameBoard[row][col]].textColor);
 
-            std::cout << cellStateProps[gameBoard[row][col]].symbol << " ";
+        std::cout << cellStateProps[gameBoard[row][col]].symbol << " ";
 
-            setConsoleTextColor(CONSOLE_BACKGROUND_COLOR,
-                              CONSOLE_TEXT_COLOR);
-        } else std::cout << gameBoard[row][col] - cellStateCount<< " ";
+        setConsoleTextColor(CONSOLE_BACKGROUND_COLOR, CONSOLE_TEXT_COLOR);
+      } else
+        std::cout << gameBoard[row][col] - BLANK << " ";
     }
     std::cout << "  " << row << '\n';
   }
@@ -444,10 +446,10 @@ void displayBoard(int gameBoard[][MAX_BOARD_SIZE]) {
 }
 
 // New Fixed using getUserAction();
- void waitKeyPressed() {
-   std::cout << '\n' << "Press any key to continue. ";
-   getUserAction();
- }
+void waitKeyPressed() {
+  std::cout << '\n' << "Press any key to continue. ";
+  getUserAction();
+}
 
 // Get the valid neighbor cells
 std::vector<std::pair<int, int> > getNeighborsPositions(const int &row,
@@ -482,7 +484,7 @@ void uncoverBoard(int gameBoard[][MAX_BOARD_SIZE],
                   const int &col, int *totalMove) {
   (*totalMove)++;
   int mineCount = countNeighboringMines(row, col, mineBoard);
-  gameBoard[row][col] = mineCount + cellStateCount;
+  gameBoard[row][col] = BLANK + mineCount;
 
   if (mineCount == 0) {
     std::vector<std::pair<int, int> > neighborsPositions =
