@@ -67,11 +67,14 @@ std::map<int, int> inputMap = {
 };
 
 int getUserAction() {
-  int character = getch();
-  if (character == 0 || character == 224) {
-    // checking if the key is an extended one
-    // to ignore the additional character when dealing with arrow keys
+  int character;
+  do {
     character = getch();
-  }
+    if (character == 0 || character == 224) {
+      // checking if the key is an extended one
+      // to ignore the additional character when dealing with arrow keys
+      character = getch();
+    }
+  } while (inputMap.find(character) == inputMap.end());
   return inputMap[character];
 }
