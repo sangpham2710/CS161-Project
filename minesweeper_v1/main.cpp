@@ -30,7 +30,7 @@ int selectedWelcomeOption = 0;
 int boardWidth, boardHeight;
 int numMines;
 
-enum cellStates { UNKNOWN, FLAGGED, QUESTIONED, MINE, BLANK, NUM_CELL_STATES };
+enum cellStates { UNKNOWN, FLAGGED, QUESTIONED, MINE, BLANK };
 struct {
   char symbol;
   int backgroundColor;
@@ -43,7 +43,7 @@ struct {
 
 // *** END OF GLOBAL VARIABLES ***
 
-// *** HELPERS ***
+// *** UTILS ***
 
 std::mt19937 randInt(
     std::chrono::steady_clock::now().time_since_epoch().count());
@@ -64,7 +64,7 @@ int printCenteredText(const std::string &text, const int &coordY) {
   return coordX;
 }
 
-// *** END OF HELPERS ***
+// *** END OF UTILS ***
 
 void Setup();
 void Game();
