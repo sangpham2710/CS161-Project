@@ -66,9 +66,7 @@ int printCenteredText(const std::string &text, const int &coordY) {
 }
 
 void printColoredTextWrapper(std::function<void()> func,
-                             const int &backgroundColor, const int &textColor,
-                             const int &coordX = -1, const int &coordY = -1) {
-  if (coordX != -1 && coordY != -1) setConsoleCursorPosition(coordX, coordY);
+                             const int &backgroundColor, const int &textColor) {
   setConsoleTextColor(backgroundColor, textColor);
   func();
   setConsoleTextColor(CONSOLE_BACKGROUND_COLOR, CONSOLE_TEXT_COLOR);
@@ -87,8 +85,8 @@ void generateMineBoard(int mineBoard[][MAX_BOARD_SIZE], int mines);
 void replaceMine(int mineBoard[][MAX_BOARD_SIZE], const int &row,
                  const int &col);
 bool isValidCell(const int &row, int col);
-std::vector<std::pair<int, int> > getNeighborsPositions(const int &row,
-                                                        const int &col);
+std::vector<std::pair<int, int>> getNeighborsPositions(const int &row,
+                                                       const int &col);
 int countNeighboringCellStates(int mineBoard[][MAX_BOARD_SIZE], const int &row,
                                const int &col, const int &cellState);
 void uncoverBoard(int gameBoard[][MAX_BOARD_SIZE],
@@ -370,7 +368,7 @@ bool revealNeighboringCells(int gameBoard[][MAX_BOARD_SIZE],
                             int mineBoard[][MAX_BOARD_SIZE], const int &row,
                             const int &col, int *totalSafelyOpenedCell,
                             int totalSafeCell) {
-  std::vector<std::pair<int, int> > neighborsPositions =
+  std::vector<std::pair<int, int>> neighborsPositions =
       getNeighborsPositions(row, col);
 
   int flagCount = countNeighboringCellStates(gameBoard, row, col, FLAGGED);
@@ -462,9 +460,9 @@ void waitKeyPressed() {
 }
 
 // Get the valid neighbor cells
-std::vector<std::pair<int, int> > getNeighborsPositions(const int &row,
-                                                        const int &col) {
-  std::vector<std::pair<int, int> > neighborsPositions;
+std::vector<std::pair<int, int>> getNeighborsPositions(const int &row,
+                                                       const int &col) {
+  std::vector<std::pair<int, int>> neighborsPositions;
 
   for (int dx = -1; dx <= 1; dx++)
     for (int dy = -1; dy <= 1; dy++)
@@ -477,7 +475,7 @@ std::vector<std::pair<int, int> > getNeighborsPositions(const int &row,
 
 int countNeighboringCellStates(int board[][MAX_BOARD_SIZE], const int &row,
                                const int &col, const int &cellState) {
-  std::vector<std::pair<int, int> > neighborsPositions =
+  std::vector<std::pair<int, int>> neighborsPositions =
       getNeighborsPositions(row, col);
 
   int cellCount = 0;
@@ -497,7 +495,7 @@ void uncoverBoard(int gameBoard[][MAX_BOARD_SIZE],
   gameBoard[row][col] = BLANK + mineCount;
 
   if (mineCount == 0) {
-    std::vector<std::pair<int, int> > neighborsPositions =
+    std::vector<std::pair<int, int>> neighborsPositions =
         getNeighborsPositions(row, col);
 
     for (int i = 0; i < neighborsPositions.size(); i++)
