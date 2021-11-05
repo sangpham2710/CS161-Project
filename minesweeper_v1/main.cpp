@@ -1,6 +1,7 @@
 #include <algorithm>
 #include <cctype>
 #include <chrono>
+#include <functional>
 #include <iostream>
 #include <random>
 #include <vector>
@@ -64,6 +65,15 @@ int printCenteredText(const std::string &text, const int &coordY) {
   return coordX;
 }
 
+void printColoredTextWrapper(std::function<void()> func,
+                             const int &backgroundColor, const int &textColor,
+                             const int &coordX = -1, const int &coordY = -1) {
+  if (coordX != -1 && coordY != -1) setConsoleCursorPosition(coordX, coordY);
+  setConsoleTextColor(backgroundColor, textColor);
+  func();
+  setConsoleTextColor(CONSOLE_BACKGROUND_COLOR, CONSOLE_TEXT_COLOR);
+}
+
 // *** END OF UTILS ***
 
 void Setup();
@@ -122,13 +132,9 @@ void displayWelcomeOptions() {
         getStartPositionOfACenteredText(welcomeOptions[i].size()), 3 + i);
 
     if (i == selectedWelcomeOption) {
-      setConsoleTextColor(CONSOLE_SELECTED_BACKGROUND_COLOR,
-                          CONSOLE_SELECTED_TEXT_COLOR);
-
-      std::cout << welcomeOptions[i];
-
-      setConsoleTextColor(CONSOLE_BACKGROUND_COLOR, CONSOLE_TEXT_COLOR);
-
+      printColoredTextWrapper([&]() { std::cout << welcomeOptions[i]; },
+                              CONSOLE_SELECTED_BACKGROUND_COLOR,
+                              CONSOLE_SELECTED_TEXT_COLOR);
     } else
       std::cout << welcomeOptions[i];
   }
@@ -150,16 +156,15 @@ int handleWelcomeOptions() {
 
       currentWelcomeOption =
           mod(currentWelcomeOption - 1, welcomeOptions.size());
-
-      setConsoleCursorPosition(getStartPositionOfACenteredText(
-                                   welcomeOptions[currentWelcomeOption].size()),
-                               3 + currentWelcomeOption);
-
-      setConsoleTextColor(CONSOLE_SELECTED_BACKGROUND_COLOR,
-                          CONSOLE_SELECTED_TEXT_COLOR);
-      std::cout << welcomeOptions[currentWelcomeOption];
-      setConsoleTextColor(CONSOLE_BACKGROUND_COLOR, CONSOLE_TEXT_COLOR);
-
+      printColoredTextWrapper(
+          [&]() {
+            setConsoleCursorPosition(
+                getStartPositionOfACenteredText(
+                    welcomeOptions[currentWelcomeOption].size()),
+                3 + currentWelcomeOption);
+            std::cout << welcomeOptions[currentWelcomeOption];
+          },
+          CONSOLE_SELECTED_BACKGROUND_COLOR, CONSOLE_SELECTED_TEXT_COLOR);
     } else if (action == DOWN) {
       setConsoleCursorPosition(getStartPositionOfACenteredText(
                                    welcomeOptions[currentWelcomeOption].size()),
@@ -170,15 +175,15 @@ int handleWelcomeOptions() {
       currentWelcomeOption =
           mod(currentWelcomeOption + 1, welcomeOptions.size());
 
-      setConsoleCursorPosition(getStartPositionOfACenteredText(
-                                   welcomeOptions[currentWelcomeOption].size()),
-                               3 + currentWelcomeOption);
-
-      setConsoleTextColor(CONSOLE_SELECTED_BACKGROUND_COLOR,
-                          CONSOLE_SELECTED_TEXT_COLOR);
-      std::cout << welcomeOptions[currentWelcomeOption];
-      setConsoleTextColor(CONSOLE_BACKGROUND_COLOR, CONSOLE_TEXT_COLOR);
-
+      printColoredTextWrapper(
+          [&]() {
+            setConsoleCursorPosition(
+                getStartPositionOfACenteredText(
+                    welcomeOptions[currentWelcomeOption].size()),
+                3 + currentWelcomeOption);
+            std::cout << welcomeOptions[currentWelcomeOption];
+          },
+          CONSOLE_SELECTED_BACKGROUND_COLOR, CONSOLE_SELECTED_TEXT_COLOR);
     } else if (action == MOUSE1) {
       selected = 1;
       break;
@@ -432,12 +437,12 @@ void displayBoard(int gameBoard[][MAX_BOARD_SIZE]) {
     std::cout << row << "   ";
     for (int col = 0; col < boardWidth; ++col) {
       if (gameBoard[row][col] <= BLANK) {
-        setConsoleTextColor(cellStateProps[gameBoard[row][col]].backgroundColor,
-                            cellStateProps[gameBoard[row][col]].textColor);
-
-        std::cout << cellStateProps[gameBoard[row][col]].symbol << " ";
-
-        setConsoleTextColor(CONSOLE_BACKGROUND_COLOR, CONSOLE_TEXT_COLOR);
+        printColoredTextWrapper(
+            [&]() {
+              std::cout << cellStateProps[gameBoard[row][col]].symbol << " ";
+            },
+            cellStateProps[gameBoard[row][col]].backgroundColor,
+            cellStateProps[gameBoard[row][col]].textColor);
       } else
         std::cout << gameBoard[row][col] - BLANK << " ";
     }
