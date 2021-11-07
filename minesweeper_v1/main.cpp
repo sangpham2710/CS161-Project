@@ -301,16 +301,14 @@ void startGame() {
       int flagCount =
           countNeighboringCellStates(gameBoard, cursorRow, cursorCol, FLAGGED);
       if (gameBoard[cursorRow][cursorCol] == UNKNOWN ||
-          gameBoard[cursorRow][cursorCol] == FLAGGED ||
-          gameBoard[cursorRow][cursorCol] == QUESTIONED) {
+          gameBoard[cursorRow][cursorCol] == FLAGGED) {
         std::cout << '\n' << "Cell must be revealed first!  ";
       } else if (flagCount != gameBoard[cursorRow][cursorCol] - BLANK) {
         std::cout << '\n' << "Please flag the correct number of mines first!";
-      } else {
+      } else
         endGame =
             revealNeighboringCells(gameBoard, mineBoard, cursorRow, cursorCol,
                                    &totalSafelyOpenedCell, totalSafeCell);
-      }
     } else if (action == MOUSE3) {
       if (gameBoard[cursorRow][cursorCol] == UNKNOWN ||
           gameBoard[cursorRow][cursorCol] == FLAGGED ||
@@ -329,22 +327,9 @@ void startGame() {
           gameBoard[cursorRow][cursorCol] = UNKNOWN;
         }
       }
-    } else if (action == MOUSE3) {
-      int flagCount =
-          countNeighboringCellStates(gameBoard, cursorRow, cursorCol, FLAGGED);
-      if (gameBoard[cursorRow][cursorCol] == UNKNOWN ||
-          gameBoard[cursorRow][cursorCol] == FLAGGED) {
-        std::cout << '\n' << "Cell must be revealed first!  ";
-      } else if (flagCount != gameBoard[cursorRow][cursorCol] - BLANK) {
-        std::cout << '\n' << "Please flag the correct number of mines first!";
-      } else
-        endGame =
-            revealNeighboringCells(gameBoard, mineBoard, cursorRow, cursorCol,
-                                   &totalSafelyOpenedCell, totalSafeCell);
     }
   }
 }
-
 // ACTION: Reveal a Cell LINKED With Winning and Losing Callout
 bool revealACell(int gameBoard[][MAX_BOARD_SIZE],
                  int mineBoard[][MAX_BOARD_SIZE], const int &row,
@@ -434,7 +419,6 @@ void replaceMine(int mineBoard[][MAX_BOARD_SIZE], const int &row,
 void displayBoard(int gameBoard[][MAX_BOARD_SIZE], int cursorRow,
                   int cursorCol) {
   resetConsoleScreen();
-
   // Number on first line to help player locate the cell
   std::cout << "    ";
   for (int i = 0; i < boardWidth; i++) std::cout << i << ' ';
@@ -463,13 +447,11 @@ void displayBoard(int gameBoard[][MAX_BOARD_SIZE], int cursorRow,
     }
     std::cout << "  " << row << '\n';
   }
-
   // Bottom number line
   std::cout << '\n' << "    ";
   for (int i = 0; i < boardWidth; i++) std::cout << i << ' ';
   std::cout << '\n';
 }
-
 // New Fixed using getUserAction();
 void waitKeyPressed() {
   std::cout << '\n' << "Press any key to continue. ";
