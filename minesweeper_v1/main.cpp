@@ -31,12 +31,13 @@ int selectedWelcomeOption = 0;
 int boardWidth, boardHeight;
 int numMines;
 
-enum cellStates { UNKNOWN, FLAGGED, QUESTIONED, MINE, BLANK };
+enum cellStates { SELECTED, UNKNOWN, FLAGGED, QUESTIONED, MINE, BLANK };
 struct {
   char symbol;
   int backgroundColor;
   int textColor;
-} cellStateProps[5] = {{'.', GRAY, BLACK},
+} cellStateProps[6] = {{' ', AQUA, BLACK},
+                       {'.', GRAY, BLACK},
                        {'F', LIGHT_RED, BRIGHT_WHITE},
                        {'?', YELLOW, BRIGHT_WHITE},
                        {'#', RED, BRIGHT_WHITE},
@@ -78,13 +79,14 @@ void Setup();
 void Game();
 
 void startGame();
-void displayBoard(int gameBoard[][MAX_BOARD_SIZE]);
+void displayBoard(int gameBoard[][MAX_BOARD_SIZE], int cursorRow = -1,
+                  int cursorCol = -1);
 void resetBoard(int gameBoard[][MAX_BOARD_SIZE],
                 int mineBoard[][MAX_BOARD_SIZE]);
 void generateMineBoard(int mineBoard[][MAX_BOARD_SIZE], int mines);
 void replaceMine(int mineBoard[][MAX_BOARD_SIZE], const int &row,
                  const int &col);
-bool isValidCell(const int &row, int col);
+bool isValidCell(const int &row, const int &col);
 std::vector<std::pair<int, int>> getNeighborsPositions(const int &row,
                                                        const int &col);
 int countNeighboringCellStates(int mineBoard[][MAX_BOARD_SIZE], const int &row,
@@ -258,82 +260,70 @@ void startGame() {
   // Game Start
   int totalSafelyOpenedCell = 0;
   bool endGame = false;
-
+  int cursorRow = 0, cursorCol = 0;
   while (!endGame) {
-    displayBoard(gameBoard);
+    displayBoard(gameBoard, cursorRow, cursorCol);
     std::cout << numFlagsLeft << " flag(s) left" << '\n' << '\n';
 
     // Get Input
-    int row, col;
-    int action;
 
-    do {
-      std::cout << "Enter your move, (row, column) -> ";
-      std::cin >> row >> col;
-    } while (!isValidCell(row, col));
-
-    do {
-      std::cout << "Enter your action: " << '\n'
-                << "j: reveal; " << '\n'
-                << "k: flag (first time) / question (already flagged); " << '\n'
-                << "l: reveal all neighboring cells. " << '\n'
-                << "-> ";
-      action = getUserAction();
-    } while (action != MOUSE1 && action != MOUSE2 && action != MOUSE3);
-    // Check first move is a mine or not. If yes then move the mine away.
-    if (totalSafelyOpenedCell == 0)
-      if (mineBoard[row][col] == MINE) replaceMine(mineBoard, row, col);
-
-    // ACTION: Reveal a cell
-    if (action == MOUSE1) {
-      if (gameBoard[row][col] == UNKNOWN)
-        endGame = revealACell(gameBoard, mineBoard, row, col,
+    int action = getUserAction();
+    if (action == ESCAPE) {
+      endGame = true;
+      break;
+    } else if (action == UP) {
+      cursorRow -= isValidCell(cursorRow - 1, cursorCol);
+    } else if (action == DOWN) {
+      cursorRow += isValidCell(cursorRow + 1, cursorCol);
+    } else if (action == LEFT) {
+      cursorCol -= isValidCell(cursorRow, cursorCol - 1);
+    } else if (action == RIGHT) {
+      cursorCol += isValidCell(cursorRow, cursorCol + 1);
+    } else if (action == MOUSE1) {
+      if (totalSafelyOpenedCell == 0)
+        if (mineBoard[cursorRow][cursorCol] == MINE)
+          replaceMine(mineBoard, cursorRow, cursorCol);
+      if (gameBoard[cursorRow][cursorCol] == UNKNOWN)
+        endGame = revealACell(gameBoard, mineBoard, cursorRow, cursorCol,
                               &totalSafelyOpenedCell, totalSafeCell);
 
       else {
         std::cout << "Illegal move. ";
-        if (mineBoard[row][col] == FLAGGED)
+        if (mineBoard[cursorRow][cursorCol] == FLAGGED)
           std::cout << '\n' << "Cell is flagged. Unflag to reveal. ";
         else
           std::cout << '\n' << "Cell is revealed. ";
-
-        waitKeyPressed();
       }
-    }
-
-    // ACTION: Flag and Question a Cell
-    if (action == MOUSE2) {
-      if (gameBoard[row][col] == UNKNOWN) {
-        if (numFlagsLeft != 0) {
-          numFlagsLeft--;
-          gameBoard[row][col] = FLAGGED;
+    } else if (action == MOUSE2) {
+      if (gameBoard[cursorRow][cursorCol] == UNKNOWN ||
+          gameBoard[cursorRow][cursorCol] == FLAGGED ||
+          gameBoard[cursorRow][cursorCol] == QUESTIONED) {
+        if (gameBoard[cursorRow][cursorCol] == UNKNOWN) {
+          if (numFlagsLeft != 0) {
+            numFlagsLeft--;
+            gameBoard[cursorRow][cursorCol] = FLAGGED;
+          } else {
+            std::cout << '\n' << "No flag left :((  ";
+          }
+        } else if (gameBoard[cursorRow][cursorCol] == FLAGGED) {
+          numFlagsLeft++;
+          gameBoard[cursorRow][cursorCol] = QUESTIONED;
         } else {
-          std::cout << '\n' << "No flag left :((  ";
-
-          waitKeyPressed();
+          gameBoard[cursorRow][cursorCol] = UNKNOWN;
         }
-      } else if (gameBoard[row][col] == FLAGGED) {
-        numFlagsLeft++;
-        gameBoard[row][col] = QUESTIONED;
-      } else {
-        gameBoard[row][col] = UNKNOWN;
       }
-    }
-
-    // ACTION: Reveal Neighbor Cell
-    if (action == MOUSE3) {
-      int flagCount = countNeighboringCellStates(gameBoard, row, col, FLAGGED);
-      if (gameBoard[row][col] == UNKNOWN || gameBoard[row][col] == FLAGGED) {
+    } else if (action == MOUSE3) {
+      int flagCount =
+          countNeighboringCellStates(gameBoard, cursorRow, cursorCol, FLAGGED);
+      if (gameBoard[cursorRow][cursorCol] == UNKNOWN ||
+          gameBoard[cursorRow][cursorCol] == FLAGGED) {
         std::cout << '\n' << "Cell must be revealed first!  ";
-
-        waitKeyPressed();
-      } else if (flagCount != gameBoard[row][col]) {
+      } else if (flagCount != gameBoard[cursorRow][cursorCol] - BLANK) {
         std::cout << '\n' << "Please flag the correct number of mines first!";
-
-        waitKeyPressed();
       } else
-        endGame = revealNeighboringCells(gameBoard, mineBoard, row, col,
-                                         &totalSafelyOpenedCell, totalSafeCell);
+        endGame =
+            revealNeighboringCells(gameBoard, mineBoard, cursorRow, cursorCol,
+                                   &totalSafelyOpenedCell, totalSafeCell);
     }
   }
 }
@@ -397,7 +387,7 @@ void resetBoard(int gameBoard[][MAX_BOARD_SIZE],
 }
 
 // Check whether the cell [row, column] is in the board or not.
-bool isValidCell(const int &row, int col) {
+bool isValidCell(const int &row, const int &col) {
   return (row >= 0) && (row < boardHeight) && (col >= 0) && (col < boardWidth);
 }
 
@@ -422,7 +412,8 @@ void replaceMine(int mineBoard[][MAX_BOARD_SIZE], const int &row,
   return;
 }
 
-void displayBoard(int gameBoard[][MAX_BOARD_SIZE]) {
+void displayBoard(int gameBoard[][MAX_BOARD_SIZE], int cursorRow,
+                  int cursorCol) {
   resetConsoleScreen();
 
   // Number on first line to help player locate the cell
@@ -434,15 +425,30 @@ void displayBoard(int gameBoard[][MAX_BOARD_SIZE]) {
   for (int row = 0; row < boardHeight; ++row) {
     std::cout << row << "   ";
     for (int col = 0; col < boardWidth; ++col) {
-      if (gameBoard[row][col] <= BLANK) {
-        printColoredTextWrapper(
-            [&]() {
-              std::cout << cellStateProps[gameBoard[row][col]].symbol << " ";
-            },
-            cellStateProps[gameBoard[row][col]].backgroundColor,
-            cellStateProps[gameBoard[row][col]].textColor);
-      } else
-        std::cout << gameBoard[row][col] - BLANK << " ";
+      if (row == cursorRow && col == cursorCol) {
+        if (gameBoard[row][col] <= BLANK) {
+          printColoredTextWrapper(
+              [&]() {
+                std::cout << cellStateProps[gameBoard[row][col]].symbol << " ";
+              },
+              cellStateProps[SELECTED].backgroundColor,
+              cellStateProps[SELECTED].textColor);
+        } else
+          printColoredTextWrapper(
+              [&]() { std::cout << gameBoard[row][col] - BLANK << " "; },
+              cellStateProps[SELECTED].backgroundColor,
+              cellStateProps[SELECTED].textColor);
+      } else {
+        if (gameBoard[row][col] <= BLANK) {
+          printColoredTextWrapper(
+              [&]() {
+                std::cout << cellStateProps[gameBoard[row][col]].symbol << " ";
+              },
+              cellStateProps[gameBoard[row][col]].backgroundColor,
+              cellStateProps[gameBoard[row][col]].textColor);
+        } else
+          std::cout << gameBoard[row][col] - BLANK << " ";
+      }
     }
     std::cout << "  " << row << '\n';
   }
