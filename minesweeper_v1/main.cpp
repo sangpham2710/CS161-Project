@@ -285,8 +285,12 @@ void startGame() {
       if (totalSafelyOpenedCell == 0)
         if (mineBoard[cursorRow][cursorCol] == MINE)
           replaceMine(mineBoard, cursorRow, cursorCol);
+<<<<<<< HEAD
       if (gameBoard[cursorRow][cursorCol] == UNKNOWN ||
           gameBoard[cursorRow][cursorCol] == QUESTIONED) {
+=======
+      if (gameBoard[cursorRow][cursorCol] == UNKNOWN)
+>>>>>>> 6b0f8eac6f7b1b49cfb245d2d7942038e5b5a70a
         endGame = revealACell(gameBoard, mineBoard, cursorRow, cursorCol,
                               &totalSafelyOpenedCell, totalSafeCell);
 
@@ -298,6 +302,7 @@ void startGame() {
           std::cout << '\n' << "Cell is revealed. ";
       }
     } else if (action == MOUSE2) {
+<<<<<<< HEAD
       int flagCount =
           countNeighboringCellStates(gameBoard, cursorRow, cursorCol, FLAGGED);
       if (gameBoard[cursorRow][cursorCol] == UNKNOWN ||
@@ -312,6 +317,8 @@ void startGame() {
                                    &totalSafelyOpenedCell, totalSafeCell);
       }
     } else if (action == MOUSE3) {
+=======
+>>>>>>> 6b0f8eac6f7b1b49cfb245d2d7942038e5b5a70a
       if (gameBoard[cursorRow][cursorCol] == UNKNOWN ||
           gameBoard[cursorRow][cursorCol] == FLAGGED ||
           gameBoard[cursorRow][cursorCol] == QUESTIONED) {
@@ -329,6 +336,22 @@ void startGame() {
           gameBoard[cursorRow][cursorCol] = UNKNOWN;
         }
       }
+<<<<<<< HEAD
+=======
+  }
+  else if (action == MOUSE3) {
+    int flagCount =
+        countNeighboringCellStates(gameBoard, cursorRow, cursorCol, FLAGGED);
+    if (gameBoard[cursorRow][cursorCol] == UNKNOWN ||
+        gameBoard[cursorRow][cursorCol] == FLAGGED) {
+      std::cout << '\n' << "Cell must be revealed first!  ";
+    } else if (flagCount != gameBoard[cursorRow][cursorCol] - BLANK) {
+      std::cout << '\n' << "Please flag the correct number of mines first!";
+    } else
+      endGame =
+          revealNeighboringCells(gameBoard, mineBoard, cursorRow, cursorCol,
+                                 &totalSafelyOpenedCell, totalSafeCell);
+>>>>>>> 6b0f8eac6f7b1b49cfb245d2d7942038e5b5a70a
     }
   }
 }
@@ -433,6 +456,7 @@ void displayBoard(int gameBoard[][MAX_BOARD_SIZE], int cursorRow,
     std::cout << row << "   ";
     for (int col = 0; col < boardWidth; ++col) {
       if (row == cursorRow && col == cursorCol) {
+<<<<<<< HEAD
         printColoredTextWrapper(
             [&]() {
               std::cout << cellStateProps[gameBoard[row][col]].symbol << " ";
@@ -447,6 +471,30 @@ void displayBoard(int gameBoard[][MAX_BOARD_SIZE], int cursorRow,
             },
             cellStateProps[gameBoard[row][col]].backgroundColor,
             cellStateProps[gameBoard[row][col]].textColor);
+=======
+        if (gameBoard[row][col] <= BLANK) {
+          printColoredTextWrapper(
+              [&]() {
+                std::cout << cellStateProps[gameBoard[row][col]].symbol << " ";
+              },
+              cellStateProps[SELECTED].backgroundColor,
+              cellStateProps[SELECTED].textColor);
+        } else
+          printColoredTextWrapper(
+              [&]() { std::cout << gameBoard[row][col] - BLANK << " "; },
+              cellStateProps[SELECTED].backgroundColor,
+              cellStateProps[SELECTED].textColor);
+      } else {
+        if (gameBoard[row][col] <= BLANK) {
+          printColoredTextWrapper(
+              [&]() {
+                std::cout << cellStateProps[gameBoard[row][col]].symbol << " ";
+              },
+              cellStateProps[gameBoard[row][col]].backgroundColor,
+              cellStateProps[gameBoard[row][col]].textColor);
+        } else
+          std::cout << gameBoard[row][col] - BLANK << " ";
+>>>>>>> 6b0f8eac6f7b1b49cfb245d2d7942038e5b5a70a
       }
     }
     std::cout << "  " << row << '\n';
