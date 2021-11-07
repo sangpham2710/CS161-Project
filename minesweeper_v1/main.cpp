@@ -36,12 +36,14 @@ struct {
   char symbol;
   int backgroundColor;
   int textColor;
-} cellStateProps[6] = {{' ', AQUA, BRIGHT_WHITE},
-                       {'.', GRAY, BLACK},
-                       {'F', LIGHT_RED, BRIGHT_WHITE},
-                       {'?', YELLOW, BRIGHT_WHITE},
-                       {'#', RED, BRIGHT_WHITE},
-                       {' ', BRIGHT_WHITE, BLACK}};
+} cellStateProps[14] = {
+    {' ', LIGHT_AQUA, BLACK},        {'.', GRAY, BLACK},
+    {'F', LIGHT_RED, BRIGHT_WHITE},  {'?', YELLOW, BRIGHT_WHITE},
+    {'#', RED, BRIGHT_WHITE},        {' ', BRIGHT_WHITE, BLACK},
+    {'1', BRIGHT_WHITE, LIGHT_BLUE}, {'2', BRIGHT_WHITE, GREEN},
+    {'3', BRIGHT_WHITE, LIGHT_RED},  {'4', BRIGHT_WHITE, BLUE},
+    {'5', BRIGHT_WHITE, RED},        {'6', BRIGHT_WHITE, AQUA},
+    {'7', BRIGHT_WHITE, BLACK},      {'8', BRIGHT_WHITE, GRAY}};
 
 // *** END OF GLOBAL VARIABLES ***
 
@@ -431,28 +433,20 @@ void displayBoard(int gameBoard[][MAX_BOARD_SIZE], int cursorRow,
     std::cout << row << "   ";
     for (int col = 0; col < boardWidth; ++col) {
       if (row == cursorRow && col == cursorCol) {
-        if (gameBoard[row][col] <= BLANK) {
-          printColoredTextWrapper(
-              [&]() {
-                std::cout << cellStateProps[gameBoard[row][col]].symbol << " ";
-              },
-              cellStateProps[SELECTED].backgroundColor,
-              cellStateProps[SELECTED].textColor);
-        } else
-          printColoredTextWrapper(
-              [&]() { std::cout << gameBoard[row][col] - BLANK << " "; },
-              cellStateProps[SELECTED].backgroundColor,
-              cellStateProps[SELECTED].textColor);
+        printColoredTextWrapper(
+            [&]() {
+              std::cout << cellStateProps[gameBoard[row][col]].symbol << " ";
+            },
+            cellStateProps[SELECTED].backgroundColor,
+            cellStateProps[SELECTED].textColor);
+
       } else {
-        if (gameBoard[row][col] <= BLANK) {
-          printColoredTextWrapper(
-              [&]() {
-                std::cout << cellStateProps[gameBoard[row][col]].symbol << " ";
-              },
-              cellStateProps[gameBoard[row][col]].backgroundColor,
-              cellStateProps[gameBoard[row][col]].textColor);
-        } else
-          std::cout << gameBoard[row][col] - BLANK << " ";
+        printColoredTextWrapper(
+            [&]() {
+              std::cout << cellStateProps[gameBoard[row][col]].symbol << " ";
+            },
+            cellStateProps[gameBoard[row][col]].backgroundColor,
+            cellStateProps[gameBoard[row][col]].textColor);
       }
     }
     std::cout << "  " << row << '\n';
