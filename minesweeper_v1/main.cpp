@@ -329,6 +329,18 @@ void startGame() {
           gameBoard[cursorRow][cursorCol] = UNKNOWN;
         }
       }
+    } else if (action == MOUSE3) {
+      int flagCount =
+          countNeighboringCellStates(gameBoard, cursorRow, cursorCol, FLAGGED);
+      if (gameBoard[cursorRow][cursorCol] == UNKNOWN ||
+          gameBoard[cursorRow][cursorCol] == FLAGGED) {
+        std::cout << '\n' << "Cell must be revealed first!  ";
+      } else if (flagCount != gameBoard[cursorRow][cursorCol] - BLANK) {
+        std::cout << '\n' << "Please flag the correct number of mines first!";
+      } else
+        endGame =
+            revealNeighboringCells(gameBoard, mineBoard, cursorRow, cursorCol,
+                                   &totalSafelyOpenedCell, totalSafeCell);
     }
   }
 }
