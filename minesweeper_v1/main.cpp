@@ -251,16 +251,16 @@ void Themes() {
 
 void displayBoard(int gameBoard[][MAX_BOARD_SIZE], int cursorRow,
                   int cursorCol) {
-  static bool firstTime = true;
+  static bool firstCall = true;
   static int oldGameBoard[MAX_BOARD_SIZE][MAX_BOARD_SIZE];
   static int oldCursorRow = 0;
   static int oldCursorCol = 0;
-  if (firstTime) {
+  if (firstCall) {
     memcpy(oldGameBoard, gameBoard,
            MAX_BOARD_SIZE * MAX_BOARD_SIZE * sizeof(int));
     oldCursorRow = cursorRow;
     oldCursorCol = cursorCol;
-    firstTime = false;
+    firstCall = false;
 
     resetConsoleScreen();
     // Top border
@@ -354,10 +354,10 @@ void displayBoard(int gameBoard[][MAX_BOARD_SIZE], int cursorRow,
 }
 
 void displayNumFlags(const int &numFlags) {
-  static bool firstTime = true;
-  if (firstTime) {
+  static bool firstCall = true;
+  if (firstCall) {
     std::cout << '\n' << std::setw(3) << numFlags << " flag(s) left" << '\n';
-    firstTime = false;
+    firstCall = false;
   } else {
     // Remove old status
     setConsoleCursorPosition(0, boardHeight + 2);
@@ -368,10 +368,10 @@ void displayNumFlags(const int &numFlags) {
 }
 
 void displayBoardStatus(const std::string &boardStatus) {
-  static bool firstTime = true;
-  if (firstTime) {
+  static bool firstCall = true;
+  if (firstCall) {
     std::cout << '\n' << boardStatus;
-    firstTime = false;
+    firstCall = false;
   } else {
     // Remove old status
     setConsoleCursorPosition(0, boardHeight + 4);
@@ -464,8 +464,8 @@ void startGame() {
       }
     }
     if (endGame) {
-        cursorRow = -1;
-        cursorCol = -1;
+      cursorRow = -1;
+      cursorCol = -1;
     }
     displayBoard(gameBoard, cursorRow, cursorCol);
     displayNumFlags(numFlagsLeft);
