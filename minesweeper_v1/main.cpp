@@ -321,7 +321,7 @@ void displayBoard(int gameBoard[][MAX_BOARD_SIZE], int cursorRow,
     }
 
     // Remove old cursor
-    if (oldCursorRow != -1 && oldCursorCol != -1) {
+    if (oldCursorRow != -1 || oldCursorCol != -1) {
       printColoredTextWrapper(
           [&]() {
             setConsoleCursorPosition(CELL_WIDTH + oldCursorCol * CELL_WIDTH,
@@ -334,7 +334,7 @@ void displayBoard(int gameBoard[][MAX_BOARD_SIZE], int cursorRow,
           cellStateProps[gameBoard[oldCursorRow][oldCursorCol]].textColor);
     }
     // Update new cursor
-    if (cursorRow != -1 && cursorCol != -1) {
+    if (cursorRow != -1 || cursorCol != -1) {
       printColoredTextWrapper(
           [&]() {
             setConsoleCursorPosition(CELL_WIDTH + cursorCol * CELL_WIDTH,
@@ -405,7 +405,7 @@ void startGame() {
   displayNumFlags(numFlagsLeft);
   displayBoardStatus(boardStatus);
 
-  do {
+  while (!endGame) {
     int action = getUserAction();
     if (action == ESCAPE) {
       endGame = true;
@@ -463,10 +463,14 @@ void startGame() {
         boardStatus = "Cell must be either unknown, flagged, or questioned!";
       }
     }
+    if (endGame) {
+        cursorRow = -1;
+        cursorCol = -1;
+    }
     displayBoard(gameBoard, cursorRow, cursorCol);
     displayNumFlags(numFlagsLeft);
     displayBoardStatus(boardStatus);
-  } while (!endGame);
+  }
   getUserAction();
 }
 // ACTION: Reveal a Cell LINKED With Winning and Losing Callout
