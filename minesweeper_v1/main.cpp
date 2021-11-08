@@ -16,7 +16,7 @@
 const int WINDOW_WIDTH = 80, WINDOW_HEIGHT = 30;
 const int MAX_BOARD_SIZE = 30;
 const int CELL_WIDTH = 2, CELL_HEIGHT = 1;
-
+const int FPS = 10;
 const int CONSOLE_BACKGROUND_COLOR = BRIGHT_WHITE;
 const int CONSOLE_TEXT_COLOR = BLACK;
 const int CONSOLE_SELECTED_TEXT_COLOR = GREEN;
@@ -307,6 +307,7 @@ void displayBoard(int gameBoard[][MAX_BOARD_SIZE], int cursorRow,
     // Update gameboard
     for (int row = 0; row < boardHeight; ++row) {
       for (int col = 0; col < boardWidth; ++col) {
+        // Update only if the cell has changed
         if (oldGameBoard[row][col] != gameBoard[row][col]) {
           printColoredTextWrapper(
               [&]() {
@@ -320,36 +321,42 @@ void displayBoard(int gameBoard[][MAX_BOARD_SIZE], int cursorRow,
       }
     }
 
-    // Remove old cursor
-    if (oldCursorRow != -1 || oldCursorCol != -1) {
-      printColoredTextWrapper(
-          [&]() {
-            setConsoleCursorPosition(CELL_WIDTH + oldCursorCol * CELL_WIDTH,
-                                     CELL_HEIGHT + oldCursorRow * CELL_HEIGHT);
-            std::cout
-                << cellStateProps[gameBoard[oldCursorRow][oldCursorCol]].symbol
-                << " ";
-          },
-          cellStateProps[gameBoard[oldCursorRow][oldCursorCol]].backgroundColor,
-          cellStateProps[gameBoard[oldCursorRow][oldCursorCol]].textColor);
+    // Update only if the cursor has changed
+    if (oldCursorRow != cursorRow || oldCursorCol != cursorCol) {
+      // Remove old cursor
+      if (oldCursorRow != -1 || oldCursorCol != -1) {
+        printColoredTextWrapper(
+            [&]() {
+              setConsoleCursorPosition(
+                  CELL_WIDTH + oldCursorCol * CELL_WIDTH,
+                  CELL_HEIGHT + oldCursorRow * CELL_HEIGHT);
+              std::cout << cellStateProps[gameBoard[oldCursorRow][oldCursorCol]]
+                               .symbol
+                        << " ";
+            },
+            cellStateProps[gameBoard[oldCursorRow][oldCursorCol]]
+                .backgroundColor,
+            cellStateProps[gameBoard[oldCursorRow][oldCursorCol]].textColor);
+      }
+      // Update new cursor
+      if (cursorRow != -1 || cursorCol != -1) {
+        printColoredTextWrapper(
+            [&]() {
+              setConsoleCursorPosition(CELL_WIDTH + cursorCol * CELL_WIDTH,
+                                       CELL_HEIGHT + cursorRow * CELL_HEIGHT);
+              std::cout
+                  << cellStateProps[gameBoard[cursorRow][cursorCol]].symbol
+                  << " ";
+            },
+            cellStateProps[SELECTED].backgroundColor,
+            cellStateProps[SELECTED].textColor);
+        memcpy(oldGameBoard, gameBoard,
+               MAX_BOARD_SIZE * MAX_BOARD_SIZE * sizeof(int));
+      }
+      // Update old cursor
+      oldCursorRow = cursorRow;
+      oldCursorCol = cursorCol;
     }
-    // Update new cursor
-    if (cursorRow != -1 || cursorCol != -1) {
-      printColoredTextWrapper(
-          [&]() {
-            setConsoleCursorPosition(CELL_WIDTH + cursorCol * CELL_WIDTH,
-                                     CELL_HEIGHT + cursorRow * CELL_HEIGHT);
-            std::cout << cellStateProps[gameBoard[cursorRow][cursorCol]].symbol
-                      << " ";
-          },
-          cellStateProps[SELECTED].backgroundColor,
-          cellStateProps[SELECTED].textColor);
-      memcpy(oldGameBoard, gameBoard,
-             MAX_BOARD_SIZE * MAX_BOARD_SIZE * sizeof(int));
-    }
-    // Update old cursor
-    oldCursorRow = cursorRow;
-    oldCursorCol = cursorCol;
   }
 }
 
@@ -359,9 +366,10 @@ void displayNumFlags(const int &numFlags) {
     std::cout << '\n' << std::setw(3) << numFlags << " flag(s) left" << '\n';
     firstCall = false;
   } else {
-    // Remove old status
+    // Remove old flag count
     setConsoleCursorPosition(0, boardHeight + 2);
     std::cout << '\n' << std::setw(3) << std::string(3, ' ');
+    // Update new flag count
     setConsoleCursorPosition(0, boardHeight + 2);
     std::cout << '\n' << std::setw(3) << numFlags;
   }
@@ -373,12 +381,33 @@ void displayBoardStatus(const std::string &boardStatus) {
     std::cout << '\n' << boardStatus;
     firstCall = false;
   } else {
-    // Remove old status
+    // Remove old board status
     setConsoleCursorPosition(0, boardHeight + 4);
     std::cout << '\n' << std::string(WINDOW_WIDTH - 1, ' ');
-    // Update new status
+    // Update new board status
     setConsoleCursorPosition(0, boardHeight + 4);
     std::cout << '\n' << boardStatus;
+  }
+}
+
+void displayTimer(const long long &elapsedTime) {
+  static bool firstCall = true;
+  if (firstCall) {
+    std::cout << '\n' << "Time: " << elapsedTime;
+    firstCall = false;
+  } else {
+    // Remove old timer
+    setConsoleCursorPosition(6, boardHeight + 6);
+    std::cout << "  ";
+    std::cout << ":";
+    std::cout << "  ";
+    // Update new timer
+    setConsoleCursorPosition(6, boardHeight + 6);
+    std::cout << std::setfill('0');
+    std::cout << std::setw(2) << elapsedTime / 60;
+    std::cout << ":";
+    std::cout << std::setw(2) << elapsedTime % 60;
+    std::cout << std::setfill(' ');
   }
 }
 
@@ -397,16 +426,33 @@ void startGame() {
   generateMineBoard(mineBoard, numMines);
 
   // Game Start
+  long long totalElapsedTime = 0;
   int totalSafelyOpenedCell = 0;
   bool endGame = false;
   int cursorRow = 0, cursorCol = 0;
+  std::chrono::high_resolution_clock::time_point gameStartTime;
 
   displayBoard(gameBoard, cursorRow, cursorCol);
   displayNumFlags(numFlagsLeft);
   displayBoardStatus(boardStatus);
+  displayTimer(0);
 
   while (!endGame) {
-    int action = getUserAction();
+    // Get input from player
+    int action = NO_ACTION;
+
+    std::chrono::high_resolution_clock::time_point updateInputStartTime =
+        std::chrono::high_resolution_clock::now();
+
+    while (std::chrono::duration_cast<std::chrono::milliseconds>(
+               std::chrono::high_resolution_clock::now() - updateInputStartTime)
+               .count() <= 1000 / FPS) {
+      if (kbhit()) {
+        action = getUserAction();
+        break;
+      }
+    }
+
     if (action == ESCAPE) {
       endGame = true;
       break;
@@ -419,9 +465,13 @@ void startGame() {
     } else if (action == RIGHT) {
       cursorCol += isValidCell(cursorRow, cursorCol + 1);
     } else if (action == MOUSE1) {
-      if (totalSafelyOpenedCell == 0)
+      if (totalSafelyOpenedCell == 0) {
+        // Start the game timer
+        gameStartTime = std::chrono::high_resolution_clock::now();
+        // Replace first cell if it is a mine
         if (mineBoard[cursorRow][cursorCol] == MINE)
           replaceMine(mineBoard, cursorRow, cursorCol);
+      }
 
       if (gameBoard[cursorRow][cursorCol] == UNKNOWN ||
           gameBoard[cursorRow][cursorCol] == QUESTIONED) {
@@ -466,10 +516,24 @@ void startGame() {
     if (endGame) {
       cursorRow = -1;
       cursorCol = -1;
+      totalElapsedTime =
+          std::chrono::duration_cast<std::chrono::milliseconds>(
+              std::chrono::high_resolution_clock::now() - gameStartTime)
+              .count();
     }
     displayBoard(gameBoard, cursorRow, cursorCol);
     displayNumFlags(numFlagsLeft);
     displayBoardStatus(boardStatus);
+
+    // If game timer has started, display the timer accordingly
+    if (gameStartTime != std::chrono::high_resolution_clock::time_point()) {
+      displayTimer(
+          std::chrono::duration_cast<std::chrono::seconds>(
+              std::chrono::high_resolution_clock::now() - gameStartTime)
+              .count());
+    } else {
+      displayTimer(0);
+    }
   }
   getUserAction();
 }

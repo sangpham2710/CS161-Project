@@ -32,6 +32,7 @@ enum keyCodes {
 };
 
 enum actionTypes {
+  NO_ACTION,
   UP,
   DOWN,
   LEFT,
