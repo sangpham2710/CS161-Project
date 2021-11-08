@@ -13,7 +13,7 @@
 
 // *** CONSTANTS ***
 
-const int WINDOW_WIDTH = 80, WINDOW_HEIGHT = 40;
+const int WINDOW_WIDTH = 80, WINDOW_HEIGHT = 30;
 const int MAX_BOARD_SIZE = 30;
 const int CELL_WIDTH = 2, CELL_HEIGHT = 1;
 
