@@ -19,7 +19,7 @@ const int CELL_WIDTH = 2, CELL_HEIGHT = 1;
 const int BORDER_WIDTH = 2, BORDER_HEIGHT = 1;
 
 const int PANEL_HEIGHT = 3;
-const int FPS = 5;
+const int FPS = 30;
 const int CONSOLE_BACKGROUND_COLOR = BRIGHT_WHITE;
 const int CONSOLE_TEXT_COLOR = BLACK;
 const int CONSOLE_SELECTED_TEXT_COLOR = GREEN;
