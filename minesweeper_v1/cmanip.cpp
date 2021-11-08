@@ -15,9 +15,17 @@ void setWindowName(const std::string& name) {
 
 void setWindowSize(const short& width, const short& height) {
   COORD pos{width, height};
-  SMALL_RECT rect{0, 0, width - 1, height - 1};
+  SMALL_RECT rect;
   HANDLE handle = GetStdHandle(STD_OUTPUT_HANDLE);
+
+  rect = {0, 0, 1, 1};
   SetConsoleWindowInfo(handle, TRUE, &rect);
+  SetConsoleScreenBufferSize(handle, pos);
+  SetConsoleActiveScreenBuffer(handle);
+
+  rect = {0, 0, (short)(width - 1), (short)(height - 1)};
+  SetConsoleWindowInfo(handle, TRUE, &rect);
+  SetConsoleActiveScreenBuffer(handle);
   SetConsoleScreenBufferSize(handle, pos);
 }
 
