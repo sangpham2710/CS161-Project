@@ -126,6 +126,7 @@ void Leaderboard();
 void Themes();
 
 void Setup() {
+  setConsoleFont(L"Consolas", FW_BOLD, 12, 24);
   setConsoleColor(CONSOLE_BACKGROUND_COLOR, CONSOLE_TEXT_COLOR);
   setWindowName("Minesweeper v1.0");
   setWindowSize(WINDOW_WIDTH, WINDOW_HEIGHT);

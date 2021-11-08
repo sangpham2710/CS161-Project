@@ -36,6 +36,18 @@ void fixWindowSize() {
       GetWindowLong(consoleWindow, GWL_STYLE) & ~WS_MAXIMIZEBOX & ~WS_SIZEBOX);
 }
 
+void setConsoleFont(const wchar_t fontName[], const short& fontWeight,
+                    const short& width, const short& height) {
+  CONSOLE_FONT_INFOEX cfi;
+  cfi.cbSize = sizeof cfi;
+  cfi.nFont = 0;
+  cfi.dwFontSize = {width, height};
+  cfi.FontFamily = FF_DONTCARE;
+  cfi.FontWeight = fontWeight;
+  wcscpy(cfi.FaceName, fontName);
+  SetCurrentConsoleFontEx(GetStdHandle(STD_OUTPUT_HANDLE), FALSE, &cfi);
+}
+
 void setConsoleColor(const int& backgroundColor, const int& textColor) {
   std::string tmp = std::string("color ") +
                     intToHexString((backgroundColor << 4) | textColor);

@@ -1,12 +1,12 @@
+#include <windows.h>
+
 #include <iostream>
+using namespace std;
 
 #include "cmanip.h"
 
 int main() {
-  setConsoleColor(LIGHT_GREEN, LIGHT_BLUE);
-  setWindowSize(80, 30);
-  setConsoleCursorPosition(1, 1);
-  setConsoleTextColor(YELLOW, RED);
-  std::cout << "Hello World";
+  setConsoleFont(L"Consolas", FW_BOLD, 10, 20);
+  cout << "\u2513" << endl;
   return 0;
 }

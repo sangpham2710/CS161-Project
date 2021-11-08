@@ -48,6 +48,8 @@ enum actionTypes {
 void setWindowName(const std::string& name);
 void setWindowSize(const short& width, const short& height);
 void fixWindowSize();
+void setConsoleFont(const wchar_t fontName[], const short& fontWeight,
+                    const short& width, const short& height);
 void setConsoleColor(const int& backgroundColor, const int& textColor);
 void showConsoleCursor(const bool& flag);
 void setConsoleCursorPosition(const short& x, const short& y);

@@ -15,9 +15,17 @@ void setWindowName(const std::string& name) {
 
 void setWindowSize(const short& width, const short& height) {
   COORD pos{width, height};
-  SMALL_RECT rect{0, 0, width - 1, height - 1};
+  SMALL_RECT rect;
   HANDLE handle = GetStdHandle(STD_OUTPUT_HANDLE);
+
+  rect = {0, 0, 1, 1};
   SetConsoleWindowInfo(handle, TRUE, &rect);
+  SetConsoleScreenBufferSize(handle, pos);
+  SetConsoleActiveScreenBuffer(handle);
+
+  rect = {0, 0, (short)(width - 1), (short)(height - 1)};
+  SetConsoleWindowInfo(handle, TRUE, &rect);
+  SetConsoleActiveScreenBuffer(handle);
   SetConsoleScreenBufferSize(handle, pos);
 }
 
@@ -26,6 +34,18 @@ void fixWindowSize() {
   SetWindowLong(
       consoleWindow, GWL_STYLE,
       GetWindowLong(consoleWindow, GWL_STYLE) & ~WS_MAXIMIZEBOX & ~WS_SIZEBOX);
+}
+
+void setConsoleFont(const wchar_t fontName[], const short& fontWeight,
+                    const short& width, const short& height) {
+  CONSOLE_FONT_INFOEX cfi;
+  cfi.cbSize = sizeof cfi;
+  cfi.nFont = 0;
+  cfi.dwFontSize = {width, height};
+  cfi.FontFamily = FF_DONTCARE;
+  cfi.FontWeight = fontWeight;
+  wcscpy(cfi.FaceName, fontName);
+  SetCurrentConsoleFontEx(GetStdHandle(STD_OUTPUT_HANDLE), FALSE, &cfi);
 }
 
 void setConsoleColor(const int& backgroundColor, const int& textColor) {
@@ -67,11 +87,14 @@ std::map<int, int> inputMap = {
 };
 
 int getUserAction() {
-  int character = getch();
-  if (character == 0 || character == 224) {
-    // checking if the key is an extended one
-    // to ignore the additional character when dealing with arrow keys
+  int character;
+  do {
     character = getch();
-  }
+    if (character == 0 || character == 224) {
+      // checking if the key is an extended one
+      // to ignore the additional character when dealing with arrow keys
+      character = getch();
+    }
+  } while (inputMap.find(character) == inputMap.end());
   return inputMap[character];
 }
