@@ -16,7 +16,10 @@
 const int WINDOW_WIDTH = 80, WINDOW_HEIGHT = 30;
 const int MAX_BOARD_SIZE = 30;
 const int CELL_WIDTH = 2, CELL_HEIGHT = 1;
-const int FPS = 10;
+const int BORDER_WIDTH = 2, BORDER_HEIGHT = 1;
+
+const int PANEL_HEIGHT = 3;
+const int FPS = 5;
 const int CONSOLE_BACKGROUND_COLOR = BRIGHT_WHITE;
 const int CONSOLE_TEXT_COLOR = BLACK;
 const int CONSOLE_SELECTED_TEXT_COLOR = GREEN;
@@ -33,7 +36,7 @@ int selectedWelcomeOption = 0;
 int boardWidth, boardHeight;
 int numMines;
 
-std::string boardStatus;
+int PADDING_X, PADDING_Y;
 
 enum cellStates { SELECTED, UNKNOWN, FLAGGED, QUESTIONED, MINE, BLANK };
 struct {
@@ -43,7 +46,7 @@ struct {
 } cellStateProps[14] = {
     {' ', LIGHT_AQUA, BLACK},        {'.', GRAY, BLACK},
     {'F', LIGHT_RED, BRIGHT_WHITE},  {'?', YELLOW, BRIGHT_WHITE},
-    {'#', RED, BRIGHT_WHITE},        {' ', BRIGHT_WHITE, BLACK},
+    {'#', RED, BRIGHT_WHITE},        {'.', BRIGHT_WHITE, BLACK},
     {'1', BRIGHT_WHITE, LIGHT_BLUE}, {'2', BRIGHT_WHITE, GREEN},
     {'3', BRIGHT_WHITE, LIGHT_RED},  {'4', BRIGHT_WHITE, BLUE},
     {'5', BRIGHT_WHITE, RED},        {'6', BRIGHT_WHITE, AQUA},
@@ -104,11 +107,12 @@ void revealAllMines(int gameBoard[][MAX_BOARD_SIZE],
                     int mineBoard[][MAX_BOARD_SIZE], bool won);
 bool revealACell(int gameBoard[][MAX_BOARD_SIZE],
                  int mineBoard[][MAX_BOARD_SIZE], const int &row,
-                 const int &col, int &totalSafelyOpenedCell, int totalSafeCell);
+                 const int &col, int &totalSafelyOpenedCell, int totalSafeCell,
+                 std::string &boardStatus);
 bool revealNeighboringCells(int gameBoard[][MAX_BOARD_SIZE],
                             int mineBoard[][MAX_BOARD_SIZE], const int &row,
                             const int &col, int &totalSafelyOpenedCell,
-                            int totalSafeCell);
+                            int totalSafeCell, std::string &boardStatus);
 void waitKeyPressed();
 
 int Welcome();
@@ -208,6 +212,13 @@ void NewGame() {
   resetConsoleScreen();
   std::cout << "Enter width, height, the amound of mines: ";
   std::cin >> boardWidth >> boardHeight >> numMines;
+  PADDING_X =
+      (WINDOW_WIDTH - (BORDER_WIDTH + CELL_WIDTH * boardWidth + BORDER_WIDTH)) /
+      2;
+  PADDING_Y =
+      (WINDOW_HEIGHT - (PANEL_HEIGHT + BORDER_HEIGHT +
+                        CELL_HEIGHT * boardHeight + BORDER_HEIGHT + 2)) /
+      2;
   startGame();
 }
 
@@ -263,22 +274,34 @@ void displayBoard(int gameBoard[][MAX_BOARD_SIZE], int cursorRow,
     firstCall = false;
 
     resetConsoleScreen();
+
+    std::string borderX =
+        std::string(BORDER_WIDTH + boardWidth * CELL_WIDTH + BORDER_WIDTH, ' ');
     // Top border
-    for (int col = 0; col <= boardWidth + 1; ++col) {
-      printColoredTextWrapper([]() { std::cout << "  "; }, BOARD_BORDER_COLOR,
-                              BOARD_BORDER_COLOR);
-    }
+    printColoredTextWrapper(
+        [&]() {
+          setConsoleCursorPosition(PADDING_X, PADDING_Y + PANEL_HEIGHT);
+          std::cout << borderX;
+        },
+        BOARD_BORDER_COLOR, BOARD_BORDER_COLOR);
+
     std::cout << '\n';
 
     for (int row = 0; row < boardHeight; ++row) {
       // Left border
-      printColoredTextWrapper([]() { std::cout << "  "; }, BOARD_BORDER_COLOR,
-                              BOARD_BORDER_COLOR);
+      setConsoleCursorPosition(
+          PADDING_X,
+          PADDING_Y + PANEL_HEIGHT + BORDER_HEIGHT + row * CELL_HEIGHT);
+      printColoredTextWrapper(
+          []() { std::cout << std::string(BORDER_WIDTH, ' '); },
+          BOARD_BORDER_COLOR, BOARD_BORDER_COLOR);
       for (int col = 0; col < boardWidth; ++col) {
         if (row == cursorRow && col == cursorCol) {
           printColoredTextWrapper(
               [&]() {
-                std::cout << cellStateProps[gameBoard[row][col]].symbol << " ";
+                std::cout << std::setw(CELL_WIDTH) << std::left
+                          << cellStateProps[gameBoard[row][col]].symbol
+                          << std::right;
               },
               cellStateProps[SELECTED].backgroundColor,
               cellStateProps[SELECTED].textColor);
@@ -286,22 +309,28 @@ void displayBoard(int gameBoard[][MAX_BOARD_SIZE], int cursorRow,
         } else {
           printColoredTextWrapper(
               [&]() {
-                std::cout << cellStateProps[gameBoard[row][col]].symbol << " ";
+                std::cout << std::setw(CELL_WIDTH) << std::left
+                          << cellStateProps[gameBoard[row][col]].symbol
+                          << std::right;
               },
               cellStateProps[gameBoard[row][col]].backgroundColor,
               cellStateProps[gameBoard[row][col]].textColor);
         }
       }
       // Right border
-      printColoredTextWrapper([]() { std::cout << "  "; }, BOARD_BORDER_COLOR,
-                              BOARD_BORDER_COLOR);
-      std::cout << '\n';
+      printColoredTextWrapper(
+          []() { std::cout << std::string(BORDER_WIDTH, ' '); },
+          BOARD_BORDER_COLOR, BOARD_BORDER_COLOR);
     }
     // Bottom border
-    for (int col = 0; col <= boardWidth + 1; ++col) {
-      printColoredTextWrapper([]() { std::cout << "  "; }, BOARD_BORDER_COLOR,
-                              BOARD_BORDER_COLOR);
-    }
+    printColoredTextWrapper(
+        [&]() {
+          setConsoleCursorPosition(PADDING_X, PADDING_Y + PANEL_HEIGHT +
+                                                  BORDER_HEIGHT +
+                                                  CELL_HEIGHT * boardHeight);
+          std::cout << borderX;
+        },
+        BOARD_BORDER_COLOR, BOARD_BORDER_COLOR);
     std::cout << '\n';
   } else {
     // Update gameboard
@@ -311,9 +340,13 @@ void displayBoard(int gameBoard[][MAX_BOARD_SIZE], int cursorRow,
         if (oldGameBoard[row][col] != gameBoard[row][col]) {
           printColoredTextWrapper(
               [&]() {
-                setConsoleCursorPosition(CELL_WIDTH + col * CELL_WIDTH,
-                                         CELL_HEIGHT + row * CELL_HEIGHT);
-                std::cout << cellStateProps[gameBoard[row][col]].symbol << " ";
+                setConsoleCursorPosition(
+                    PADDING_X + BORDER_WIDTH + col * CELL_WIDTH,
+                    PADDING_Y + PANEL_HEIGHT + BORDER_HEIGHT +
+                        row * CELL_HEIGHT);
+                std::cout << std::setw(CELL_WIDTH) << std::left
+                          << cellStateProps[gameBoard[row][col]].symbol
+                          << std::right;
               },
               cellStateProps[gameBoard[row][col]].backgroundColor,
               cellStateProps[gameBoard[row][col]].textColor);
@@ -322,17 +355,20 @@ void displayBoard(int gameBoard[][MAX_BOARD_SIZE], int cursorRow,
     }
 
     // Update only if the cursor has changed
-    if (oldCursorRow != cursorRow || oldCursorCol != cursorCol) {
+    if (oldCursorRow != cursorRow || oldCursorCol != cursorCol ||
+        oldGameBoard[cursorRow][cursorCol] != gameBoard[cursorRow][cursorCol]) {
       // Remove old cursor
       if (oldCursorRow != -1 || oldCursorCol != -1) {
         printColoredTextWrapper(
             [&]() {
               setConsoleCursorPosition(
-                  CELL_WIDTH + oldCursorCol * CELL_WIDTH,
-                  CELL_HEIGHT + oldCursorRow * CELL_HEIGHT);
-              std::cout << cellStateProps[gameBoard[oldCursorRow][oldCursorCol]]
+                  PADDING_X + BORDER_WIDTH + oldCursorCol * CELL_WIDTH,
+                  PADDING_Y + PANEL_HEIGHT + BORDER_HEIGHT +
+                      oldCursorRow * CELL_HEIGHT);
+              std::cout << std::setw(CELL_WIDTH) << std::left
+                        << cellStateProps[gameBoard[oldCursorRow][oldCursorCol]]
                                .symbol
-                        << " ";
+                        << std::right;
             },
             cellStateProps[gameBoard[oldCursorRow][oldCursorCol]]
                 .backgroundColor,
@@ -342,11 +378,14 @@ void displayBoard(int gameBoard[][MAX_BOARD_SIZE], int cursorRow,
       if (cursorRow != -1 || cursorCol != -1) {
         printColoredTextWrapper(
             [&]() {
-              setConsoleCursorPosition(CELL_WIDTH + cursorCol * CELL_WIDTH,
-                                       CELL_HEIGHT + cursorRow * CELL_HEIGHT);
+              setConsoleCursorPosition(
+                  PADDING_X + BORDER_WIDTH + cursorCol * CELL_WIDTH,
+                  PADDING_Y + PANEL_HEIGHT + BORDER_HEIGHT +
+                      cursorRow * CELL_HEIGHT);
               std::cout
+                  << std::setw(CELL_WIDTH) << std::left
                   << cellStateProps[gameBoard[cursorRow][cursorCol]].symbol
-                  << " ";
+                  << std::right;
             },
             cellStateProps[SELECTED].backgroundColor,
             cellStateProps[SELECTED].textColor);
@@ -363,51 +402,73 @@ void displayBoard(int gameBoard[][MAX_BOARD_SIZE], int cursorRow,
 void displayNumFlags(const int &numFlags) {
   static bool firstCall = true;
   if (firstCall) {
-    std::cout << '\n' << std::setw(3) << numFlags << " flag(s) left" << '\n';
+    setConsoleCursorPosition(PADDING_X, PADDING_Y);
+    std::cout << "+-----+---+";
+    setConsoleCursorPosition(PADDING_X, PADDING_Y + 1);
+    std::cout << "|Flags|" << std::setw(3) << numFlags << "|";
+    setConsoleCursorPosition(PADDING_X, PADDING_Y + 2);
+    std::cout << "+-----+---+";
     firstCall = false;
   } else {
     // Remove old flag count
-    setConsoleCursorPosition(0, boardHeight + 2);
-    std::cout << '\n' << std::setw(3) << std::string(3, ' ');
+    setConsoleCursorPosition(PADDING_X + 7, PADDING_Y + 1);
+    std::cout << std::string(3, ' ');
     // Update new flag count
-    setConsoleCursorPosition(0, boardHeight + 2);
-    std::cout << '\n' << std::setw(3) << numFlags;
+    setConsoleCursorPosition(PADDING_X + 7, PADDING_Y + 1);
+    std::cout << std::setw(3) << numFlags;
   }
 }
 
 void displayBoardStatus(const std::string &boardStatus) {
   static bool firstCall = true;
   if (firstCall) {
-    std::cout << '\n' << boardStatus;
+    setConsoleCursorPosition(
+        getStartPositionOfACenteredText(boardStatus.size()),
+        PADDING_Y + PANEL_HEIGHT + BORDER_HEIGHT + CELL_HEIGHT * boardHeight +
+            2);
+    std::cout << boardStatus;
     firstCall = false;
   } else {
     // Remove old board status
-    setConsoleCursorPosition(0, boardHeight + 4);
-    std::cout << '\n' << std::string(WINDOW_WIDTH - 1, ' ');
+    setConsoleCursorPosition(0, PADDING_Y + PANEL_HEIGHT + BORDER_HEIGHT +
+                                    CELL_HEIGHT * boardHeight + 2);
+    std::cout << std::string(WINDOW_WIDTH, ' ');
     // Update new board status
-    setConsoleCursorPosition(0, boardHeight + 4);
-    std::cout << '\n' << boardStatus;
+    setConsoleCursorPosition(
+        getStartPositionOfACenteredText(boardStatus.size()),
+        PADDING_Y + PANEL_HEIGHT + BORDER_HEIGHT + CELL_HEIGHT * boardHeight +
+            2);
+    std::cout << boardStatus;
   }
 }
 
 void displayTimer(const long long &elapsedTime) {
   static bool firstCall = true;
   if (firstCall) {
-    std::cout << '\n' << "Time: " << elapsedTime;
+    setConsoleCursorPosition(
+        PADDING_X + BORDER_WIDTH + CELL_WIDTH * boardWidth + BORDER_WIDTH - 10,
+        PADDING_Y);
+    std::cout << "+----+---+";
+    setConsoleCursorPosition(
+        PADDING_X + BORDER_WIDTH + CELL_WIDTH * boardWidth + BORDER_WIDTH - 10,
+        PADDING_Y + 1);
+    std::cout << "|Time|" << std::setw(3) << elapsedTime << "|";
+    setConsoleCursorPosition(
+        PADDING_X + BORDER_WIDTH + CELL_WIDTH * boardWidth + BORDER_WIDTH - 10,
+        PADDING_Y + 2);
+    std::cout << "+----+---+";
     firstCall = false;
   } else {
     // Remove old timer
-    setConsoleCursorPosition(6, boardHeight + 6);
-    std::cout << "  ";
-    std::cout << ":";
-    std::cout << "  ";
+    setConsoleCursorPosition(
+        PADDING_X + BORDER_WIDTH + CELL_WIDTH * boardWidth + BORDER_WIDTH - 4,
+        PADDING_Y + 1);
+    std::cout << std::string(3, ' ');
     // Update new timer
-    setConsoleCursorPosition(6, boardHeight + 6);
-    std::cout << std::setfill('0');
-    std::cout << std::setw(2) << elapsedTime / 60;
-    std::cout << ":";
-    std::cout << std::setw(2) << elapsedTime % 60;
-    std::cout << std::setfill(' ');
+    setConsoleCursorPosition(
+        PADDING_X + BORDER_WIDTH + CELL_WIDTH * boardWidth + BORDER_WIDTH - 4,
+        PADDING_Y + 1);
+    std::cout << std::setw(3) << elapsedTime;
   }
 }
 
@@ -420,8 +481,12 @@ void startGame() {
   // displayed to player
   int mineBoard[MAX_BOARD_SIZE][MAX_BOARD_SIZE],
       gameBoard[MAX_BOARD_SIZE][MAX_BOARD_SIZE];
+  int cursorRow = 0, cursorCol = 0;
   int totalSafeCell = boardHeight * boardWidth - numMines;
   int numFlagsLeft = numMines;
+  std::string boardStatus;
+  std::chrono::high_resolution_clock::time_point gameStartTime;
+
   resetBoard(gameBoard, mineBoard);
   generateMineBoard(mineBoard, numMines);
 
@@ -429,8 +494,6 @@ void startGame() {
   long long totalElapsedTime = 0;
   int totalSafelyOpenedCell = 0;
   bool endGame = false;
-  int cursorRow = 0, cursorCol = 0;
-  std::chrono::high_resolution_clock::time_point gameStartTime;
 
   displayBoard(gameBoard, cursorRow, cursorCol);
   displayNumFlags(numFlagsLeft);
@@ -468,6 +531,7 @@ void startGame() {
       if (totalSafelyOpenedCell == 0) {
         // Start the game timer
         gameStartTime = std::chrono::high_resolution_clock::now();
+
         // Replace first cell if it is a mine
         if (mineBoard[cursorRow][cursorCol] == MINE)
           replaceMine(mineBoard, cursorRow, cursorCol);
@@ -475,34 +539,35 @@ void startGame() {
 
       if (gameBoard[cursorRow][cursorCol] == UNKNOWN ||
           gameBoard[cursorRow][cursorCol] == QUESTIONED) {
-        endGame = revealACell(gameBoard, mineBoard, cursorRow, cursorCol,
-                              totalSafelyOpenedCell, totalSafeCell);
+        endGame =
+            revealACell(gameBoard, mineBoard, cursorRow, cursorCol,
+                        totalSafelyOpenedCell, totalSafeCell, boardStatus);
 
       } else {
         if (gameBoard[cursorRow][cursorCol] == FLAGGED)
-          boardStatus = "Cell is flagged. Unflag to reveal. ";
+          boardStatus = "Can't reveal a flagged cell.";
         else
-          boardStatus = "Cell is revealed. ";
+          boardStatus = "Can't reveal a revealed cell.";
       }
     } else if (action == MOUSE2) {
       int flagCount =
           countNeighboringCellStates(gameBoard, cursorRow, cursorCol, FLAGGED);
       if (gameBoard[cursorRow][cursorCol] == UNKNOWN ||
           gameBoard[cursorRow][cursorCol] == FLAGGED) {
-        boardStatus = "Cell must be revealed first!  ";
+        boardStatus = "Cell must be revealed first!";
       } else if (flagCount != gameBoard[cursorRow][cursorCol] - BLANK) {
-        boardStatus = "Please flag the correct number of mines first!";
+        boardStatus = "Please flag the correct number of neighboring mines!";
       } else
-        endGame =
-            revealNeighboringCells(gameBoard, mineBoard, cursorRow, cursorCol,
-                                   totalSafelyOpenedCell, totalSafeCell);
+        endGame = revealNeighboringCells(gameBoard, mineBoard, cursorRow,
+                                         cursorCol, totalSafelyOpenedCell,
+                                         totalSafeCell, boardStatus);
     } else if (action == MOUSE3) {
       if (gameBoard[cursorRow][cursorCol] == UNKNOWN) {
         if (numFlagsLeft > 0) {
           numFlagsLeft--;
           gameBoard[cursorRow][cursorCol] = FLAGGED;
         } else {
-          boardStatus = "No flag left :((  ";
+          boardStatus = "No flag left :((";
         }
       } else if (gameBoard[cursorRow][cursorCol] == FLAGGED) {
         numFlagsLeft++;
@@ -510,7 +575,7 @@ void startGame() {
       } else if (gameBoard[cursorRow][cursorCol] == QUESTIONED) {
         gameBoard[cursorRow][cursorCol] = UNKNOWN;
       } else {
-        boardStatus = "Cell must be either unknown, flagged, or questioned!";
+        boardStatus = "Can't flag a revealed cell.";
       }
     }
     if (endGame) {
@@ -540,21 +605,18 @@ void startGame() {
 // ACTION: Reveal a Cell LINKED With Winning and Losing Callout
 bool revealACell(int gameBoard[][MAX_BOARD_SIZE],
                  int mineBoard[][MAX_BOARD_SIZE], const int &row,
-                 const int &col, int &totalSafelyOpenedCell,
-                 int totalSafeCell) {
+                 const int &col, int &totalSafelyOpenedCell, int totalSafeCell,
+                 std::string &boardStatus) {
   if (mineBoard[row][col] == UNKNOWN) {
     uncoverBoard(gameBoard, mineBoard, row, col, totalSafelyOpenedCell);
     if (totalSafelyOpenedCell == totalSafeCell) {
       revealAllMines(gameBoard, mineBoard, true);
-      displayBoard(gameBoard);
       boardStatus = "Congratulation! You won!";
       return true;
     }
   } else if (mineBoard[row][col] == MINE) {
     gameBoard[row][col] = MINE;
-    displayBoard(gameBoard);
     revealAllMines(gameBoard, mineBoard, false);
-    displayBoard(gameBoard);
     boardStatus = "Umm... Quite a big explosion, right?";
     return true;
   }
@@ -566,7 +628,7 @@ bool revealACell(int gameBoard[][MAX_BOARD_SIZE],
 bool revealNeighboringCells(int gameBoard[][MAX_BOARD_SIZE],
                             int mineBoard[][MAX_BOARD_SIZE], const int &row,
                             const int &col, int &totalSafelyOpenedCell,
-                            int totalSafeCell) {
+                            int totalSafeCell, std::string &boardStatus) {
   std::vector<std::pair<int, int>> neighborsPositions =
       getNeighborsPositions(row, col);
 
@@ -581,7 +643,7 @@ bool revealNeighboringCells(int gameBoard[][MAX_BOARD_SIZE],
                    [neighborsPositions[i].second] == QUESTIONED) {
         if (revealACell(gameBoard, mineBoard, neighborsPositions[i].first,
                         neighborsPositions[i].second, totalSafelyOpenedCell,
-                        totalSafeCell))
+                        totalSafeCell, boardStatus))
           return true;
       }
   }
@@ -705,5 +767,15 @@ void Game() {
 int main() {
   Setup();
   Game();
+  // boardWidth = 9;
+  // boardHeight = 9;
+  // numMines = 9;
+  // int gameboard[30][30];
+  // int mineboard[30][30];
+  // resetBoard(gameboard, mineboard);
+  // displayBoard(gameboard);
+  // gameboard[2][2] = FLAGGED;
+  // displayBoard(gameboard);
+  // getUserAction();
   return 0;
 }
