@@ -15,6 +15,7 @@
 
 const int WINDOW_WIDTH = 80, WINDOW_HEIGHT = 40;
 const int MAX_BOARD_SIZE = 30;
+const int CELL_WIDTH = 2, CELL_HEIGHT = 1;
 
 const int CONSOLE_BACKGROUND_COLOR = BRIGHT_WHITE;
 const int CONSOLE_TEXT_COLOR = BLACK;
@@ -248,12 +249,137 @@ void Themes() {
   std::cout << "Themes\n";
 }
 
+void displayBoard(int gameBoard[][MAX_BOARD_SIZE], int cursorRow,
+                  int cursorCol) {
+  static bool firstTime = true;
+  static int oldGameBoard[MAX_BOARD_SIZE][MAX_BOARD_SIZE];
+  static int oldCursorRow = 0;
+  static int oldCursorCol = 0;
+  if (firstTime) {
+    memcpy(oldGameBoard, gameBoard,
+           MAX_BOARD_SIZE * MAX_BOARD_SIZE * sizeof(int));
+    oldCursorRow = cursorRow;
+    oldCursorCol = cursorCol;
+    firstTime = false;
+
+    resetConsoleScreen();
+    // Top border
+    for (int col = 0; col <= boardWidth + 1; ++col) {
+      printColoredTextWrapper([]() { std::cout << "  "; }, BOARD_BORDER_COLOR,
+                              BOARD_BORDER_COLOR);
+    }
+    std::cout << '\n';
+
+    for (int row = 0; row < boardHeight; ++row) {
+      // Left border
+      printColoredTextWrapper([]() { std::cout << "  "; }, BOARD_BORDER_COLOR,
+                              BOARD_BORDER_COLOR);
+      for (int col = 0; col < boardWidth; ++col) {
+        if (row == cursorRow && col == cursorCol) {
+          printColoredTextWrapper(
+              [&]() {
+                std::cout << cellStateProps[gameBoard[row][col]].symbol << " ";
+              },
+              cellStateProps[SELECTED].backgroundColor,
+              cellStateProps[SELECTED].textColor);
+
+        } else {
+          printColoredTextWrapper(
+              [&]() {
+                std::cout << cellStateProps[gameBoard[row][col]].symbol << " ";
+              },
+              cellStateProps[gameBoard[row][col]].backgroundColor,
+              cellStateProps[gameBoard[row][col]].textColor);
+        }
+      }
+      // Right border
+      printColoredTextWrapper([]() { std::cout << "  "; }, BOARD_BORDER_COLOR,
+                              BOARD_BORDER_COLOR);
+      std::cout << '\n';
+    }
+    // Bottom border
+    for (int col = 0; col <= boardWidth + 1; ++col) {
+      printColoredTextWrapper([]() { std::cout << "  "; }, BOARD_BORDER_COLOR,
+                              BOARD_BORDER_COLOR);
+    }
+    std::cout << '\n';
+  } else {
+    // Update gameboard
+    for (int row = 0; row < boardHeight; ++row) {
+      for (int col = 0; col < boardWidth; ++col) {
+        if (oldGameBoard[row][col] != gameBoard[row][col]) {
+          printColoredTextWrapper(
+              [&]() {
+                setConsoleCursorPosition(CELL_WIDTH + col * CELL_WIDTH,
+                                         CELL_HEIGHT + row * CELL_HEIGHT);
+                std::cout << cellStateProps[gameBoard[row][col]].symbol << " ";
+              },
+              cellStateProps[gameBoard[row][col]].backgroundColor,
+              cellStateProps[gameBoard[row][col]].textColor);
+        }
+      }
+    }
+
+    // Remove old cursor
+    if (oldCursorRow != -1 && oldCursorCol != -1) {
+      printColoredTextWrapper(
+          [&]() {
+            setConsoleCursorPosition(CELL_WIDTH + oldCursorCol * CELL_WIDTH,
+                                     CELL_HEIGHT + oldCursorRow * CELL_HEIGHT);
+            std::cout
+                << cellStateProps[gameBoard[oldCursorRow][oldCursorCol]].symbol
+                << " ";
+          },
+          cellStateProps[gameBoard[oldCursorRow][oldCursorCol]].backgroundColor,
+          cellStateProps[gameBoard[oldCursorRow][oldCursorCol]].textColor);
+    }
+    // Update new cursor
+    if (cursorRow != -1 && cursorCol != -1) {
+      printColoredTextWrapper(
+          [&]() {
+            setConsoleCursorPosition(CELL_WIDTH + cursorCol * CELL_WIDTH,
+                                     CELL_HEIGHT + cursorRow * CELL_HEIGHT);
+            std::cout << cellStateProps[gameBoard[cursorRow][cursorCol]].symbol
+                      << " ";
+          },
+          cellStateProps[SELECTED].backgroundColor,
+          cellStateProps[SELECTED].textColor);
+      memcpy(oldGameBoard, gameBoard,
+             MAX_BOARD_SIZE * MAX_BOARD_SIZE * sizeof(int));
+    }
+    // Update old cursor
+    oldCursorRow = cursorRow;
+    oldCursorCol = cursorCol;
+  }
+}
+
 void displayNumFlags(const int &numFlags) {
-  std::cout << '\n' << std::setw(3) << numFlags << " flag(s) left" << '\n';
+  static bool firstTime = true;
+  if (firstTime) {
+    std::cout << '\n' << std::setw(3) << numFlags << " flag(s) left" << '\n';
+    firstTime = false;
+  } else {
+    // Remove old status
+    setConsoleCursorPosition(0, boardHeight + 2);
+    std::cout << '\n' << std::setw(3) << std::string(3, ' ');
+    setConsoleCursorPosition(0, boardHeight + 2);
+    std::cout << '\n' << std::setw(3) << numFlags;
+  }
 }
 
 void displayBoardStatus(const std::string &boardStatus) {
-  std::cout << '\n' << boardStatus;
+  static bool firstTime = true;
+  if (firstTime) {
+    std::cout << '\n' << boardStatus;
+    firstTime = false;
+  } else {
+    // Remove old status
+    setConsoleCursorPosition(0, boardHeight + 4);
+    std::cout << '\n' << std::string(WINDOW_WIDTH - 1, ' ');
+    // Update new status
+    setConsoleCursorPosition(0, boardHeight + 4);
+    std::cout << '\n' << boardStatus;
+  }
 }
 
 // Game-Logic Here
@@ -341,6 +467,7 @@ void startGame() {
     displayNumFlags(numFlagsLeft);
     displayBoardStatus(boardStatus);
   } while (!endGame);
+  getUserAction();
 }
 // ACTION: Reveal a Cell LINKED With Winning and Losing Callout
 bool revealACell(int gameBoard[][MAX_BOARD_SIZE],
@@ -425,51 +552,6 @@ void replaceMine(int mineBoard[][MAX_BOARD_SIZE], const int &row,
                  const int &col) {
   generateMineBoard(mineBoard, 1);  // add a new mine
   mineBoard[row][col] = UNKNOWN;    // remove the old one
-}
-
-void displayBoard(int gameBoard[][MAX_BOARD_SIZE], int cursorRow,
-                  int cursorCol) {
-  resetConsoleScreen();
-  // Top border
-  for (int col = 0; col <= boardWidth + 1; ++col) {
-    printColoredTextWrapper([]() { std::cout << "  "; }, BOARD_BORDER_COLOR,
-                            BOARD_BORDER_COLOR);
-  }
-  std::cout << '\n';
-
-  for (int row = 0; row < boardHeight; ++row) {
-    // Left border
-    printColoredTextWrapper([]() { std::cout << "  "; }, BOARD_BORDER_COLOR,
-                            BOARD_BORDER_COLOR);
-    for (int col = 0; col < boardWidth; ++col) {
-      if (row == cursorRow && col == cursorCol) {
-        printColoredTextWrapper(
-            [&]() {
-              std::cout << cellStateProps[gameBoard[row][col]].symbol << " ";
-            },
-            cellStateProps[SELECTED].backgroundColor,
-            cellStateProps[SELECTED].textColor);
-
-      } else {
-        printColoredTextWrapper(
-            [&]() {
-              std::cout << cellStateProps[gameBoard[row][col]].symbol << " ";
-            },
-            cellStateProps[gameBoard[row][col]].backgroundColor,
-            cellStateProps[gameBoard[row][col]].textColor);
-      }
-    }
-    // Right border
-    printColoredTextWrapper([]() { std::cout << "  "; }, BOARD_BORDER_COLOR,
-                            BOARD_BORDER_COLOR);
-    std::cout << '\n';
-  }
-  // Bottom border
-  for (int col = 0; col <= boardWidth + 1; ++col) {
-    printColoredTextWrapper([]() { std::cout << "  "; }, BOARD_BORDER_COLOR,
-                            BOARD_BORDER_COLOR);
-  }
-  std::cout << '\n';
 }
 
 // Get the valid neighbor cells
