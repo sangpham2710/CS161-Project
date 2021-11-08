@@ -9,8 +9,7 @@
 #include "cmanip_utils.h"
 
 void setWindowName(const std::string& name) {
-  std::string tmp = std::string("title ") + name;
-  system(tmp.c_str());
+  SetConsoleTitle(std::wstring(name.begin(), name.end()).c_str());
 }
 
 void setWindowSize(const short& width, const short& height) {
