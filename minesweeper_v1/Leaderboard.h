@@ -1,0 +1,6 @@
+#ifndef LEADERBOARD_H_INCLUDED
+#define LEADERBOARD_H_INCLUDED
+
+int Leaderboard();
+
+#endif  // LEADERBOARD_H_INCLUDED

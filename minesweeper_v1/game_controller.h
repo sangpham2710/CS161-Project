@@ -1,0 +1,6 @@
+#ifndef GAME_CONTROLLER_H_INCLUDED
+#define GAME_CONTROLLER_H_INCLUDED
+
+int startGame();
+
+#endif  // GAME_CONTROLLER_H_INCLUDED

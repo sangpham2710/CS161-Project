@@ -1,0 +1,6 @@
+#ifndef CONTINUE_GAME_H_INCLUDED
+#define CONTINUE_GAME_H_INCLUDED
+
+int ContinueGame();
+
+#endif  // CONTINUE_GAME_H_INCLUDED
