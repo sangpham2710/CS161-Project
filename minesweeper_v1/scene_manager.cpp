@@ -5,13 +5,14 @@
 #include "Leaderboard.h"
 #include "NewGame.h"
 #include "Welcome.h"
+#include "GameLevel.h"
 
 void startSceneManager() {
   static int currentScene = WELCOME;
   while (true) {
     switch (currentScene) {
       case NEW_GAME:
-        currentScene = NewGame();
+        currentScene = GameLevel();
         break;
       case CONTINUE_GAME:
         currentScene = ContinueGame();

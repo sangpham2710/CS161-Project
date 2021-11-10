@@ -8,9 +8,6 @@
 #include "scene_manager.h"
 
 int NewGame() {
-  resetConsoleScreen();
-  std::cout << "Enter width, height, the amound of mines: ";
-  std::cin >> boardWidth >> boardHeight >> numMines;
   PADDING_X =
       (WINDOW_WIDTH - (BORDER_WIDTH + CELL_WIDTH * boardWidth + BORDER_WIDTH)) /
       2;
