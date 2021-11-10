@@ -2,7 +2,7 @@
 
 #include <iostream>
 
-#include "Windows.h"
+#include "windows.h"
 #include "cmanip.h"
 #include "global.h"
 
@@ -32,7 +32,7 @@ void printColoredTextWrapper(std::function<void()> func,
 int mod(const int &a, const int &b) { return (a % b + b) % b; }
 
 void setupWindow() {
-  setConsoleFont(L"Consolas", FW_BOLD, 12, 24);
+  setConsoleFont(L"Consolas", FW_BOLD, 16, 32);
   setConsoleColor(CONSOLE_BACKGROUND_COLOR, CONSOLE_TEXT_COLOR);
   setWindowName("Minesweeper v1.0");
   setWindowSize(WINDOW_WIDTH, WINDOW_HEIGHT);

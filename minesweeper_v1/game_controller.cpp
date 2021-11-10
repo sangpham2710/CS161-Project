@@ -14,6 +14,8 @@ int numMines, boardWidth, boardHeight;
 int PADDING_X, PADDING_Y;
 
 int startGame() {
+  // setConsoleFont(L"Consolas", 600, 20, 40);
+
   // mineBoard to save the actual values of cells (mine or number).
   // gameBoard to save the uncovered cell, the flagged cells, anything on board
   // displayed to player

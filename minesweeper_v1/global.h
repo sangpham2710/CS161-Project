@@ -3,7 +3,8 @@
 
 #include "cmanip.h"
 
-const int WINDOW_WIDTH = 80, WINDOW_HEIGHT = 30;
+const int WINDOW_WIDTH = 75, WINDOW_HEIGHT = 25; // 1200x800
+//const int WINDOW_WIDTH = 60, WINDOW_HEIGHT = 20; // 1200x800
 const int MAX_BOARD_SIZE = 30;
 const int CELL_WIDTH = 2, CELL_HEIGHT = 1;
 const int BORDER_WIDTH = 2, BORDER_HEIGHT = 1;
