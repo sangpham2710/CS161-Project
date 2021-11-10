@@ -16,17 +16,17 @@ void setWindowName(const std::string& name) {
 void setWindowSize(const short& width, const short& height) {
   COORD pos{width, height};
   SMALL_RECT rect;
-  HANDLE handle = GetStdHandle(STD_OUTPUT_HANDLE);
+  HANDLE hOut = GetStdHandle(STD_OUTPUT_HANDLE);
 
   rect = {0, 0, 1, 1};
-  SetConsoleWindowInfo(handle, TRUE, &rect);
-  SetConsoleScreenBufferSize(handle, pos);
-  SetConsoleActiveScreenBuffer(handle);
+  SetConsoleWindowInfo(hOut, TRUE, &rect);
+  SetConsoleScreenBufferSize(hOut, pos);
+  SetConsoleActiveScreenBuffer(hOut);
 
   rect = {0, 0, (short)(width - 1), (short)(height - 1)};
-  SetConsoleWindowInfo(handle, TRUE, &rect);
-  SetConsoleActiveScreenBuffer(handle);
-  SetConsoleScreenBufferSize(handle, pos);
+  SetConsoleWindowInfo(hOut, TRUE, &rect);
+  SetConsoleActiveScreenBuffer(hOut);
+  SetConsoleScreenBufferSize(hOut, pos);
 }
 
 void fixWindowSize() {
@@ -54,23 +54,31 @@ void setConsoleColor(const int& backgroundColor, const int& textColor) {
   system(tmp.c_str());
 }
 
+void disableConsoleQuickEditMode() {
+  DWORD prevMode;
+  HANDLE hIn = GetStdHandle(STD_INPUT_HANDLE);
+  GetConsoleMode(hIn, &prevMode);
+  SetConsoleMode(hIn,
+                 ENABLE_EXTENDED_FLAGS | (prevMode & ~ENABLE_QUICK_EDIT_MODE));
+}
+
 void showConsoleCursor(const bool& flag) {
-  HANDLE handle = GetStdHandle(STD_OUTPUT_HANDLE);
+  HANDLE hOut = GetStdHandle(STD_OUTPUT_HANDLE);
   CONSOLE_CURSOR_INFO tmp;
-  GetConsoleCursorInfo(handle, &tmp);
+  GetConsoleCursorInfo(hOut, &tmp);
   tmp.bVisible = flag;
-  SetConsoleCursorInfo(handle, &tmp);
+  SetConsoleCursorInfo(hOut, &tmp);
 }
 
 void setConsoleCursorPosition(const short& x, const short& y) {
   COORD pos{x, y};
-  HANDLE handle = GetStdHandle(STD_OUTPUT_HANDLE);
-  SetConsoleCursorPosition(handle, pos);
+  HANDLE hOut = GetStdHandle(STD_OUTPUT_HANDLE);
+  SetConsoleCursorPosition(hOut, pos);
 }
 
 void setConsoleTextColor(const int& backgroundColor, const int& textColor) {
-  HANDLE handle = GetStdHandle(STD_OUTPUT_HANDLE);
-  SetConsoleTextAttribute(handle, (backgroundColor << 4) | textColor);
+  HANDLE hOut = GetStdHandle(STD_OUTPUT_HANDLE);
+  SetConsoleTextAttribute(hOut, (backgroundColor << 4) | textColor);
 }
 
 void clearConsole() { system("cls"); }

@@ -37,5 +37,6 @@ void setupWindow() {
   setWindowName("Minesweeper v1.0");
   setWindowSize(WINDOW_WIDTH, WINDOW_HEIGHT);
   fixWindowSize();
+  disableConsoleQuickEditMode();
   showConsoleCursor(false);
 }
