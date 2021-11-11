@@ -12,3 +12,5 @@ SFML-2.5.1/
 # generated directories
 bin/
 obj/
+# generated files
+data.txt
