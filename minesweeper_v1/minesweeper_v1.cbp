@@ -45,8 +45,7 @@
 		<Unit filename="Exit.h">
 			<Option virtualFolder="Scenes/" />
 		</Unit>
-		<Unit filename="GameLevel.c">
-			<Option compilerVar="CC" />
+		<Unit filename="GameLevel.cpp">
 			<Option virtualFolder="Scenes/" />
 		</Unit>
 		<Unit filename="GameLevel.h">
