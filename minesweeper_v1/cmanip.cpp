@@ -84,14 +84,14 @@ void setConsoleTextColor(const int& backgroundColor, const int& textColor) {
 void clearConsole() { system("cls"); }
 
 std::map<int, int> inputMap = {
-    {'w', UP},     {'W', UP},     {UP_ARROW_KEY, UP},
-    {'s', DOWN},   {'S', DOWN},   {DOWN_ARROW_KEY, DOWN},
-    {'a', LEFT},   {'A', LEFT},   {LEFT_ARROW_KEY, LEFT},
-    {'d', RIGHT},  {'D', RIGHT},  {RIGHT_ARROW_KEY, RIGHT},
-    {'j', MOUSE1}, {'J', MOUSE1}, {RETURN_KEY, MOUSE1},
-    {'k', MOUSE2}, {'K', MOUSE2}, {'l', MOUSE3},
-    {'L', MOUSE3}, {'y', YES},    {'Y', YES},
-    {'n', NO},     {'N', NO},     {ESCAPE_KEY, ESCAPE},
+    {'w', UP},        {'W', UP},        {UP_ARROW_KEY, UP},
+    {'s', DOWN},      {'S', DOWN},      {DOWN_ARROW_KEY, DOWN},
+    {'a', LEFT},      {'A', LEFT},      {LEFT_ARROW_KEY, LEFT},
+    {'d', RIGHT},     {'D', RIGHT},     {RIGHT_ARROW_KEY, RIGHT},
+    {'j', MOUSE1},    {'J', MOUSE1},    {RETURN_KEY, MOUSE1},
+    {'k', MOUSE2},    {'K', MOUSE2},    {'l', MOUSE3},
+    {'L', MOUSE3},    {'y', YES},       {'Y', YES},
+    {'n', NO},        {'N', NO},        {ESCAPE_KEY, ESCAPE},
     {'o', SAVE_GAME}, {'O', SAVE_GAME},
 };
 

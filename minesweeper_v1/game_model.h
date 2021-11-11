@@ -31,4 +31,17 @@ void uncoverBoard(int gameBoard[][MAX_BOARD_SIZE],
                   int mineBoard[][MAX_BOARD_SIZE], const int &row,
                   const int &col, int &totalSafelyOpenedCell);
 
+void addToLeaderboard(const long long &elapsedTime, const int &gameLevel);
+void saveBoard(const int &WIDTH, const int &HEIGHT, const int &MINES,
+               const int &flagLeft, const long long &elapsedTime,
+               const int &totalSafelyOpenedCell,
+               int gameBoard[][MAX_BOARD_SIZE],
+               int mineBoard[][MAX_BOARD_SIZE]);
+void loadDataFile();
+void updateDataFile();
+void transferDataToGame(int &flagLeft, long long &elapsedTime,
+                        int &totalSafelyOpenedCell,
+                        int gameBoard[][MAX_BOARD_SIZE],
+                        int mineBoard[][MAX_BOARD_SIZE]);
+
 #endif  // GAME_MODEL_H_INCLUDED

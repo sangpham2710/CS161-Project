@@ -2,9 +2,9 @@
 
 #include <iostream>
 
-#include "windows.h"
 #include "cmanip.h"
 #include "global.h"
+#include "windows.h"
 
 void resetConsoleScreen() {
   setConsoleColor(CONSOLE_BACKGROUND_COLOR, CONSOLE_TEXT_COLOR);
