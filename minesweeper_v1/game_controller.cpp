@@ -2,6 +2,7 @@
 
 #include <chrono>
 #include <string>
+#include <iostream>
 
 #include "cmanip.h"
 #include "conio.h"
@@ -47,12 +48,21 @@ int startGame(const int &STATUS) {
         transferDataToGame(numFlagsLeft, savedTime, totalSafelyOpenedCell,
                            gameBoard, mineBoard);
 
+        PADDING_X =
+          (WINDOW_WIDTH - (BORDER_WIDTH + CELL_WIDTH * boardWidth + BORDER_WIDTH)) /
+          2;
+        PADDING_Y =
+          (WINDOW_HEIGHT - (PANEL_HEIGHT + BORDER_HEIGHT +
+                            CELL_HEIGHT * boardHeight + BORDER_HEIGHT + 2)) /
+          2;
   }
 
       displayBoard(gameBoard, cursorRow, cursorCol, true);
       displayNumFlags(numFlagsLeft, true);
       displayBoardStatus(boardStatus, true);
-      displayTimer(savedTime, false);
+      //displayTimer(0, true);
+      displayTimer(savedTime / 1000, true);
+      getUserAction();
 
 
   while (!endGame) {
@@ -136,10 +146,10 @@ int startGame(const int &STATUS) {
         boardStatus = "Can't flag a revealed cell.";
       }
     } else if (action == SAVE_GAME) {
-        long long time = (std::chrono::duration_cast<std::chrono::milliseconds>(
-                  std::chrono::high_resolution_clock::now() - gameStartTime).count());
         saveBoard(boardWidth, boardHeight, numMines, numFlagsLeft,
-                  time, totalSafelyOpenedCell, gameBoard, mineBoard);
+                  std::chrono::duration_cast<std::chrono::milliseconds>(
+                  std::chrono::high_resolution_clock::now() - gameStartTime).count(),
+                  totalSafelyOpenedCell, gameBoard, mineBoard);
     }
     if (endGame) {
       cursorRow = -1;
@@ -160,7 +170,7 @@ int startGame(const int &STATUS) {
               std::chrono::high_resolution_clock::now() - gameStartTime)
               .count());
     } else {
-      displayTimer(0);
+      displayTimer(savedTime / 1000);
     }
   }
   getUserAction();

@@ -38,7 +38,7 @@ void saveBoard(const int &WIDTH, const int &HEIGHT, const int &MINES, const int 
 //0 0 0 0 0 0 0 0 0 0
 //0 0 0 0 0 0 0 0 0 0
 //0 0 0 0 0 0 0 0 0 0
-//width height mine time total_safely_opened_cell
+//width height mine flag time total_safely_opened_cell
 //0 0 0 0 0
 //[displayBoard]
 //[mineBoard]
@@ -50,7 +50,7 @@ void updateDataFile() {
         dataFile << '\n';
     }
 
-    dataFile << savedWIDTH << " " << savedHEIGHT << " " << savedMINES << " " << savedTime << " " << savedOpenedCell;
+    dataFile << savedWIDTH << " " << savedHEIGHT << " " << savedMINES << " " << savedFlagLeft << " " << savedTime << " " << savedOpenedCell;
     for (int row = 0; row < savedHEIGHT; row++){
         dataFile << '\n';
         for (int col = 0; col < savedWIDTH; col++)
@@ -71,7 +71,7 @@ void loadDataFile() {
         for (int j = 0; j < 10; j++)
             dataFile >> savedLeaderboard[i][j];
 
-    dataFile >> savedWIDTH >> savedHEIGHT >> savedMINES >> savedTime >> savedOpenedCell;
+    dataFile >> savedWIDTH >> savedHEIGHT >> savedMINES >> savedFlagLeft >> savedTime >> savedOpenedCell;
     for (int row = 0; row < savedHEIGHT; row++)
         for (int col = 0; col < savedWIDTH; col++)
             dataFile >> savedGameBoard[row][col];
