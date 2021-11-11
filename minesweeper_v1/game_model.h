@@ -1,5 +1,5 @@
-#ifndef GAME_LOGIC_H_INCLUDED
-#define GAME_LOGIC_H_INCLUDED
+#ifndef GAME_MODEL_H_INCLUDED
+#define GAME_MODEL_H_INCLUDED
 
 #include <algorithm>
 #include <string>
@@ -31,4 +31,4 @@ void uncoverBoard(int gameBoard[][MAX_BOARD_SIZE],
                   int mineBoard[][MAX_BOARD_SIZE], const int &row,
                   const int &col, int &totalSafelyOpenedCell);
 
-#endif  // GAME_LOGIC_H_INCLUDED
+#endif  // GAME_MODEL_H_INCLUDED

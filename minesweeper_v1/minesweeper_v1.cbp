@@ -81,6 +81,12 @@
 		<Unit filename="game_controller.h">
 			<Option virtualFolder="Game/" />
 		</Unit>
+		<Unit filename="game_data.cpp">
+			<Option virtualFolder="Game/" />
+		</Unit>
+		<Unit filename="game_data.h">
+			<Option virtualFolder="Game/" />
+		</Unit>
 		<Unit filename="game_model.cpp">
 			<Option virtualFolder="Game/" />
 		</Unit>
@@ -102,12 +108,6 @@
 		</Unit>
 		<Unit filename="scene_manager.h">
 			<Option virtualFolder="Scenes/" />
-		</Unit>
-		<Unit filename="user_data.cpp">
-			<Option virtualFolder="Game/" />
-		</Unit>
-		<Unit filename="user_data.h">
-			<Option virtualFolder="Game/" />
 		</Unit>
 		<Extensions>
 			<lib_finder disable_auto="1" />

@@ -22,7 +22,7 @@ void startSceneManager() {
       case EXIT:
         currentScene = Exit();
         break;
-    case WELCOME:
+      case WELCOME:
         currentScene = Welcome();
         break;
     }
