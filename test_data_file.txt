@@ -1,0 +1,8 @@
+//3 che do
+0 0 0 0 0 0 0 0 0 0
+0 0 0 0 0 0 0 0 0 0
+0 0 0 0 0 0 0 0 0 0
+//width height mine flag time
+0 0 0
+[displayBoard]
+[mineBoard]

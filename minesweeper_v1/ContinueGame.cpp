@@ -2,8 +2,8 @@
 
 #include "main_utils.h"
 #include "scene_manager.h"
+#include "game_controller.h"
 
 int ContinueGame() {
-  resetConsoleScreen();
-  return WELCOME;
+  return startGame(CONTINUE_GAME);
 }
