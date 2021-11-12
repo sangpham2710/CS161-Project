@@ -81,12 +81,6 @@
 		<Unit filename="game_controller.h">
 			<Option virtualFolder="Game/" />
 		</Unit>
-		<Unit filename="game_data.cpp">
-			<Option virtualFolder="Game/" />
-		</Unit>
-		<Unit filename="game_data.h">
-			<Option virtualFolder="Game/" />
-		</Unit>
 		<Unit filename="game_model.cpp">
 			<Option virtualFolder="Game/" />
 		</Unit>
