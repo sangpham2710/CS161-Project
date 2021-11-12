@@ -8,6 +8,8 @@
 #include <string>
 #include <vector>
 
+#include "Leaderboard.h"
+
 std::mt19937 randInt(
     std::chrono::steady_clock::now().time_since_epoch().count());
 
@@ -19,13 +21,13 @@ bool revealACell(int gameBoard[][MAX_BOARD_SIZE],
     uncoverBoard(gameBoard, mineBoard, row, col, totalSafelyOpenedCell);
     if (totalSafelyOpenedCell == totalSafeCell) {
       revealAllMines(gameBoard, mineBoard, true);
-      boardStatus = "Congratulation! You won!";
+      boardStatus = boardStatusOptions[WIN];
       return true;
     }
   } else if (mineBoard[row][col] == MINE) {
     gameBoard[row][col] = MINE;
     revealAllMines(gameBoard, mineBoard, false);
-    boardStatus = "Umm... Quite a big explosion, right?";
+    boardStatus = boardStatusOptions[LOSE];
     return true;
   }
 
@@ -152,16 +154,19 @@ void revealAllMines(int gameBoard[][MAX_BOARD_SIZE],
       }
     }
   }
+
 }
 
-long long savedTime, savedLeaderboard[3][10];
+long long savedTime, savedLeaderboard[NUMBER_OF_GAME_MODE][MAX_PLAYER_DISPLAY];
 int savedGameLevel, savedWIDTH, savedHEIGHT, savedMINES, savedFlagLeft,
     savedOpenedCell, savedGameBoard[MAX_BOARD_SIZE][MAX_BOARD_SIZE],
     savedMineBoard[MAX_BOARD_SIZE][MAX_BOARD_SIZE];
 
 const std::string FILENAME = "data.txt";
 
-void addToLeaderboard(const long long &elapsedTime, const int &gameLevel) {}
+void saveLeaderboard(const long long &elapsedTime, const int &gameLevel) {
+    if (addToLeaderboard(gameLevel, elapsedTime, savedLeaderboard)) updateDataFile();
+}
 
 void saveBoard(const int &WIDTH, const int &HEIGHT, const int &MINES,
                const int &flagLeft, const long long &elapsedTime,
@@ -172,6 +177,7 @@ void saveBoard(const int &WIDTH, const int &HEIGHT, const int &MINES,
   savedHEIGHT = HEIGHT;
   savedMINES = MINES;
   savedFlagLeft = flagLeft;
+  savedGameLevel = curMode;
   savedTime = elapsedTime;
   savedOpenedCell = totalSafelyOpenedCell;
 
@@ -188,8 +194,8 @@ void saveBoard(const int &WIDTH, const int &HEIGHT, const int &MINES,
 // 0 0 0 0 0 0 0 0 0 0
 // 0 0 0 0 0 0 0 0 0 0
 // 0 0 0 0 0 0 0 0 0 0
-// width height mine flag time total_safely_opened_cell
-// 0 0 0 0 0
+// gamelevel width height mine flag time total_safely_opened_cell
+// 0 0 0 0 0 0
 //[displayBoard]
 //[mineBoard]
 void updateDataFile() {
@@ -199,7 +205,7 @@ void updateDataFile() {
     dataFile << '\n';
   }
 
-  dataFile << savedWIDTH << " " << savedHEIGHT << " " << savedMINES << " "
+  dataFile << savedGameLevel << " " << savedWIDTH << " " << savedHEIGHT << " " << savedMINES << " "
            << savedFlagLeft << " " << savedTime << " " << savedOpenedCell;
   for (int row = 0; row < savedHEIGHT; row++) {
     dataFile << '\n';
@@ -215,13 +221,15 @@ void updateDataFile() {
   dataFile.close();
 }
 
-void loadDataFile() {
+bool loadDataFile() {
   std::ifstream dataFile(FILENAME);
+  if (dataFile) return false;
   for (int i = 0; i < 3; i++)
     for (int j = 0; j < 10; j++) dataFile >> savedLeaderboard[i][j];
 
-  dataFile >> savedWIDTH >> savedHEIGHT >> savedMINES >> savedFlagLeft >>
+  dataFile >> savedGameLevel >> savedWIDTH >> savedHEIGHT >> savedMINES >> savedFlagLeft >>
       savedTime >> savedOpenedCell;
+    if (savedWIDTH == 0) return false;
   for (int row = 0; row < savedHEIGHT; row++)
     for (int col = 0; col < savedWIDTH; col++)
       dataFile >> savedGameBoard[row][col];
@@ -240,6 +248,7 @@ void transferDataToGame(int &flagLeft, long long &elapsedTime,
   boardHeight = savedHEIGHT;
   boardWidth = savedWIDTH;
   numMines = savedMINES;
+  curMode = savedGameLevel;
 
   flagLeft = savedFlagLeft;
   elapsedTime = savedTime;
@@ -250,4 +259,11 @@ void transferDataToGame(int &flagLeft, long long &elapsedTime,
       gameBoard[row][col] = savedGameBoard[row][col];
       mineBoard[row][col] = savedMineBoard[row][col];
     }
+}
+
+void transferDataToLeaderboard(long long leaderboard[][MAX_PLAYER_DISPLAY + 1]) {
+
+    for (int mode = 0; mode < NUMBER_OF_GAME_MODE; mode++)
+        for (int player = 0; player < MAX_PLAYER_DISPLAY; player++)
+            leaderboard[mode][player] = savedLeaderboard[mode][player];
 }
