@@ -1,6 +1,7 @@
 #include "game_controller.h"
 
 #include <chrono>
+#include <iostream>
 #include <string>
 
 #include "cmanip.h"
@@ -13,7 +14,7 @@
 int numMines, boardWidth, boardHeight;
 int PADDING_X, PADDING_Y;
 
-int startGame() {
+int startGame(const int &state) {
   // setConsoleFont(L"Consolas", 600, 20, 40);
 
   // mineBoard to save the actual values of cells (mine or number).
@@ -22,23 +23,45 @@ int startGame() {
   int mineBoard[MAX_BOARD_SIZE][MAX_BOARD_SIZE],
       gameBoard[MAX_BOARD_SIZE][MAX_BOARD_SIZE];
   int cursorRow = 0, cursorCol = 0;
-  int totalSafeCell = boardHeight * boardWidth - numMines;
-  int numFlagsLeft = numMines;
+  int totalSafeCell;
+  int numFlagsLeft;
+  long long savedTime = 0;
+  bool isTimerStarted = false;
   std::string boardStatus;
   std::chrono::high_resolution_clock::time_point gameStartTime;
-
-  resetBoard(gameBoard, mineBoard);
-  generateMineBoard(mineBoard, numMines);
 
   // Game Start
   long long totalElapsedTime = 0;
   int totalSafelyOpenedCell = 0;
   bool endGame = false;
 
+  if (state == NEW) {
+    resetBoard(gameBoard, mineBoard);
+    generateMineBoard(mineBoard, numMines);
+
+    totalSafeCell = boardHeight * boardWidth - numMines;
+    numFlagsLeft = numMines;
+
+  } else if (state == CONTINUE) {
+    loadDataFile();
+    transferDataToGame(numFlagsLeft, savedTime, totalSafelyOpenedCell,
+                       gameBoard, mineBoard);
+
+    PADDING_X = (WINDOW_WIDTH -
+                 (BORDER_WIDTH + CELL_WIDTH * boardWidth + BORDER_WIDTH)) /
+                2;
+    PADDING_Y =
+        (WINDOW_HEIGHT - (PANEL_HEIGHT + BORDER_HEIGHT +
+                          CELL_HEIGHT * boardHeight + BORDER_HEIGHT + 2)) /
+        2;
+  }
+
   displayBoard(gameBoard, cursorRow, cursorCol, true);
   displayNumFlags(numFlagsLeft, true);
   displayBoardStatus(boardStatus, true);
-  displayTimer(0, true);
+  // displayTimer(0, true);
+  displayTimer(savedTime / 1000, true);
+  getUserAction();
 
   while (!endGame) {
     // Get input from player
@@ -68,10 +91,13 @@ int startGame() {
     } else if (action == RIGHT) {
       cursorCol += isValidCell(cursorRow, cursorCol + 1);
     } else if (action == MOUSE1) {
-      if (totalSafelyOpenedCell == 0) {
+      if (!isTimerStarted) {
         // Start the game timer
-        gameStartTime = std::chrono::high_resolution_clock::now();
-
+        gameStartTime = std::chrono::high_resolution_clock::now() -
+                        std::chrono::milliseconds(savedTime);
+        isTimerStarted = true;
+      }
+      if (totalSafelyOpenedCell == 0) {
         // Replace first cell if it is a mine
         if (mineBoard[cursorRow][cursorCol] == MINE)
           replaceMine(mineBoard, cursorRow, cursorCol);
@@ -117,6 +143,13 @@ int startGame() {
       } else {
         boardStatus = "Can't flag a revealed cell.";
       }
+    } else if (action == SAVE_GAME) {
+      saveBoard(boardWidth, boardHeight, numMines, numFlagsLeft,
+                std::chrono::duration_cast<std::chrono::milliseconds>(
+                    std::chrono::high_resolution_clock::now() - gameStartTime)
+                    .count(),
+                totalSafelyOpenedCell, gameBoard, mineBoard);
+      boardStatus = "Game saved!";
     }
     if (endGame) {
       cursorRow = -1;
@@ -137,7 +170,7 @@ int startGame() {
               std::chrono::high_resolution_clock::now() - gameStartTime)
               .count());
     } else {
-      displayTimer(0);
+      displayTimer(savedTime / 1000);
     }
   }
   getUserAction();

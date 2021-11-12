@@ -85,5 +85,5 @@ int NewGame() {
       (WINDOW_HEIGHT - (PANEL_HEIGHT + BORDER_HEIGHT +
                         CELL_HEIGHT * boardHeight + BORDER_HEIGHT + 2)) /
       2;
-  return startGame();
+  return startGame(NEW);
 }

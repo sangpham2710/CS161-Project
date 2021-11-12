@@ -12,7 +12,10 @@ SFML-2.5.1/
 # generated directories
 bin/
 obj/
+<<<<<<< HEAD
 
 ### main ###
+=======
+>>>>>>> game-data-review
 # generated files
 data.txt
