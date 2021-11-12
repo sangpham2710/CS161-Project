@@ -1,6 +1,7 @@
 #include "main_utils.h"
 
 #include <iostream>
+#include <sstream>
 
 #include "windows.h"
 #include "cmanip.h"
@@ -39,4 +40,10 @@ void setupWindow() {
   fixWindowSize();
   disableConsoleQuickEditMode();
   showConsoleCursor(false);
+}
+
+std::string intToString(const int &number) {
+  std::stringstream stream;
+  stream << number;
+  return stream.str();
 }
