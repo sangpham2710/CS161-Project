@@ -224,7 +224,7 @@ void updateDataFile() {
 
 bool loadDataFile() {
   std::ifstream dataFile(FILENAME);
-  if (dataFile) return false;
+  if (!dataFile) return false;
   for (int i = 0; i < 3; i++)
     for (int j = 0; j < 10; j++) dataFile >> savedLeaderboard[i][j];
 
@@ -240,6 +240,7 @@ bool loadDataFile() {
       dataFile >> savedMineBoard[row][col];
 
   dataFile.close();
+  return true;
 }
 
 void transferDataToGame(int &flagLeft, long long &elapsedTime,
