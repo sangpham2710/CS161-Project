@@ -29,7 +29,9 @@ int handleLevelOptions(const int& oldLevelOption) {
   int newLevelOption = oldLevelOption;
   while (!selected) {
     int action = getUserAction();
-    if (action == UP) {
+    if (action == ESCAPE) {
+      return -1;
+    } else if (action == UP) {
       setConsoleCursorPosition(
           getStartPositionOfACenteredText(levelOptions[newLevelOption].size()),
           3 + newLevelOption);
@@ -75,6 +77,7 @@ int NewGame() {
   resetConsoleScreen();
   displayLevelOptions(oldLevelOption);
   int selectedLevel = handleLevelOptions(oldLevelOption);
+  if (selectedLevel == -1) return WELCOME;
   oldLevelOption = selectedLevel;
   return startGame(selectedLevel);
 }
