@@ -71,7 +71,7 @@ int handleGameLevelOptions(const int& oldLevelOption) {
 }
 
 int NewGame() {
-    static int oldLevelOption = 0;
+  static int oldLevelOption = 0;
   resetConsoleScreen();
   displayLevelOptions(oldLevelOption);
   oldLevelOption = handleGameLevelOptions(oldLevelOption);

@@ -15,4 +15,4 @@ obj/
 
 ### main ###
 # generated files
-data.txt
+*.txt
