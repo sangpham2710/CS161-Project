@@ -1,17 +1,17 @@
 #include "game_controller.h"
 
 #include <chrono>
-#include <string>
 #include <iostream>
+#include <string>
 
+#include "Leaderboard.h"
+#include "NewGame.h"
 #include "cmanip.h"
 #include "conio.h"
 #include "game_model.h"
 #include "game_view.h"
 #include "global.h"
 #include "scene_manager.h"
-#include "Leaderboard.h"
-#include "NewGame.h"
 
 int numMines, boardWidth, boardHeight, curMode;
 int PADDING_X, PADDING_Y;
@@ -45,9 +45,10 @@ int startGame(const int &state) {
 
   } else if (state == CONTINUE) {
     if (!loadDataFile()) {
-        std::cout << "No Previous Play Found!" << '\n' << "Press any key to Start a new Game.";
-        getUserAction();
-        return NewGame();
+      std::cout << "No Previous Play Found!" << '\n'
+                << "Press any key to Start a new Game.";
+      getUserAction();
+      return NewGame();
     }
     transferDataToGame(numFlagsLeft, savedTime, totalSafelyOpenedCell,
                        gameBoard, mineBoard);
@@ -61,7 +62,7 @@ int startGame(const int &state) {
         2;
   }
 
-    totalSafeCell = boardHeight * boardWidth - numMines;
+  totalSafeCell = boardHeight * boardWidth - numMines;
   displayBoard(gameBoard, cursorRow, cursorCol, true);
   displayNumFlags(numFlagsLeft, true);
   displayBoardStatus(boardStatus, true);
@@ -97,13 +98,13 @@ int startGame(const int &state) {
     } else if (action == RIGHT) {
       cursorCol += isValidCell(cursorRow, cursorCol + 1);
     } else if (action == MOUSE1) {
-        if (!isTimerStarted) {
+      if (!isTimerStarted) {
         // Start the game timer
-        gameStartTime = std::chrono::high_resolution_clock::now() - std::chrono::milliseconds(savedTime);
+        gameStartTime = std::chrono::high_resolution_clock::now() -
+                        std::chrono::milliseconds(savedTime);
         isTimerStarted = true;
-        }
+      }
       if (totalSafelyOpenedCell == 0) {
-
         // Replace first cell if it is a mine
         if (mineBoard[cursorRow][cursorCol] == MINE)
           replaceMine(mineBoard, cursorRow, cursorCol);
@@ -150,7 +151,7 @@ int startGame(const int &state) {
         boardStatus = "Can't flag a revealed cell.";
       }
     } else if (action == SAVE_GAME) {
-        saveBoard(boardWidth, boardHeight, numMines, numFlagsLeft,
+      saveBoard(boardWidth, boardHeight, numMines, numFlagsLeft,
                 std::chrono::duration_cast<std::chrono::milliseconds>(
                     std::chrono::high_resolution_clock::now() - gameStartTime)
                     .count(),
@@ -164,7 +165,8 @@ int startGame(const int &state) {
           std::chrono::duration_cast<std::chrono::milliseconds>(
               std::chrono::high_resolution_clock::now() - gameStartTime)
               .count();
-       if (boardStatus == boardStatusOptions[WIN]) saveLeaderboard(totalElapsedTime / 1000, curMode);
+      if (boardStatus == boardStatusOptions[WIN])
+        saveLeaderboard(totalElapsedTime / 1000, curMode);
     }
     displayBoard(gameBoard, cursorRow, cursorCol);
     displayNumFlags(numFlagsLeft);

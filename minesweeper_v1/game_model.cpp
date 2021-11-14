@@ -154,10 +154,9 @@ void revealAllMines(int gameBoard[][MAX_BOARD_SIZE],
       }
     }
   }
-
 }
 
-long long savedTime, savedLeaderboard[NUMBER_OF_GAME_MODE][MAX_PLAYER_DISPLAY];
+long long savedTime, savedLeaderboard[NUM_LEVELS][NUM_RECORDS_PER_LEVEL];
 int savedGameLevel, savedWIDTH, savedHEIGHT, savedMINES, savedFlagLeft,
     savedOpenedCell, savedGameBoard[MAX_BOARD_SIZE][MAX_BOARD_SIZE],
     savedMineBoard[MAX_BOARD_SIZE][MAX_BOARD_SIZE];
@@ -165,7 +164,8 @@ int savedGameLevel, savedWIDTH, savedHEIGHT, savedMINES, savedFlagLeft,
 const std::string FILENAME = "data.txt";
 
 void saveLeaderboard(const long long &elapsedTime, const int &gameLevel) {
-    if (addToLeaderboard(gameLevel, elapsedTime, savedLeaderboard)) updateDataFile();
+  if (addToLeaderboard(gameLevel, elapsedTime, savedLeaderboard))
+    updateDataFile();
 }
 
 void saveBoard(const int &WIDTH, const int &HEIGHT, const int &MINES,
@@ -205,8 +205,9 @@ void updateDataFile() {
     dataFile << '\n';
   }
 
-  dataFile << savedGameLevel << " " << savedWIDTH << " " << savedHEIGHT << " " << savedMINES << " "
-           << savedFlagLeft << " " << savedTime << " " << savedOpenedCell;
+  dataFile << savedGameLevel << " " << savedWIDTH << " " << savedHEIGHT << " "
+           << savedMINES << " " << savedFlagLeft << " " << savedTime << " "
+           << savedOpenedCell;
   for (int row = 0; row < savedHEIGHT; row++) {
     dataFile << '\n';
     for (int col = 0; col < savedWIDTH; col++)
@@ -227,9 +228,9 @@ bool loadDataFile() {
   for (int i = 0; i < 3; i++)
     for (int j = 0; j < 10; j++) dataFile >> savedLeaderboard[i][j];
 
-  dataFile >> savedGameLevel >> savedWIDTH >> savedHEIGHT >> savedMINES >> savedFlagLeft >>
-      savedTime >> savedOpenedCell;
-    if (savedWIDTH == 0) return false;
+  dataFile >> savedGameLevel >> savedWIDTH >> savedHEIGHT >> savedMINES >>
+      savedFlagLeft >> savedTime >> savedOpenedCell;
+  if (savedWIDTH == 0) return false;
   for (int row = 0; row < savedHEIGHT; row++)
     for (int col = 0; col < savedWIDTH; col++)
       dataFile >> savedGameBoard[row][col];
@@ -261,9 +262,9 @@ void transferDataToGame(int &flagLeft, long long &elapsedTime,
     }
 }
 
-void transferDataToLeaderboard(long long leaderboard[][MAX_PLAYER_DISPLAY + 1]) {
-
-    for (int mode = 0; mode < NUMBER_OF_GAME_MODE; mode++)
-        for (int player = 0; player < MAX_PLAYER_DISPLAY; player++)
-            leaderboard[mode][player] = savedLeaderboard[mode][player];
+void transferDataToLeaderboard(
+    long long leaderboard[][NUM_RECORDS_PER_LEVEL + 1]) {
+  for (int mode = 0; mode < NUM_LEVELS; mode++)
+    for (int player = 0; player < NUM_RECORDS_PER_LEVEL; player++)
+      leaderboard[mode][player] = savedLeaderboard[mode][player];
 }

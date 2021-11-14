@@ -7,11 +7,10 @@
 
 #include "global.h"
 
-enum boardStatusTypes {
-  WIN, LOSE
-};
+enum boardStatusTypes { WIN, LOSE };
 
-const std::vector<std::string> boardStatusOptions = {"Congratulation! You won!", "Umm... Quite a big explosion, right?"};
+const std::vector<std::string> boardStatusOptions = {
+    "Congratulation! You won!", "Umm... Quite a big explosion, right?"};
 
 bool revealACell(int gameBoard[][MAX_BOARD_SIZE],
                  int mineBoard[][MAX_BOARD_SIZE], const int &row,
@@ -37,8 +36,6 @@ void uncoverBoard(int gameBoard[][MAX_BOARD_SIZE],
                   int mineBoard[][MAX_BOARD_SIZE], const int &row,
                   const int &col, int &totalSafelyOpenedCell);
 
-
-
 void saveLeaderboard(const long long &elapsedTime, const int &gameLevel);
 void saveBoard(const int &WIDTH, const int &HEIGHT, const int &MINES,
                const int &flagLeft, const long long &elapsedTime,
@@ -51,7 +48,7 @@ void transferDataToGame(int &flagLeft, long long &elapsedTime,
                         int &totalSafelyOpenedCell,
                         int gameBoard[][MAX_BOARD_SIZE],
                         int mineBoard[][MAX_BOARD_SIZE]);
-void transferDataToLeaderboard(long long leaderboard[][MAX_PLAYER_DISPLAY + 1]);
+void transferDataToLeaderboard(
+    long long leaderboard[][NUM_RECORDS_PER_LEVEL + 1]);
 
 #endif  // GAME_MODEL_H_INCLUDED
-

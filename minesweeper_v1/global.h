@@ -7,8 +7,8 @@
 #include "cmanip.h"
 #include "main_utils.h"
 
-const int WINDOW_WIDTH = 75, WINDOW_HEIGHT = 25; // 1200x800
-//const int WINDOW_WIDTH = 60, WINDOW_HEIGHT = 20; // 1200x800
+const int WINDOW_WIDTH = 75, WINDOW_HEIGHT = 25;  // 1200x800
+// const int WINDOW_WIDTH = 60, WINDOW_HEIGHT = 20; // 1200x800
 const int MAX_BOARD_SIZE = 40;
 const int CELL_WIDTH = 2, CELL_HEIGHT = 1;
 const int BORDER_WIDTH = 2, BORDER_HEIGHT = 1;
@@ -27,9 +27,8 @@ extern int curMode;
 
 extern int PADDING_X, PADDING_Y;
 
-//Leaderboard
- const int NUMBER_OF_GAME_MODE = 3;
- const int MAX_PLAYER_DISPLAY = 10;
+// Leaderboard
+const int NUM_RECORDS_PER_LEVEL = 10;
 
 // Cell states
 enum cellStates { SELECTED, UNKNOWN, FLAGGED, QUESTIONED, MINE, BLANK };
@@ -47,7 +46,7 @@ struct {
     {'7', BRIGHT_WHITE, BLACK},      {'8', BRIGHT_WHITE, GRAY}};
 
 // Levels
-enum Levels { BEGINNER, INTERMEDIATE, EXPERT };
+enum Levels { BEGINNER, INTERMEDIATE, EXPERT, NUM_LEVELS };
 const struct {
   std::string name;
   int width;
@@ -70,6 +69,5 @@ const std::vector<std::string> levelOptions = {
         intToString(boardLevelsInfo[EXPERT].numMines) + " mines | " +
         intToString(boardLevelsInfo[EXPERT].width) + "x" +
         intToString(boardLevelsInfo[EXPERT].height) + " grid"};
-
 
 #endif  // GLOBAL_H_INCLUDED
