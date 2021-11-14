@@ -177,7 +177,7 @@ void saveBoard(const int &WIDTH, const int &HEIGHT, const int &MINES,
   savedHEIGHT = HEIGHT;
   savedMINES = MINES;
   savedFlagLeft = flagLeft;
-  savedGameLevel = curMode;
+  savedGameLevel = currentLevel;
   savedTime = elapsedTime;
   savedOpenedCell = totalSafelyOpenedCell;
 
@@ -250,7 +250,7 @@ void transferDataToGame(int &flagLeft, long long &elapsedTime,
   boardHeight = savedHEIGHT;
   boardWidth = savedWIDTH;
   numMines = savedMINES;
-  curMode = savedGameLevel;
+  currentLevel = savedGameLevel;
 
   flagLeft = savedFlagLeft;
   elapsedTime = savedTime;

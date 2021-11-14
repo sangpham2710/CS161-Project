@@ -5,6 +5,18 @@
 
 #include "main_utils.h"
 
+int PADDING_X, PADDING_Y;
+
+void setupDisplay(int boardWidth, int boardHeight) {
+  PADDING_X =
+      (WINDOW_WIDTH - (BORDER_WIDTH + CELL_WIDTH * boardWidth + BORDER_WIDTH)) /
+      2;
+  PADDING_Y =
+      (WINDOW_HEIGHT - (PANEL_HEIGHT + BORDER_HEIGHT +
+                        CELL_HEIGHT * boardHeight + BORDER_HEIGHT + 2)) /
+      2;
+}
+
 void displayBoard(int gameBoard[][MAX_BOARD_SIZE], int cursorRow, int cursorCol,
                   bool firstCall) {
   static int oldGameBoard[MAX_BOARD_SIZE][MAX_BOARD_SIZE];

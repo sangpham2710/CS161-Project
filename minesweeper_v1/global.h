@@ -23,9 +23,7 @@ const int BOARD_BORDER_COLOR = BLACK;
 
 extern int boardWidth, boardHeight;
 extern int numMines;
-extern int curMode;
-
-extern int PADDING_X, PADDING_Y;
+extern int currentLevel;
 
 // Leaderboard
 const int NUM_RECORDS_PER_LEVEL = 10;

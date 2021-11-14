@@ -5,6 +5,7 @@
 
 #include "global.h"
 
+void setupDisplay(int boardWidth, int boardHeight);
 void displayBoard(int gameBoard[][MAX_BOARD_SIZE], int cursorRow, int cursorCol,
                   bool firstCall = false);
 void displayNumFlags(const int &numFlags, bool firstCall = false);

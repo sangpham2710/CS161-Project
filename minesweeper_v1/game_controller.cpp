@@ -13,8 +13,7 @@
 #include "global.h"
 #include "scene_manager.h"
 
-int numMines, boardWidth, boardHeight, curMode;
-int PADDING_X, PADDING_Y;
+int numMines, boardWidth, boardHeight, currentLevel;
 
 int startGame(const int &state) {
   // setConsoleFont(L"Consolas", 600, 20, 40);
@@ -52,17 +51,11 @@ int startGame(const int &state) {
     }
     transferDataToGame(numFlagsLeft, savedTime, totalSafelyOpenedCell,
                        gameBoard, mineBoard);
-
-    PADDING_X = (WINDOW_WIDTH -
-                 (BORDER_WIDTH + CELL_WIDTH * boardWidth + BORDER_WIDTH)) /
-                2;
-    PADDING_Y =
-        (WINDOW_HEIGHT - (PANEL_HEIGHT + BORDER_HEIGHT +
-                          CELL_HEIGHT * boardHeight + BORDER_HEIGHT + 2)) /
-        2;
   }
 
   totalSafeCell = boardHeight * boardWidth - numMines;
+
+  setupDisplay(boardWidth, boardHeight);
   displayBoard(gameBoard, cursorRow, cursorCol, true);
   displayNumFlags(numFlagsLeft, true);
   displayBoardStatus(boardStatus, true);
@@ -166,7 +159,7 @@ int startGame(const int &state) {
               std::chrono::high_resolution_clock::now() - gameStartTime)
               .count();
       if (boardStatus == boardStatusOptions[WIN])
-        saveLeaderboard(totalElapsedTime / 1000, curMode);
+        saveLeaderboard(totalElapsedTime / 1000, currentLevel);
     }
     displayBoard(gameBoard, cursorRow, cursorCol);
     displayNumFlags(numFlagsLeft);

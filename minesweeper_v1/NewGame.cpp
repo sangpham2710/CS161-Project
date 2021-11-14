@@ -76,16 +76,9 @@ int NewGame() {
   displayLevelOptions(oldLevelOption);
   oldLevelOption = handleGameLevelOptions(oldLevelOption);
 
-  curMode = oldLevelOption;
+  currentLevel = oldLevelOption;
   boardHeight = boardLevelsInfo[oldLevelOption].height;
   boardWidth = boardLevelsInfo[oldLevelOption].width;
   numMines = boardLevelsInfo[oldLevelOption].numMines;
-  PADDING_X =
-      (WINDOW_WIDTH - (BORDER_WIDTH + CELL_WIDTH * boardWidth + BORDER_WIDTH)) /
-      2;
-  PADDING_Y =
-      (WINDOW_HEIGHT - (PANEL_HEIGHT + BORDER_HEIGHT +
-                        CELL_HEIGHT * boardHeight + BORDER_HEIGHT + 2)) /
-      2;
   return startGame(NEW);
 }
