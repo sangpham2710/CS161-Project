@@ -6,5 +6,5 @@
 
 int ContinueGame() {
   resetConsoleScreen();
-  return startGame(CONTINUE);
+  return startGame();
 }

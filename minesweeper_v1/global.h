@@ -21,16 +21,21 @@ const int CONSOLE_SELECTED_TEXT_COLOR = GREEN;
 const int CONSOLE_SELECTED_BACKGROUND_COLOR = BRIGHT_WHITE;
 const int BOARD_BORDER_COLOR = BLACK;
 
-extern int boardWidth, boardHeight;
-extern int numMines;
-extern int currentLevel;
-
-// Leaderboard
-const int NUM_RECORDS_PER_LEVEL = 10;
+// Game board
+struct GameBoard {
+  int boardWidth;
+  int boardHeight;
+  int numMines;
+  int numFlagsLeft;
+  int currentLevel;
+  std::string boardStatus;
+  int playerBoard[MAX_BOARD_SIZE][MAX_BOARD_SIZE];
+  int mineBoard[MAX_BOARD_SIZE][MAX_BOARD_SIZE];
+};
 
 // Cell states
 enum cellStates { SELECTED, UNKNOWN, FLAGGED, QUESTIONED, MINE, BLANK };
-struct {
+const struct {
   char symbol;
   int backgroundColor;
   int textColor;
@@ -67,5 +72,8 @@ const std::vector<std::string> levelOptions = {
         intToString(boardLevelsInfo[EXPERT].numMines) + " mines | " +
         intToString(boardLevelsInfo[EXPERT].width) + "x" +
         intToString(boardLevelsInfo[EXPERT].height) + " grid"};
+
+// Leaderboard
+const int NUM_RECORDS_PER_LEVEL = 10;
 
 #endif  // GLOBAL_H_INCLUDED

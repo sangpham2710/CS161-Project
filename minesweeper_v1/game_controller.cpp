@@ -13,55 +13,52 @@
 #include "global.h"
 #include "scene_manager.h"
 
-int numMines, boardWidth, boardHeight, currentLevel;
-
-int startGame(const int &state) {
+int startGame(const int &currentLevel) {
   // setConsoleFont(L"Consolas", 600, 20, 40);
 
   // mineBoard to save the actual values of cells (mine or number).
   // gameBoard to save the uncovered cell, the flagged cells, anything on board
   // displayed to player
-  int mineBoard[MAX_BOARD_SIZE][MAX_BOARD_SIZE],
-      gameBoard[MAX_BOARD_SIZE][MAX_BOARD_SIZE];
+  GameBoard gameBoard;
   int cursorRow = 0, cursorCol = 0;
   int totalSafeCell;
-  int numFlagsLeft;
-  long long savedTime = 0;
+  long long savedElapsedTime = 0;
   bool isTimerStarted = false;
-  std::string boardStatus;
   std::chrono::high_resolution_clock::time_point gameStartTime;
 
   // Game Start
   long long totalElapsedTime = 0;
-  int totalSafelyOpenedCell = 0;
+  int numOpenedCell = 0;
   bool endGame = false;
 
-  if (state == NEW) {
-    resetBoard(gameBoard, mineBoard);
-    generateMineBoard(mineBoard, numMines);
+  if (currentLevel != -1) {  // New game
+    gameBoard.currentLevel = currentLevel;
+    gameBoard.boardWidth = boardLevelsInfo[currentLevel].width;
+    gameBoard.boardHeight = boardLevelsInfo[currentLevel].height;
+    gameBoard.numMines = boardLevelsInfo[currentLevel].numMines;
+    resetBoard(gameBoard);
+    generateMineBoard(gameBoard, gameBoard.numMines);
+    gameBoard.numFlagsLeft = gameBoard.numMines;
 
-    numFlagsLeft = numMines;
-
-  } else if (state == CONTINUE) {
+  } else {  // Continue game
     if (!loadDataFile()) {
       std::cout << "No Previous Play Found!" << '\n'
                 << "Press any key to Start a new Game.";
       getUserAction();
       return NewGame();
     }
-    transferDataToGame(numFlagsLeft, savedTime, totalSafelyOpenedCell,
-                       gameBoard, mineBoard);
+    transferDataToGame(gameBoard, savedElapsedTime, numOpenedCell);
   }
 
-  totalSafeCell = boardHeight * boardWidth - numMines;
+  totalSafeCell =
+      gameBoard.boardHeight * gameBoard.boardWidth - gameBoard.numMines;
 
-  setupDisplay(boardWidth, boardHeight);
-  displayBoard(gameBoard, cursorRow, cursorCol, true);
-  displayNumFlags(numFlagsLeft, true);
-  displayBoardStatus(boardStatus, true);
+  setupDisplay(gameBoard.boardWidth, gameBoard.boardHeight);
+  displayBoard(gameBoard.playerBoard, cursorRow, cursorCol, true);
+  displayNumFlags(gameBoard.numFlagsLeft, true);
+  displayBoardStatus(gameBoard.boardStatus, true);
   // displayTimer(0, true);
-  displayTimer(savedTime / 1000, true);
-  getUserAction();
+  displayTimer(savedElapsedTime / 1000, true);
 
   while (!endGame) {
     // Get input from player
@@ -83,73 +80,78 @@ int startGame(const int &state) {
       endGame = true;
       break;
     } else if (action == UP) {
-      cursorRow -= isValidCell(cursorRow - 1, cursorCol);
+      cursorRow -= isValidCell(gameBoard.boardWidth, gameBoard.boardHeight,
+                               cursorRow - 1, cursorCol);
     } else if (action == DOWN) {
-      cursorRow += isValidCell(cursorRow + 1, cursorCol);
+      cursorRow += isValidCell(gameBoard.boardWidth, gameBoard.boardHeight,
+                               cursorRow + 1, cursorCol);
     } else if (action == LEFT) {
-      cursorCol -= isValidCell(cursorRow, cursorCol - 1);
+      cursorCol -= isValidCell(gameBoard.boardWidth, gameBoard.boardHeight,
+                               cursorRow, cursorCol - 1);
     } else if (action == RIGHT) {
-      cursorCol += isValidCell(cursorRow, cursorCol + 1);
+      cursorCol += isValidCell(gameBoard.boardWidth, gameBoard.boardHeight,
+                               cursorRow, cursorCol + 1);
     } else if (action == MOUSE1) {
       if (!isTimerStarted) {
         // Start the game timer
         gameStartTime = std::chrono::high_resolution_clock::now() -
-                        std::chrono::milliseconds(savedTime);
+                        std::chrono::milliseconds(savedElapsedTime);
         isTimerStarted = true;
       }
-      if (totalSafelyOpenedCell == 0) {
+      if (numOpenedCell == 0) {
         // Replace first cell if it is a mine
-        if (mineBoard[cursorRow][cursorCol] == MINE)
-          replaceMine(mineBoard, cursorRow, cursorCol);
+        if (gameBoard.mineBoard[cursorRow][cursorCol] == MINE)
+          replaceMine(gameBoard, cursorRow, cursorCol);
       }
 
-      if (gameBoard[cursorRow][cursorCol] == UNKNOWN ||
-          gameBoard[cursorRow][cursorCol] == QUESTIONED) {
-        endGame =
-            revealACell(gameBoard, mineBoard, cursorRow, cursorCol,
-                        totalSafelyOpenedCell, totalSafeCell, boardStatus);
+      if (gameBoard.playerBoard[cursorRow][cursorCol] == UNKNOWN ||
+          gameBoard.playerBoard[cursorRow][cursorCol] == QUESTIONED) {
+        endGame = revealACell(gameBoard, cursorRow, cursorCol, numOpenedCell,
+                              totalSafeCell);
 
       } else {
-        if (gameBoard[cursorRow][cursorCol] == FLAGGED)
-          boardStatus = "Can't reveal a flagged cell.";
+        if (gameBoard.playerBoard[cursorRow][cursorCol] == FLAGGED)
+          gameBoard.boardStatus = "Can't reveal a flagged cell.";
         else
-          boardStatus = "Can't reveal a revealed cell.";
+          gameBoard.boardStatus = "Can't reveal a revealed cell.";
       }
     } else if (action == MOUSE2) {
-      int flagCount =
-          countNeighboringCellStates(gameBoard, cursorRow, cursorCol, FLAGGED);
-      if (gameBoard[cursorRow][cursorCol] == UNKNOWN ||
-          gameBoard[cursorRow][cursorCol] == FLAGGED) {
-        boardStatus = "Cell must be revealed first!";
-      } else if (flagCount != gameBoard[cursorRow][cursorCol] - BLANK) {
-        boardStatus = "Please flag the correct number of neighboring mines!";
+      int flagCount = countNeighboringCellStates(
+          gameBoard.boardWidth, gameBoard.boardHeight, gameBoard.playerBoard,
+          cursorRow, cursorCol, FLAGGED);
+      if (gameBoard.playerBoard[cursorRow][cursorCol] == UNKNOWN ||
+          gameBoard.playerBoard[cursorRow][cursorCol] == FLAGGED) {
+        gameBoard.boardStatus = "Cell must be revealed first!";
+      } else if (flagCount !=
+                 gameBoard.playerBoard[cursorRow][cursorCol] - BLANK) {
+        gameBoard.boardStatus =
+            "Please flag the correct number of neighboring mines!";
       } else
-        endGame = revealNeighboringCells(gameBoard, mineBoard, cursorRow,
-                                         cursorCol, totalSafelyOpenedCell,
-                                         totalSafeCell, boardStatus);
+        endGame = revealNeighboringCells(gameBoard, cursorRow, cursorCol,
+                                         numOpenedCell, totalSafeCell);
     } else if (action == MOUSE3) {
-      if (gameBoard[cursorRow][cursorCol] == UNKNOWN) {
-        if (numFlagsLeft > 0) {
-          numFlagsLeft--;
-          gameBoard[cursorRow][cursorCol] = FLAGGED;
+      if (gameBoard.playerBoard[cursorRow][cursorCol] == UNKNOWN) {
+        if (gameBoard.numFlagsLeft > 0) {
+          gameBoard.numFlagsLeft--;
+          gameBoard.playerBoard[cursorRow][cursorCol] = FLAGGED;
         } else {
-          boardStatus = "No flag left :((";
+          gameBoard.boardStatus = "No flag left :((";
         }
-      } else if (gameBoard[cursorRow][cursorCol] == FLAGGED) {
-        numFlagsLeft++;
-        gameBoard[cursorRow][cursorCol] = QUESTIONED;
-      } else if (gameBoard[cursorRow][cursorCol] == QUESTIONED) {
-        gameBoard[cursorRow][cursorCol] = UNKNOWN;
+      } else if (gameBoard.playerBoard[cursorRow][cursorCol] == FLAGGED) {
+        gameBoard.numFlagsLeft++;
+        gameBoard.playerBoard[cursorRow][cursorCol] = QUESTIONED;
+      } else if (gameBoard.playerBoard[cursorRow][cursorCol] == QUESTIONED) {
+        gameBoard.playerBoard[cursorRow][cursorCol] = UNKNOWN;
       } else {
-        boardStatus = "Can't flag a revealed cell.";
+        gameBoard.boardStatus = "Can't flag a revealed cell.";
       }
     } else if (action == SAVE_GAME) {
-      saveBoard(boardWidth, boardHeight, numMines, numFlagsLeft,
+      saveBoard(gameBoard,
                 std::chrono::duration_cast<std::chrono::milliseconds>(
                     std::chrono::high_resolution_clock::now() - gameStartTime)
                     .count(),
-                totalSafelyOpenedCell, gameBoard, mineBoard);
-      boardStatus = "Game saved!";
+                numOpenedCell);
+      gameBoard.boardStatus = "Game saved!";
     }
     if (endGame) {
       cursorRow = -1;
@@ -158,12 +160,12 @@ int startGame(const int &state) {
           std::chrono::duration_cast<std::chrono::milliseconds>(
               std::chrono::high_resolution_clock::now() - gameStartTime)
               .count();
-      if (boardStatus == boardStatusOptions[WIN])
-        saveLeaderboard(totalElapsedTime / 1000, currentLevel);
+      if (gameBoard.boardStatus == boardStatusOptions[WIN])
+        saveLeaderboard(totalElapsedTime / 1000, gameBoard.currentLevel);
     }
-    displayBoard(gameBoard, cursorRow, cursorCol);
-    displayNumFlags(numFlagsLeft);
-    displayBoardStatus(boardStatus);
+    displayBoard(gameBoard.playerBoard, cursorRow, cursorCol);
+    displayNumFlags(gameBoard.numFlagsLeft);
+    displayBoardStatus(gameBoard.boardStatus);
 
     // If game timer has started, display the timer accordingly
     if (gameStartTime != std::chrono::high_resolution_clock::time_point()) {
@@ -172,7 +174,7 @@ int startGame(const int &state) {
               std::chrono::high_resolution_clock::now() - gameStartTime)
               .count());
     } else {
-      displayTimer(savedTime / 1000);
+      displayTimer(savedElapsedTime / 1000);
     }
   }
   getUserAction();

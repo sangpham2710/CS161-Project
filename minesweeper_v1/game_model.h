@@ -12,42 +12,34 @@ enum boardStatusTypes { WIN, LOSE };
 const std::vector<std::string> boardStatusOptions = {
     "Congratulation! You won!", "Umm... Quite a big explosion, right?"};
 
-bool revealACell(int gameBoard[][MAX_BOARD_SIZE],
-                 int mineBoard[][MAX_BOARD_SIZE], const int &row,
-                 const int &col, int &totalSafelyOpenedCell, int totalSafeCell,
-                 std::string &boardStatus);
-bool revealNeighboringCells(int gameBoard[][MAX_BOARD_SIZE],
-                            int mineBoard[][MAX_BOARD_SIZE], const int &row,
-                            const int &col, int &totalSafelyOpenedCell,
-                            int totalSafeCell, std::string &boardStatus);
-void revealAllMines(int gameBoard[][MAX_BOARD_SIZE],
-                    int mineBoard[][MAX_BOARD_SIZE], const bool &won);
-void resetBoard(int gameBoard[][MAX_BOARD_SIZE],
-                int mineBoard[][MAX_BOARD_SIZE]);
-bool isValidCell(const int &row, const int &col);
-void generateMineBoard(int mineBoard[][MAX_BOARD_SIZE], int mines);
-void replaceMine(int mineBoard[][MAX_BOARD_SIZE], const int &row,
+bool revealACell(GameBoard &gameBoard, const int &row, const int &col,
+                 int &numOpenedCell, int totalSafeCell);
+bool revealNeighboringCells(GameBoard &gameBoard, const int &row,
+                            const int &col, int &numOpenedCell,
+                            int totalSafeCell);
+void revealAllMines(GameBoard &gameBoard, const bool &won);
+void resetBoard(GameBoard &gameBoard);
+bool isValidCell(const int &width, const int &height, const int &row,
                  const int &col);
-std::vector<std::pair<int, int>> getNeighborsPositions(const int &row,
+void generateMineBoard(GameBoard &gameBoard, int mines);
+void replaceMine(GameBoard &gameBoard, const int &row, const int &col);
+std::vector<std::pair<int, int>> getNeighborsPositions(const int &width,
+                                                       const int &height,
+                                                       const int &row,
                                                        const int &col);
-int countNeighboringCellStates(int board[][MAX_BOARD_SIZE], const int &row,
+int countNeighboringCellStates(const int &width, const int &height,
+                               int board[][MAX_BOARD_SIZE], const int &row,
                                const int &col, const int &cellState);
-void uncoverBoard(int gameBoard[][MAX_BOARD_SIZE],
-                  int mineBoard[][MAX_BOARD_SIZE], const int &row,
-                  const int &col, int &totalSafelyOpenedCell);
+void uncoverBoard(GameBoard &gameBoard, const int &row, const int &col,
+                  int &numOpenedCell);
 
 void saveLeaderboard(const long long &elapsedTime, const int &gameLevel);
-void saveBoard(const int &WIDTH, const int &HEIGHT, const int &MINES,
-               const int &flagLeft, const long long &elapsedTime,
-               const int &totalSafelyOpenedCell,
-               int gameBoard[][MAX_BOARD_SIZE],
-               int mineBoard[][MAX_BOARD_SIZE]);
+void saveBoard(GameBoard &gameBoard, const long long &elapsedTime,
+               const int &numOpenedCell);
 bool loadDataFile();
 void updateDataFile();
-void transferDataToGame(int &flagLeft, long long &elapsedTime,
-                        int &totalSafelyOpenedCell,
-                        int gameBoard[][MAX_BOARD_SIZE],
-                        int mineBoard[][MAX_BOARD_SIZE]);
+void transferDataToGame(GameBoard &gameBoard, long long &elapsedTime,
+                        int &numOpenedCell);
 void transferDataToLeaderboard(
     long long leaderboard[][NUM_RECORDS_PER_LEVEL + 1]);
 

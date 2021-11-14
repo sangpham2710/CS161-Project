@@ -6,8 +6,11 @@
 #include "main_utils.h"
 
 int PADDING_X, PADDING_Y;
+int boardWidth, boardHeight;
 
-void setupDisplay(int boardWidth, int boardHeight) {
+void setupDisplay(const int &_boardWidth, const int &_boardHeight) {
+  boardWidth = _boardWidth;
+  boardHeight = _boardHeight;
   PADDING_X =
       (WINDOW_WIDTH - (BORDER_WIDTH + CELL_WIDTH * boardWidth + BORDER_WIDTH)) /
       2;
@@ -17,17 +20,16 @@ void setupDisplay(int boardWidth, int boardHeight) {
       2;
 }
 
-void displayBoard(int gameBoard[][MAX_BOARD_SIZE], int cursorRow, int cursorCol,
-                  bool firstCall) {
-  static int oldGameBoard[MAX_BOARD_SIZE][MAX_BOARD_SIZE];
+void displayBoard(int playerBoard[][MAX_BOARD_SIZE], const int &cursorRow,
+                  const int &cursorCol, const bool &firstCall) {
+  static int oldPlayerBoard[MAX_BOARD_SIZE][MAX_BOARD_SIZE];
   static int oldCursorRow = 0;
   static int oldCursorCol = 0;
   if (firstCall) {
-    memcpy(oldGameBoard, gameBoard,
+    memcpy(oldPlayerBoard, playerBoard,
            MAX_BOARD_SIZE * MAX_BOARD_SIZE * sizeof(int));
     oldCursorRow = cursorRow;
     oldCursorCol = cursorCol;
-    firstCall = false;
 
     resetConsoleScreen();
 
@@ -56,7 +58,7 @@ void displayBoard(int gameBoard[][MAX_BOARD_SIZE], int cursorRow, int cursorCol,
           printColoredTextWrapper(
               [&]() {
                 std::cout << std::setw(CELL_WIDTH) << std::left
-                          << cellStateProps[gameBoard[row][col]].symbol
+                          << cellStateProps[playerBoard[row][col]].symbol
                           << std::right;
               },
               cellStateProps[SELECTED].backgroundColor,
@@ -66,11 +68,11 @@ void displayBoard(int gameBoard[][MAX_BOARD_SIZE], int cursorRow, int cursorCol,
           printColoredTextWrapper(
               [&]() {
                 std::cout << std::setw(CELL_WIDTH) << std::left
-                          << cellStateProps[gameBoard[row][col]].symbol
+                          << cellStateProps[playerBoard[row][col]].symbol
                           << std::right;
               },
-              cellStateProps[gameBoard[row][col]].backgroundColor,
-              cellStateProps[gameBoard[row][col]].textColor);
+              cellStateProps[playerBoard[row][col]].backgroundColor,
+              cellStateProps[playerBoard[row][col]].textColor);
         }
       }
       // Right border
@@ -93,7 +95,7 @@ void displayBoard(int gameBoard[][MAX_BOARD_SIZE], int cursorRow, int cursorCol,
     for (int row = 0; row < boardHeight; ++row) {
       for (int col = 0; col < boardWidth; ++col) {
         // Update only if the cell has changed
-        if (oldGameBoard[row][col] != gameBoard[row][col]) {
+        if (oldPlayerBoard[row][col] != playerBoard[row][col]) {
           printColoredTextWrapper(
               [&]() {
                 setConsoleCursorPosition(
@@ -101,18 +103,19 @@ void displayBoard(int gameBoard[][MAX_BOARD_SIZE], int cursorRow, int cursorCol,
                     PADDING_Y + PANEL_HEIGHT + BORDER_HEIGHT +
                         row * CELL_HEIGHT);
                 std::cout << std::setw(CELL_WIDTH) << std::left
-                          << cellStateProps[gameBoard[row][col]].symbol
+                          << cellStateProps[playerBoard[row][col]].symbol
                           << std::right;
               },
-              cellStateProps[gameBoard[row][col]].backgroundColor,
-              cellStateProps[gameBoard[row][col]].textColor);
+              cellStateProps[playerBoard[row][col]].backgroundColor,
+              cellStateProps[playerBoard[row][col]].textColor);
         }
       }
     }
 
     // Update only if the cursor has changed
     if (oldCursorRow != cursorRow || oldCursorCol != cursorCol ||
-        oldGameBoard[cursorRow][cursorCol] != gameBoard[cursorRow][cursorCol]) {
+        oldPlayerBoard[cursorRow][cursorCol] !=
+            playerBoard[cursorRow][cursorCol]) {
       // Remove old cursor
       if (oldCursorRow != -1 || oldCursorCol != -1) {
         printColoredTextWrapper(
@@ -121,14 +124,15 @@ void displayBoard(int gameBoard[][MAX_BOARD_SIZE], int cursorRow, int cursorCol,
                   PADDING_X + BORDER_WIDTH + oldCursorCol * CELL_WIDTH,
                   PADDING_Y + PANEL_HEIGHT + BORDER_HEIGHT +
                       oldCursorRow * CELL_HEIGHT);
-              std::cout << std::setw(CELL_WIDTH) << std::left
-                        << cellStateProps[gameBoard[oldCursorRow][oldCursorCol]]
-                               .symbol
-                        << std::right;
+              std::cout
+                  << std::setw(CELL_WIDTH) << std::left
+                  << cellStateProps[playerBoard[oldCursorRow][oldCursorCol]]
+                         .symbol
+                  << std::right;
             },
-            cellStateProps[gameBoard[oldCursorRow][oldCursorCol]]
+            cellStateProps[playerBoard[oldCursorRow][oldCursorCol]]
                 .backgroundColor,
-            cellStateProps[gameBoard[oldCursorRow][oldCursorCol]].textColor);
+            cellStateProps[playerBoard[oldCursorRow][oldCursorCol]].textColor);
       }
       // Update new cursor
       if (cursorRow != -1 || cursorCol != -1) {
@@ -140,12 +144,12 @@ void displayBoard(int gameBoard[][MAX_BOARD_SIZE], int cursorRow, int cursorCol,
                       cursorRow * CELL_HEIGHT);
               std::cout
                   << std::setw(CELL_WIDTH) << std::left
-                  << cellStateProps[gameBoard[cursorRow][cursorCol]].symbol
+                  << cellStateProps[playerBoard[cursorRow][cursorCol]].symbol
                   << std::right;
             },
             cellStateProps[SELECTED].backgroundColor,
             cellStateProps[SELECTED].textColor);
-        memcpy(oldGameBoard, gameBoard,
+        memcpy(oldPlayerBoard, playerBoard,
                MAX_BOARD_SIZE * MAX_BOARD_SIZE * sizeof(int));
       }
       // Update old cursor
@@ -155,7 +159,7 @@ void displayBoard(int gameBoard[][MAX_BOARD_SIZE], int cursorRow, int cursorCol,
   }
 }
 
-void displayNumFlags(const int &numFlags, bool firstCall) {
+void displayNumFlags(const int &numFlags, const bool &firstCall) {
   if (firstCall) {
     setConsoleCursorPosition(PADDING_X, PADDING_Y);
     std::cout << "+-----+---+";
@@ -163,7 +167,6 @@ void displayNumFlags(const int &numFlags, bool firstCall) {
     std::cout << "|Flags|" << std::setw(3) << numFlags << "|";
     setConsoleCursorPosition(PADDING_X, PADDING_Y + 2);
     std::cout << "+-----+---+";
-    firstCall = false;
   } else {
     // Remove old flag count
     setConsoleCursorPosition(PADDING_X + 7, PADDING_Y + 1);
@@ -174,14 +177,13 @@ void displayNumFlags(const int &numFlags, bool firstCall) {
   }
 }
 
-void displayBoardStatus(const std::string &boardStatus, bool firstCall) {
+void displayBoardStatus(const std::string &boardStatus, const bool &firstCall) {
   if (firstCall) {
     setConsoleCursorPosition(
         getStartPositionOfACenteredText(boardStatus.size()),
         PADDING_Y + PANEL_HEIGHT + BORDER_HEIGHT + CELL_HEIGHT * boardHeight +
             2);
     std::cout << boardStatus;
-    firstCall = false;
   } else {
     // Remove old board status
     setConsoleCursorPosition(0, PADDING_Y + PANEL_HEIGHT + BORDER_HEIGHT +
@@ -196,7 +198,7 @@ void displayBoardStatus(const std::string &boardStatus, bool firstCall) {
   }
 }
 
-void displayTimer(const long long &elapsedTime, bool firstCall) {
+void displayTimer(const long long &elapsedTime, const bool &firstCall) {
   if (firstCall) {
     setConsoleCursorPosition(
         PADDING_X + BORDER_WIDTH + CELL_WIDTH * boardWidth + BORDER_WIDTH - 10,
@@ -210,7 +212,6 @@ void displayTimer(const long long &elapsedTime, bool firstCall) {
         PADDING_X + BORDER_WIDTH + CELL_WIDTH * boardWidth + BORDER_WIDTH - 10,
         PADDING_Y + 2);
     std::cout << "+----+---+";
-    firstCall = false;
   } else {
     // Remove old timer
     setConsoleCursorPosition(

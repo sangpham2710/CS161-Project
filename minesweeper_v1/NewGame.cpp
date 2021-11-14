@@ -24,7 +24,7 @@ void displayLevelOptions(const int& oldLevelOption) {
   }
 }
 
-int handleGameLevelOptions(const int& oldLevelOption) {
+int handleLevelOptions(const int& oldLevelOption) {
   bool selected = false;
   int newLevelOption = oldLevelOption;
   while (!selected) {
@@ -74,11 +74,7 @@ int NewGame() {
   static int oldLevelOption = 0;
   resetConsoleScreen();
   displayLevelOptions(oldLevelOption);
-  oldLevelOption = handleGameLevelOptions(oldLevelOption);
-
-  currentLevel = oldLevelOption;
-  boardHeight = boardLevelsInfo[oldLevelOption].height;
-  boardWidth = boardLevelsInfo[oldLevelOption].width;
-  numMines = boardLevelsInfo[oldLevelOption].numMines;
-  return startGame(NEW);
+  int selectedLevel = handleLevelOptions(oldLevelOption);
+  oldLevelOption = selectedLevel;
+  return startGame(selectedLevel);
 }

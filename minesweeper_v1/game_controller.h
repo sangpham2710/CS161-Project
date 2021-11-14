@@ -1,8 +1,6 @@
 #ifndef GAME_CONTROLLER_H_INCLUDED
 #define GAME_CONTROLLER_H_INCLUDED
 
-enum startGameStates { NEW, CONTINUE };
-
-int startGame(const int &state);
+int startGame(const int& currentLevel = -1);
 
 #endif  // GAME_CONTROLLER_H_INCLUDED
