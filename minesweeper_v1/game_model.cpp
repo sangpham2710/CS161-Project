@@ -161,7 +161,7 @@ void revealAllMines(GameBoard &gameBoard, const bool &won) {
   }
 }
 
-long long savedElapsedTime, savedLeaderboard[NUM_LEVELS][NUM_RECORDS_PER_LEVEL];
+long long savedElapsedTime, savedLeaderboard[NUM_LEVELS][NUM_PLAYERS_PER_LEVEL];
 GameBoard savedGameBoard;
 int savedNumOpenedCell;
 
@@ -201,9 +201,9 @@ void saveBoard(GameBoard &gameBoard, const long long &elapsedTime,
 //[mineBoard]
 void updateDataFile() {
   std::ofstream dataFile(DATA_FILE_NAME);
-  for (int i = 0; i < NUM_LEVELS; i++) {
-    for (int j = 0; j < NUM_RECORDS_PER_LEVEL; j++)
-      dataFile << savedLeaderboard[i][j] << " ";
+  for (int level = 0; level < NUM_LEVELS; level++) {
+    for (int player = 0; player < NUM_PLAYERS_PER_LEVEL; player++)
+      dataFile << savedLeaderboard[level][player] << " ";
     dataFile << '\n';
   }
 
@@ -264,9 +264,8 @@ void transferDataToGame(GameBoard &gameBoard, long long &elapsedTime,
     }
 }
 
-void transferDataToLeaderboard(
-    long long leaderboard[][NUM_RECORDS_PER_LEVEL + 1]) {
-  for (int mode = 0; mode < NUM_LEVELS; mode++)
-    for (int player = 0; player < NUM_RECORDS_PER_LEVEL; player++)
-      leaderboard[mode][player] = savedLeaderboard[mode][player];
+void transferDataToLeaderboard(long long leaderboard[][NUM_PLAYERS_PER_LEVEL]) {
+  for (int level = 0; level < NUM_LEVELS; level++)
+    for (int player = 0; player < NUM_PLAYERS_PER_LEVEL; player++)
+      leaderboard[level][player] = savedLeaderboard[level][player];
 }

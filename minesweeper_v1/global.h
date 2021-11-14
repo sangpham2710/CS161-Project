@@ -74,6 +74,6 @@ const std::vector<std::string> levelOptions = {
         intToString(boardLevelsInfo[EXPERT].height) + " grid"};
 
 // Leaderboard
-const int NUM_RECORDS_PER_LEVEL = 10;
+const int NUM_PLAYERS_PER_LEVEL = 10;
 
 #endif  // GLOBAL_H_INCLUDED

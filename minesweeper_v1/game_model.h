@@ -40,7 +40,6 @@ bool loadDataFile();
 void updateDataFile();
 void transferDataToGame(GameBoard &gameBoard, long long &elapsedTime,
                         int &numOpenedCell);
-void transferDataToLeaderboard(
-    long long leaderboard[][NUM_RECORDS_PER_LEVEL + 1]);
+void transferDataToLeaderboard(long long leaderboard[][NUM_PLAYERS_PER_LEVEL]);
 
 #endif  // GAME_MODEL_H_INCLUDED
