@@ -11,9 +11,10 @@
 #include "game_model.h"
 #include "game_view.h"
 #include "global.h"
+#include "main_utils.h"
 #include "scene_manager.h"
 
-int startGame(const int &currentLevel) {
+int startGame(const int& currentLevel) {
   // setConsoleFont(L"Consolas", 600, 20, 40);
 
   // mineBoard to save the actual values of cells (mine or number).
@@ -30,7 +31,7 @@ int startGame(const int &currentLevel) {
   long long totalElapsedTime = 0;
   int numOpenedCell = 0;
   bool endGame = false;
-
+  // ============================== SETUP BOARD ==============================
   if (currentLevel != -1) {  // New game
     gameBoard.currentLevel = currentLevel;
     gameBoard.boardWidth = boardLevelsInfo[currentLevel].width;
@@ -45,7 +46,7 @@ int startGame(const int &currentLevel) {
       std::cout << "No Previous Play Found!" << '\n'
                 << "Press any key to Start a new Game.";
       getUserAction();
-      return NewGame();
+      return NEW_GAME;
     }
     transferDataToGame(gameBoard, savedElapsedTime, numOpenedCell);
   }
@@ -53,32 +54,24 @@ int startGame(const int &currentLevel) {
   totalSafeCell =
       gameBoard.boardHeight * gameBoard.boardWidth - gameBoard.numMines;
 
+  // ============================== SETUP DISPLAY ==============================
   setupDisplay(gameBoard.boardWidth, gameBoard.boardHeight);
   displayBoard(gameBoard.playerBoard, cursorRow, cursorCol, true);
   displayNumFlags(gameBoard.numFlagsLeft, true);
   displayBoardStatus(gameBoard.boardStatus, true);
   // displayTimer(0, true);
-  displayTimer(savedElapsedTime / 1000, true);
+  displayTimer(savedElapsedTime, true);
 
+  // ============================== GAME LOOP ==============================
   while (!endGame) {
-    // Get input from player
+    // ==================== UPDATE ACTION ====================
     int action = NO_ACTION;
+    action = timedGetUserAction(1000 / FPS);
 
-    std::chrono::high_resolution_clock::time_point updateInputStartTime =
-        std::chrono::high_resolution_clock::now();
-
-    while (std::chrono::duration_cast<std::chrono::milliseconds>(
-               std::chrono::high_resolution_clock::now() - updateInputStartTime)
-               .count() <= 1000 / FPS) {
-      if (kbhit()) {
-        action = getUserAction();
-        break;
-      }
-    }
-
+    // ==================== HANDLE ACTION ====================
     if (action == ESCAPE) {
       endGame = true;
-      break;
+      return WELCOME;
     } else if (action == UP) {
       cursorRow -= isValidCell(gameBoard.boardWidth, gameBoard.boardHeight,
                                cursorRow - 1, cursorCol);
@@ -146,37 +139,53 @@ int startGame(const int &currentLevel) {
         gameBoard.boardStatus = "Can't flag a revealed cell.";
       }
     } else if (action == SAVE_GAME) {
-      saveBoard(gameBoard,
-                std::chrono::duration_cast<std::chrono::milliseconds>(
-                    std::chrono::high_resolution_clock::now() - gameStartTime)
-                    .count(),
-                numOpenedCell);
+      saveBoard(
+          gameBoard,
+          getTimeDiff(gameStartTime, std::chrono::high_resolution_clock::now()),
+          numOpenedCell);
       gameBoard.boardStatus = "Game saved!";
     }
+
+    // Handle endGame edge cases
     if (endGame) {
+      // Remove cursor
       cursorRow = -1;
       cursorCol = -1;
+
       totalElapsedTime =
-          std::chrono::duration_cast<std::chrono::milliseconds>(
-              std::chrono::high_resolution_clock::now() - gameStartTime)
-              .count();
+          getTimeDiff(gameStartTime, std::chrono::high_resolution_clock::now());
+
+      // Update Leaderboard if won
       if (gameBoard.boardStatus == boardStatusOptions[WIN])
-        saveLeaderboard(totalElapsedTime / 1000, gameBoard.currentLevel);
+        saveLeaderboard(totalElapsedTime, gameBoard.currentLevel);
     }
+
+    // ==================== UPDATE DISPLAY ====================
     displayBoard(gameBoard.playerBoard, cursorRow, cursorCol);
     displayNumFlags(gameBoard.numFlagsLeft);
     displayBoardStatus(gameBoard.boardStatus);
 
     // If game timer has started, display the timer accordingly
-    if (gameStartTime != std::chrono::high_resolution_clock::time_point()) {
-      displayTimer(
-          std::chrono::duration_cast<std::chrono::seconds>(
-              std::chrono::high_resolution_clock::now() - gameStartTime)
-              .count());
+    if (isTimerStarted) {
+      displayTimer(getTimeDiff(gameStartTime,
+                               std::chrono::high_resolution_clock::now()));
     } else {
-      displayTimer(savedElapsedTime / 1000);
+      displayTimer(savedElapsedTime);
     }
   }
   getUserAction();
   return WELCOME;
+}
+
+int timedGetUserAction(const long long& waitTime) {
+  std::chrono::high_resolution_clock::time_point startTime =
+      std::chrono::high_resolution_clock::now();
+
+  while (getTimeDiff(startTime, std::chrono::high_resolution_clock::now()) <=
+         waitTime) {
+    if (kbhit()) {
+      return getUserAction();
+      break;
+    }
+  }
 }

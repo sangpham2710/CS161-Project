@@ -207,7 +207,7 @@ void displayTimer(const long long &elapsedTime, const bool &firstCall) {
     setConsoleCursorPosition(
         PADDING_X + BORDER_WIDTH + CELL_WIDTH * boardWidth + BORDER_WIDTH - 10,
         PADDING_Y + 1);
-    std::cout << "|Time|" << std::setw(3) << elapsedTime << "|";
+    std::cout << "|Time|" << std::setw(3) << elapsedTime / 1000 << "|";
     setConsoleCursorPosition(
         PADDING_X + BORDER_WIDTH + CELL_WIDTH * boardWidth + BORDER_WIDTH - 10,
         PADDING_Y + 2);
@@ -222,6 +222,6 @@ void displayTimer(const long long &elapsedTime, const bool &firstCall) {
     setConsoleCursorPosition(
         PADDING_X + BORDER_WIDTH + CELL_WIDTH * boardWidth + BORDER_WIDTH - 4,
         PADDING_Y + 1);
-    std::cout << std::setw(3) << elapsedTime;
+    std::cout << std::setw(3) << elapsedTime / 1000;
   }
 }

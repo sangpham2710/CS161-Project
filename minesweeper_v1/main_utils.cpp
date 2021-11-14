@@ -47,3 +47,11 @@ std::string intToString(const int &number) {
   stream << number;
   return stream.str();
 }
+
+long long getTimeDiff(
+    std::chrono::high_resolution_clock::time_point timePoint1,
+    std::chrono::high_resolution_clock::time_point timePoint2) {
+  return std::chrono::duration_cast<std::chrono::milliseconds>(timePoint2 -
+                                                               timePoint1)
+      .count();
+}
