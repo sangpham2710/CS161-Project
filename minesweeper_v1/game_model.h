@@ -12,11 +12,11 @@ enum boardStatusTypes { WIN, LOSE };
 const std::vector<std::string> boardStatusOptions = {
     "Congratulation! You won!", "Umm... Quite a big explosion, right?"};
 
-bool revealACell(GameBoard &gameBoard, const int &row, const int &col,
-                 int &numOpenedCell, int totalSafeCell);
+void constructBoard(GameBoard &gameBoard, const int &currentLevel);
+void copyBoard(GameBoard &dest, const GameBoard &src);
+bool revealACell(GameBoard &gameBoard, const int &row, const int &col);
 bool revealNeighboringCells(GameBoard &gameBoard, const int &row,
-                            const int &col, int &numOpenedCell,
-                            int totalSafeCell);
+                            const int &col);
 void revealAllMines(GameBoard &gameBoard, const bool &won);
 void resetBoard(GameBoard &gameBoard);
 bool isValidCell(const int &width, const int &height, const int &row,
@@ -30,16 +30,14 @@ std::vector<std::pair<int, int>> getNeighborsPositions(const int &width,
 int countNeighboringCellStates(const int &width, const int &height,
                                int board[][MAX_BOARD_SIZE], const int &row,
                                const int &col, const int &cellState);
-void uncoverBoard(GameBoard &gameBoard, const int &row, const int &col,
-                  int &numOpenedCell);
+void uncoverBoard(GameBoard &gameBoard, const int &row, const int &col);
 
-void saveLeaderboard(const long long &elapsedTime, const int &gameLevel);
-void saveBoard(GameBoard &gameBoard, const long long &elapsedTime,
-               const int &numOpenedCell);
+void saveLeaderboard(const int &gameLevel, const long long &elapsedTime);
+void saveBoard(GameBoard &gameBoard);
 bool loadDataFile();
 void updateDataFile();
-void transferDataToGame(GameBoard &gameBoard, long long &elapsedTime,
-                        int &numOpenedCell);
-void transferDataToLeaderboard(long long leaderboard[][NUM_PLAYERS_PER_LEVEL]);
+void transferDataToGame(GameBoard &gameBoard);
+void transferDataToLeaderboard(
+    long long leaderboard[][NUM_PLAYERS_PER_LEVEL + 1]);
 
 #endif  // GAME_MODEL_H_INCLUDED

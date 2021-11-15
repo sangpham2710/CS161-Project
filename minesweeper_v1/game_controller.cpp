@@ -22,25 +22,14 @@ int startGame(const int& currentLevel) {
   // displayed to player
   GameBoard gameBoard;
   int cursorRow = 0, cursorCol = 0;
-  int totalSafeCell;
-  long long savedElapsedTime = 0;
   bool isTimerStarted = false;
   std::chrono::high_resolution_clock::time_point gameStartTime;
 
-  // Game Start
-  long long totalElapsedTime = 0;
-  int numOpenedCell = 0;
+  // int numOpenedCells = 0;
   bool endGame = false;
   // ============================== SETUP BOARD ==============================
   if (currentLevel != -1) {  // New game
-    gameBoard.currentLevel = currentLevel;
-    gameBoard.boardWidth = boardLevelsInfo[currentLevel].width;
-    gameBoard.boardHeight = boardLevelsInfo[currentLevel].height;
-    gameBoard.numMines = boardLevelsInfo[currentLevel].numMines;
-    resetBoard(gameBoard);
-    generateMineBoard(gameBoard, gameBoard.numMines);
-    gameBoard.numFlagsLeft = gameBoard.numMines;
-
+    constructBoard(gameBoard, currentLevel);
   } else {  // Continue game
     if (!loadDataFile()) {
       std::cout << "No Previous Play Found!" << '\n'
@@ -48,11 +37,8 @@ int startGame(const int& currentLevel) {
       getUserAction();
       return NEW_GAME;
     }
-    transferDataToGame(gameBoard, savedElapsedTime, numOpenedCell);
+    transferDataToGame(gameBoard);
   }
-
-  totalSafeCell =
-      gameBoard.boardHeight * gameBoard.boardWidth - gameBoard.numMines;
 
   // ============================== SETUP DISPLAY ==============================
   setupDisplay(gameBoard.boardWidth, gameBoard.boardHeight);
@@ -60,7 +46,7 @@ int startGame(const int& currentLevel) {
   displayNumFlags(gameBoard.numFlagsLeft, true);
   displayBoardStatus(gameBoard.boardStatus, true);
   // displayTimer(0, true);
-  displayTimer(savedElapsedTime, true);
+  displayTimer(gameBoard.elapsedTime, true);
 
   // ============================== GAME LOOP ==============================
   while (!endGame) {
@@ -69,6 +55,16 @@ int startGame(const int& currentLevel) {
     action = timedGetUserAction(1000 / FPS);
 
     // ==================== HANDLE ACTION ====================
+
+    // If action is a mouse click then start timer
+    if (action == MOUSE1 || action == MOUSE2 || action == MOUSE3) {
+      if (!isTimerStarted) {
+        // Start the game timer
+        gameStartTime = std::chrono::high_resolution_clock::now();
+        isTimerStarted = true;
+      }
+    }
+
     if (action == ESCAPE) {
       endGame = true;
       return WELCOME;
@@ -85,13 +81,7 @@ int startGame(const int& currentLevel) {
       cursorCol += isValidCell(gameBoard.boardWidth, gameBoard.boardHeight,
                                cursorRow, cursorCol + 1);
     } else if (action == MOUSE1) {
-      if (!isTimerStarted) {
-        // Start the game timer
-        gameStartTime = std::chrono::high_resolution_clock::now() -
-                        std::chrono::milliseconds(savedElapsedTime);
-        isTimerStarted = true;
-      }
-      if (numOpenedCell == 0) {
+      if (gameBoard.numOpenedCells == 0) {
         // Replace first cell if it is a mine
         if (gameBoard.mineBoard[cursorRow][cursorCol] == MINE)
           replaceMine(gameBoard, cursorRow, cursorCol);
@@ -99,8 +89,7 @@ int startGame(const int& currentLevel) {
 
       if (gameBoard.playerBoard[cursorRow][cursorCol] == UNKNOWN ||
           gameBoard.playerBoard[cursorRow][cursorCol] == QUESTIONED) {
-        endGame = revealACell(gameBoard, cursorRow, cursorCol, numOpenedCell,
-                              totalSafeCell);
+        endGame = revealACell(gameBoard, cursorRow, cursorCol);
 
       } else {
         if (gameBoard.playerBoard[cursorRow][cursorCol] == FLAGGED)
@@ -120,8 +109,7 @@ int startGame(const int& currentLevel) {
         gameBoard.boardStatus =
             "Please flag the correct number of neighboring mines!";
       } else
-        endGame = revealNeighboringCells(gameBoard, cursorRow, cursorCol,
-                                         numOpenedCell, totalSafeCell);
+        endGame = revealNeighboringCells(gameBoard, cursorRow, cursorCol);
     } else if (action == MOUSE3) {
       if (gameBoard.playerBoard[cursorRow][cursorCol] == UNKNOWN) {
         if (gameBoard.numFlagsLeft > 0) {
@@ -139,10 +127,17 @@ int startGame(const int& currentLevel) {
         gameBoard.boardStatus = "Can't flag a revealed cell.";
       }
     } else if (action == SAVE_GAME) {
-      saveBoard(
-          gameBoard,
-          getTimeDiff(gameStartTime, std::chrono::high_resolution_clock::now()),
-          numOpenedCell);
+      GameBoard savingGameBoard;
+      copyBoard(savingGameBoard, gameBoard);
+
+      savingGameBoard.elapsedTime =
+          gameBoard.elapsedTime +
+          (isTimerStarted
+               ? getTimeDiff(gameStartTime,
+                             std::chrono::high_resolution_clock::now())
+               : 0);
+
+      saveBoard(savingGameBoard);
       gameBoard.boardStatus = "Game saved!";
     }
 
@@ -151,13 +146,12 @@ int startGame(const int& currentLevel) {
       // Remove cursor
       cursorRow = -1;
       cursorCol = -1;
-
-      totalElapsedTime =
+      long long totalElapsedTime =
+          gameBoard.elapsedTime +
           getTimeDiff(gameStartTime, std::chrono::high_resolution_clock::now());
-
       // Update Leaderboard if won
       if (gameBoard.boardStatus == boardStatusOptions[WIN])
-        saveLeaderboard(totalElapsedTime, gameBoard.currentLevel);
+        saveLeaderboard(gameBoard.currentLevel, totalElapsedTime);
     }
 
     // ==================== UPDATE DISPLAY ====================
@@ -166,12 +160,11 @@ int startGame(const int& currentLevel) {
     displayBoardStatus(gameBoard.boardStatus);
 
     // If game timer has started, display the timer accordingly
-    if (isTimerStarted) {
-      displayTimer(getTimeDiff(gameStartTime,
-                               std::chrono::high_resolution_clock::now()));
-    } else {
-      displayTimer(savedElapsedTime);
-    }
+    displayTimer(gameBoard.elapsedTime +
+                 (isTimerStarted
+                      ? getTimeDiff(gameStartTime,
+                                    std::chrono::high_resolution_clock::now())
+                      : 0));
   }
   getUserAction();
   return WELCOME;

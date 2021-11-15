@@ -27,6 +27,8 @@ struct GameBoard {
   int boardHeight;
   int numMines;
   int numFlagsLeft;
+  int numOpenedCells;
+  long long elapsedTime;
   int currentLevel;
   std::string boardStatus;
   int playerBoard[MAX_BOARD_SIZE][MAX_BOARD_SIZE];

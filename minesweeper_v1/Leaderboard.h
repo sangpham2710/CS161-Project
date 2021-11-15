@@ -3,10 +3,10 @@
 
 #include "global.h"
 
-void resetLeaderboard(long long leaderboard[][NUM_PLAYERS_PER_LEVEL]);
+void resetLeaderboard(long long leaderboard[][NUM_PLAYERS_PER_LEVEL + 1]);
 void getOldLeaderboardData();
-bool addToLeaderboard(int MODE, long long point,
-                      long long savedLeaderboard[][NUM_PLAYERS_PER_LEVEL]);
+bool addToLeaderboard(const int& level, const long long& elapsedTime,
+                      long long savedLeaderboard[][NUM_PLAYERS_PER_LEVEL + 1]);
 void displayLeaderboard();
 int Leaderboard();
 
