@@ -62,12 +62,15 @@ void updateLeaderboardData() {
   dataFile.close();
 }
 
-void addToLeaderboard(const int& level, const long long& elapsedTime) {
+bool addToLeaderboard(const int& level, const long long& elapsedTime) {
   leaderboard[level][NUM_PLAYERS_PER_LEVEL] = elapsedTime;
   std::sort(leaderboard[level], leaderboard[level] + NUM_PLAYERS_PER_LEVEL + 1);
 
-  if (elapsedTime != leaderboard[level][NUM_PLAYERS_PER_LEVEL])
+  if (elapsedTime != leaderboard[level][NUM_PLAYERS_PER_LEVEL]) {
     updateLeaderboardData();
+    return true;
+  } else
+    return false;
 }
 
 void displayLeaderboard() {
