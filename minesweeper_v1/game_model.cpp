@@ -190,28 +190,16 @@ void revealAllMines(GameBoard &gameBoard, const bool &won) {
 long long savedLeaderboard[NUM_LEVELS][NUM_PLAYERS_PER_LEVEL + 1];
 GameBoard savedGameBoard;
 
-const std::string DATA_FILE_NAME = "data.txt";
+const std::string GAMEBOARD_FILE_NAME = "data.txt";
 
 void saveLeaderboard(const int &gameLevel, const long long &elapsedTime) {
   if (addToLeaderboard(gameLevel, elapsedTime, savedLeaderboard))
-    updateDataFile();
+    updateGameBoardDataFile();
 }
 
 void saveBoard(GameBoard &gameBoard) {
-  savedGameBoard.boardWidth = gameBoard.boardWidth;
-  savedGameBoard.boardHeight = gameBoard.boardHeight;
-  savedGameBoard.numMines = gameBoard.numMines;
-  savedGameBoard.numFlagsLeft = gameBoard.numFlagsLeft;
-  savedGameBoard.currentLevel = gameBoard.currentLevel;
-  savedGameBoard.numOpenedCells = gameBoard.numOpenedCells;
-  savedGameBoard.elapsedTime = gameBoard.elapsedTime;
-
-  for (int row = 0; row < gameBoard.boardHeight; row++)
-    for (int col = 0; col < gameBoard.boardWidth; col++) {
-      savedGameBoard.playerBoard[row][col] = gameBoard.playerBoard[row][col];
-      savedGameBoard.mineBoard[row][col] = gameBoard.mineBoard[row][col];
-    }
-  updateDataFile();
+  copyBoard(savedGameBoard, gameBoard);
+  updateGameBoardDataFile();
 }
 
 // DATA FILE TEMPLATE
@@ -223,8 +211,8 @@ void saveBoard(GameBoard &gameBoard) {
 // 0 0 0 0 0 0
 //[displayBoard]
 //[mineBoard]
-void updateDataFile() {
-  std::ofstream dataFile(DATA_FILE_NAME);
+void updateGameBoardDataFile() {
+  std::ofstream dataFile(GAMEBOARD_FILE_NAME);
   for (int level = 0; level < NUM_LEVELS; level++) {
     for (int player = 0; player < NUM_PLAYERS_PER_LEVEL; player++)
       dataFile << savedLeaderboard[level][player] << " ";
@@ -250,8 +238,8 @@ void updateDataFile() {
   dataFile.close();
 }
 
-bool loadDataFile() {
-  std::ifstream dataFile(DATA_FILE_NAME);
+bool loadSavedGameBoardDataFile() {
+  std::ifstream dataFile(GAMEBOARD_FILE_NAME);
   if (!dataFile) return false;
   for (int i = 0; i < 3; i++)
     for (int j = 0; j < 10; j++) dataFile >> savedLeaderboard[i][j];
@@ -274,20 +262,8 @@ bool loadDataFile() {
   return true;
 }
 
-void transferDataToGame(GameBoard &gameBoard) {
-  gameBoard.boardWidth = savedGameBoard.boardWidth;
-  gameBoard.boardHeight = savedGameBoard.boardHeight;
-  gameBoard.numMines = savedGameBoard.numMines;
-  gameBoard.numFlagsLeft = savedGameBoard.numFlagsLeft;
-  gameBoard.currentLevel = savedGameBoard.currentLevel;
-  gameBoard.numOpenedCells = savedGameBoard.numOpenedCells;
-  gameBoard.elapsedTime = savedGameBoard.elapsedTime;
-
-  for (int row = 0; row < gameBoard.boardHeight; row++)
-    for (int col = 0; col < gameBoard.boardWidth; col++) {
-      gameBoard.playerBoard[row][col] = savedGameBoard.playerBoard[row][col];
-      gameBoard.mineBoard[row][col] = savedGameBoard.mineBoard[row][col];
-    }
+void loadSavedGameBoardData(GameBoard &gameBoard) {
+  copyBoard(gameBoard, savedGameBoard);
 }
 
 void transferDataToLeaderboard(

@@ -34,9 +34,9 @@ void uncoverBoard(GameBoard &gameBoard, const int &row, const int &col);
 
 void saveLeaderboard(const int &gameLevel, const long long &elapsedTime);
 void saveBoard(GameBoard &gameBoard);
-bool loadDataFile();
-void updateDataFile();
-void transferDataToGame(GameBoard &gameBoard);
+bool loadSavedGameBoardDataFile();
+void updateGameBoardDataFile();
+void loadSavedGameBoardData(GameBoard &gameBoard);
 void transferDataToLeaderboard(
     long long leaderboard[][NUM_PLAYERS_PER_LEVEL + 1]);
 

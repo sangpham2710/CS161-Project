@@ -30,13 +30,13 @@ int startGame(const int& currentLevel) {
   if (currentLevel != -1) {  // New game
     constructBoard(gameBoard, currentLevel);
   } else {  // Continue game
-    if (!loadDataFile()) {
+    if (!loadSavedGameBoardDataFile()) {
       std::cout << "No Previous Play Found!" << '\n'
                 << "Press any key to Start a new Game.";
       getUserAction();
       return NEW_GAME;
     }
-    transferDataToGame(gameBoard);
+    loadSavedGameBoardData(gameBoard);
   }
 
   // ============================== SETUP DISPLAY ==============================
