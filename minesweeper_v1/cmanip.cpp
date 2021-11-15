@@ -29,6 +29,20 @@ void setWindowSize(const short& width, const short& height) {
   SetConsoleScreenBufferSize(hOut, pos);
 }
 
+int getWindowWidth() {
+  HANDLE hOut = GetStdHandle(STD_OUTPUT_HANDLE);
+  CONSOLE_SCREEN_BUFFER_INFO csbf;
+  GetConsoleScreenBufferInfo(hOut, &csbf);
+  return csbf.dwSize.X;
+}
+
+int getWindowHeight() {
+  HANDLE hOut = GetStdHandle(STD_OUTPUT_HANDLE);
+  CONSOLE_SCREEN_BUFFER_INFO csbf;
+  GetConsoleScreenBufferInfo(hOut, &csbf);
+  return csbf.dwSize.Y;
+}
+
 void fixWindowSize() {
   HWND consoleWindow = GetConsoleWindow();
   SetWindowLong(

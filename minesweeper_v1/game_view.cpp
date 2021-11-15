@@ -3,21 +3,35 @@
 #include <iomanip>
 #include <iostream>
 
+// #include "conio.h"
 #include "main_utils.h"
+#include "windows.h"
 
 int PADDING_X, PADDING_Y;
 int boardWidth, boardHeight;
 
-void setupDisplay(const int &_boardWidth, const int &_boardHeight) {
+void setupDisplay(const int &_boardWidth, const int &_boardHeight,
+                  const int &currentLevel) {
+  if (currentLevel == BEGINNER) {
+    setConsoleFont(L"Consolas", FW_BOLD, FONT_WIDTH_BEGINNER,
+                   FONT_HEIGHT_BEGINNER);
+    setWindowSize(WINDOW_WIDTH_BEGINNER, WINDOW_HEIGHT_BEGINNER);
+  }
+
   boardWidth = _boardWidth;
   boardHeight = _boardHeight;
-  PADDING_X =
-      (WINDOW_WIDTH - (BORDER_WIDTH + CELL_WIDTH * boardWidth + BORDER_WIDTH)) /
-      2;
+  PADDING_X = (getWindowWidth() -
+               (BORDER_WIDTH + CELL_WIDTH * boardWidth + BORDER_WIDTH)) /
+              2;
   PADDING_Y =
-      (WINDOW_HEIGHT - (PANEL_HEIGHT + BORDER_HEIGHT +
-                        CELL_HEIGHT * boardHeight + BORDER_HEIGHT + 2)) /
+      (getWindowHeight() - (PANEL_HEIGHT + BORDER_HEIGHT +
+                            CELL_HEIGHT * boardHeight + BORDER_HEIGHT + 2)) /
       2;
+}
+
+void resetDisplay() {
+  setConsoleFont(L"Consolas", FW_BOLD, FONT_WIDTH, FONT_HEIGHT);
+  setWindowSize(WINDOW_WIDTH, WINDOW_HEIGHT);
 }
 
 void displayBoard(int playerBoard[][MAX_BOARD_SIZE], const int &cursorRow,
@@ -188,7 +202,7 @@ void displayBoardStatus(const std::string &boardStatus, const bool &firstCall) {
     // Remove old board status
     setConsoleCursorPosition(0, PADDING_Y + PANEL_HEIGHT + BORDER_HEIGHT +
                                     CELL_HEIGHT * boardHeight + 2);
-    std::cout << std::string(WINDOW_WIDTH, ' ');
+    std::cout << std::string(getWindowWidth(), ' ');
     // Update new board status
     setConsoleCursorPosition(
         getStartPositionOfACenteredText(boardStatus.size()),

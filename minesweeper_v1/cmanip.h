@@ -48,6 +48,8 @@ enum actionTypes {
 
 void setWindowName(const std::string& name);
 void setWindowSize(const short& width, const short& height);
+int getWindowWidth();
+int getWindowHeight();
 void fixWindowSize();
 void setConsoleFont(const wchar_t fontName[], const short& fontWeight,
                     const short& width, const short& height);

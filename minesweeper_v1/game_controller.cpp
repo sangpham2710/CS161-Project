@@ -13,10 +13,9 @@
 #include "global.h"
 #include "main_utils.h"
 #include "scene_manager.h"
+#include "windows.h"
 
 int startGame(const int& currentLevel) {
-  // setConsoleFont(L"Consolas", 600, 20, 40);
-
   // mineBoard to save the actual values of cells (mine or number).
   // gameBoard to save the uncovered cell, the flagged cells, anything on board
   // displayed to player
@@ -41,7 +40,8 @@ int startGame(const int& currentLevel) {
   }
 
   // ============================== SETUP DISPLAY ==============================
-  setupDisplay(gameBoard.boardWidth, gameBoard.boardHeight);
+  setupDisplay(gameBoard.boardWidth, gameBoard.boardHeight,
+               gameBoard.currentLevel);
   displayBoard(gameBoard.playerBoard, cursorRow, cursorCol, true);
   displayNumFlags(gameBoard.numFlagsLeft, true);
   displayBoardStatus(gameBoard.boardStatus, true);
@@ -67,6 +67,7 @@ int startGame(const int& currentLevel) {
 
     if (action == ESCAPE) {
       endGame = true;
+      resetDisplay();
       return WELCOME;
     } else if (action == UP) {
       cursorRow -= isValidCell(gameBoard.boardWidth, gameBoard.boardHeight,
@@ -148,7 +149,10 @@ int startGame(const int& currentLevel) {
       cursorCol = -1;
       long long totalElapsedTime =
           gameBoard.elapsedTime +
-          getTimeDiff(gameStartTime, std::chrono::high_resolution_clock::now());
+          (isTimerStarted
+               ? getTimeDiff(gameStartTime,
+                             std::chrono::high_resolution_clock::now())
+               : 0);
       // Update Leaderboard if won
       if (gameBoard.boardStatus == boardStatusOptions[WIN])
         saveLeaderboard(gameBoard.currentLevel, totalElapsedTime);
@@ -167,6 +171,7 @@ int startGame(const int& currentLevel) {
                       : 0));
   }
   getUserAction();
+  resetDisplay();
   return WELCOME;
 }
 

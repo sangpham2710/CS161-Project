@@ -13,7 +13,7 @@ void resetConsoleScreen() {
 }
 
 int getStartPositionOfACenteredText(const int &textSize) {
-  return (WINDOW_WIDTH - textSize) / 2;
+  return (getWindowWidth() - textSize) / 2;
 }
 
 int printCenteredText(const std::string &text, const int &coordY) {
@@ -33,7 +33,7 @@ void printColoredTextWrapper(std::function<void()> func,
 int mod(const int &a, const int &b) { return (a % b + b) % b; }
 
 void setupWindow() {
-  setConsoleFont(L"Consolas", FW_BOLD, 16, 32);
+  setConsoleFont(L"Consolas", FW_BOLD, FONT_WIDTH, FONT_HEIGHT);
   setConsoleColor(CONSOLE_BACKGROUND_COLOR, CONSOLE_TEXT_COLOR);
   setWindowName("Minesweeper v1.0");
   setWindowSize(WINDOW_WIDTH, WINDOW_HEIGHT);

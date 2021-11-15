@@ -16,7 +16,7 @@ bool isFirstCall = true;
 void resetLeaderboard(long long leaderboard[][NUM_PLAYERS_PER_LEVEL + 1]) {
   for (int level = 0; level < NUM_LEVELS; level++)
     for (int player = 0; player < NUM_PLAYERS_PER_LEVEL; player++)
-      leaderboard[level][player] = 0;
+      leaderboard[level][player] = (int)1e6;
 }
 
 void getOldLeaderboardData() {

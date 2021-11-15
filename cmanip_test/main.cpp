@@ -7,6 +7,7 @@ using namespace std;
 
 int main() {
   setConsoleFont(L"Consolas", FW_BOLD, 10, 20);
-  cout << "\u2513" << endl;
+  setWindowSize(40, 30);
+  cout << getWindowWidth() << ' ' << getWindowHeight() << '\n';
   return 0;
 }

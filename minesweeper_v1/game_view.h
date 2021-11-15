@@ -5,7 +5,9 @@
 
 #include "global.h"
 
-void setupDisplay(const int &_boardWidth, const int &_boardHeight);
+void setupDisplay(const int &_boardWidth, const int &_boardHeight,
+                  const int &currentLevel);
+void resetDisplay();
 void displayBoard(int playerBoard[][MAX_BOARD_SIZE], const int &cursorRow,
                   const int &cursorCol, const bool &firstCall = false);
 void displayNumFlags(const int &numFlags, const bool &firstCall = false);

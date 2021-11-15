@@ -42,15 +42,19 @@ enum actionTypes {
   MOUSE2,
   MOUSE3,
   YES,
-  NO
+  NO,
+  SAVE_GAME
 };
 
 void setWindowName(const std::string& name);
 void setWindowSize(const short& width, const short& height);
+int getWindowWidth();
+int getWindowHeight();
 void fixWindowSize();
 void setConsoleFont(const wchar_t fontName[], const short& fontWeight,
                     const short& width, const short& height);
 void setConsoleColor(const int& backgroundColor, const int& textColor);
+void disableConsoleQuickEditMode();
 void showConsoleCursor(const bool& flag);
 void setConsoleCursorPosition(const short& x, const short& y);
 void setConsoleTextColor(const int& backgroundColor, const int& textColor);
