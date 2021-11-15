@@ -10,6 +10,7 @@
 #include "global.h"
 #include "main_utils.h"
 #include "scene_manager.h"
+#include "cmanip.h"
 
 const std::string LEADERBOARD_FILE_NAME = "leaderboard.txt";
 const int MAX_TIME = 1e6;
@@ -68,12 +69,9 @@ void addToLeaderboard(const int& level, const long long& elapsedTime) {
   if (elapsedTime != leaderboard[level][NUM_PLAYERS_PER_LEVEL]) updateLeaderboardData();
 }
 
-void resetLeaderboard() {
-  initLeaderboardFile();
-  loadLeaderboardData();
-}
-
 void displayLeaderboard() {
+  resetConsoleScreen();
+
   for (int level = 0; level < NUM_LEVELS; level++) {
     for (int player = 0; player < NUM_PLAYERS_PER_LEVEL; player++)
       if (leaderboard[level][player] == MAX_TIME)
@@ -85,9 +83,29 @@ void displayLeaderboard() {
   }
 }
 
+void resetLeaderboard() {
+  printCenteredText("Do you want to reset leaderboard (all data will be lost!) ?", 9);
+  printCenteredText("[Y] Yes / [N] No", 10);
+
+  while (true) {
+    int action = getUserAction();
+    if (action == YES) {
+      initLeaderboardFile();
+      displayLeaderboard();
+      return;
+    }
+
+    else if (action == NO || action == ESCAPE) {
+      return;
+    }
+  }
+}
+
 int Leaderboard() {
-  resetConsoleScreen();
   displayLeaderboard();
-  getUserAction();
+  if (getUserAction() == RESET_LEADERBOARD) {
+    resetLeaderboard();
+    getUserAction();
+  }
   return WELCOME;
 }

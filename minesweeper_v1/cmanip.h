@@ -43,7 +43,8 @@ enum actionTypes {
   MOUSE3,
   YES,
   NO,
-  SAVE_GAME
+  SAVE_GAME,
+  RESET_LEADERBOARD
 };
 
 void setWindowName(const std::string& name);
