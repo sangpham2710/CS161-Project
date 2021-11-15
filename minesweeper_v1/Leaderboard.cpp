@@ -3,6 +3,7 @@
 #include <algorithm>
 #include <iomanip>
 #include <iostream>
+#include <fstream>
 
 #include "Leaderboard.h"
 #include "game_model.h"
@@ -10,45 +11,73 @@
 #include "main_utils.h"
 #include "scene_manager.h"
 
+const std::string LEADERBOARD_FILE_NAME = "leaderboard.txt";
+const int MAX_TIME = 1e6;
+
+// 3 che do
+// 0 0 0 0 0 0 0 0 0 0
+// 0 0 0 0 0 0 0 0 0 0
+// 0 0 0 0 0 0 0 0 0 0
 long long leaderboard[NUM_LEVELS][NUM_PLAYERS_PER_LEVEL + 1];
-bool isFirstCall = true;
 
-void resetLeaderboard(long long leaderboard[][NUM_PLAYERS_PER_LEVEL + 1]) {
-  for (int level = 0; level < NUM_LEVELS; level++)
-    for (int player = 0; player < NUM_PLAYERS_PER_LEVEL; player++)
-      leaderboard[level][player] = (int)1e6;
-}
+void initLeaderboardFile() {
+  std::ofstream dataFile(LEADERBOARD_FILE_NAME);
 
-void getOldLeaderboardData() {
-  resetLeaderboard(leaderboard);
-  transferDataToLeaderboard(leaderboard);
-}
-
-bool addToLeaderboard(const int& level, const long long& elapsedTime,
-                      long long savedLeaderboard[][NUM_PLAYERS_PER_LEVEL + 1]) {
-  if (isFirstCall) {
-    getOldLeaderboardData();
-    isFirstCall = false;
+  for (int level = 0; level < NUM_LEVELS; level++) {
+    for (int player = 0; player < NUM_PLAYERS_PER_LEVEL; player++) {
+      dataFile << MAX_TIME << " ";
+      leaderboard[level][player] = MAX_TIME;
+    }
+    dataFile << '\n';
   }
+
+  dataFile.close();
+}
+
+void loadLeaderboardData() {
+  std::ifstream dataFile(LEADERBOARD_FILE_NAME);
+
+  if (!dataFile) {
+    initLeaderboardFile();
+    return;
+  }
+
+  for (int i = 0; i < NUM_LEVELS; i++)
+    for (int j = 0; j < NUM_PLAYERS_PER_LEVEL; j++) dataFile >> leaderboard[i][j];
+
+  dataFile.close();
+}
+
+void updateLeaderboardData() {
+  std::ofstream dataFile(LEADERBOARD_FILE_NAME);
+
+  for (int level = 0; level < NUM_LEVELS; level++) {
+    for (int player = 0; player < NUM_PLAYERS_PER_LEVEL; player++)
+      dataFile << leaderboard[level][player] << " ";
+    dataFile << '\n';
+  }
+
+  dataFile.close();
+}
+
+void addToLeaderboard(const int& level, const long long& elapsedTime) {
 
   leaderboard[level][NUM_PLAYERS_PER_LEVEL] = elapsedTime;
   std::sort(leaderboard[level], leaderboard[level] + NUM_PLAYERS_PER_LEVEL + 1);
 
-  if (elapsedTime == leaderboard[level][NUM_PLAYERS_PER_LEVEL])
-    return false;
-  else {
-    for (int mode = 0; mode < NUM_LEVELS; mode++)
-      for (int player = 0; player < NUM_PLAYERS_PER_LEVEL; player++)
-        savedLeaderboard[mode][player] = leaderboard[mode][player];
-    return true;
-  }
+  if (elapsedTime != leaderboard[level][NUM_PLAYERS_PER_LEVEL]) updateLeaderboardData();
+}
+
+void resetLeaderboard() {
+  initLeaderboardFile();
+  loadLeaderboardData();
 }
 
 void displayLeaderboard() {
   for (int level = 0; level < NUM_LEVELS; level++) {
     for (int player = 0; player < NUM_PLAYERS_PER_LEVEL; player++)
-      if (leaderboard[level][player] == 0)
-        std::cout << "---- ";
+      if (leaderboard[level][player] == MAX_TIME)
+        std::cout << "-/- ";
       else
         std::cout << std::fixed << std::setprecision(3)
                   << leaderboard[level][player] / 1000.0 << " ";

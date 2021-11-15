@@ -187,37 +187,22 @@ void revealAllMines(GameBoard &gameBoard, const bool &won) {
   }
 }
 
-long long savedLeaderboard[NUM_LEVELS][NUM_PLAYERS_PER_LEVEL + 1];
-GameBoard savedGameBoard;
-
 const std::string GAMEBOARD_FILE_NAME = "data.txt";
-
-void saveLeaderboard(const int &gameLevel, const long long &elapsedTime) {
-  if (addToLeaderboard(gameLevel, elapsedTime, savedLeaderboard))
-    updateGameBoardDataFile();
-}
+GameBoard savedGameBoard;
 
 void saveBoard(GameBoard &gameBoard) {
   copyBoard(savedGameBoard, gameBoard);
   updateGameBoardDataFile();
 }
 
-// DATA FILE TEMPLATE
-// 3 che do
-// 0 0 0 0 0 0 0 0 0 0
-// 0 0 0 0 0 0 0 0 0 0
-// 0 0 0 0 0 0 0 0 0 0
+// GAMEBOARD FILE TEMPLATE
 // gamelevel width height mine flag time total_safely_opened_cell
 // 0 0 0 0 0 0
 //[displayBoard]
 //[mineBoard]
+
 void updateGameBoardDataFile() {
   std::ofstream dataFile(GAMEBOARD_FILE_NAME);
-  for (int level = 0; level < NUM_LEVELS; level++) {
-    for (int player = 0; player < NUM_PLAYERS_PER_LEVEL; player++)
-      dataFile << savedLeaderboard[level][player] << " ";
-    dataFile << '\n';
-  }
 
   dataFile << savedGameBoard.currentLevel << " " << savedGameBoard.boardWidth
            << " " << savedGameBoard.boardHeight << " "
@@ -241,8 +226,6 @@ void updateGameBoardDataFile() {
 bool loadSavedGameBoardDataFile() {
   std::ifstream dataFile(GAMEBOARD_FILE_NAME);
   if (!dataFile) return false;
-  for (int i = 0; i < 3; i++)
-    for (int j = 0; j < 10; j++) dataFile >> savedLeaderboard[i][j];
 
   dataFile >> savedGameBoard.currentLevel >> savedGameBoard.boardHeight >>
       savedGameBoard.boardWidth >> savedGameBoard.numMines >>
@@ -264,11 +247,4 @@ bool loadSavedGameBoardDataFile() {
 
 void loadSavedGameBoardData(GameBoard &gameBoard) {
   copyBoard(gameBoard, savedGameBoard);
-}
-
-void transferDataToLeaderboard(
-    long long leaderboard[][NUM_PLAYERS_PER_LEVEL + 1]) {
-  for (int level = 0; level < NUM_LEVELS; level++)
-    for (int player = 0; player < NUM_PLAYERS_PER_LEVEL; player++)
-      leaderboard[level][player] = savedLeaderboard[level][player];
 }

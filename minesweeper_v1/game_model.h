@@ -32,12 +32,9 @@ int countNeighboringCellStates(const int &width, const int &height,
                                const int &col, const int &cellState);
 void uncoverBoard(GameBoard &gameBoard, const int &row, const int &col);
 
-void saveLeaderboard(const int &gameLevel, const long long &elapsedTime);
 void saveBoard(GameBoard &gameBoard);
 bool loadSavedGameBoardDataFile();
 void updateGameBoardDataFile();
 void loadSavedGameBoardData(GameBoard &gameBoard);
-void transferDataToLeaderboard(
-    long long leaderboard[][NUM_PLAYERS_PER_LEVEL + 1]);
 
 #endif  // GAME_MODEL_H_INCLUDED

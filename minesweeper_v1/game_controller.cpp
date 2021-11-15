@@ -155,7 +155,7 @@ int startGame(const int& currentLevel) {
                : 0);
       // Update Leaderboard if won
       if (gameBoard.boardStatus == boardStatusOptions[WIN])
-        saveLeaderboard(gameBoard.currentLevel, totalElapsedTime);
+        addToLeaderboard(gameBoard.currentLevel, totalElapsedTime);
     }
 
     // ==================== UPDATE DISPLAY ====================
