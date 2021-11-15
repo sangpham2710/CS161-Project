@@ -106,7 +106,8 @@ std::map<int, int> inputMap = {
     {'k', MOUSE2},    {'K', MOUSE2},    {'l', MOUSE3},
     {'L', MOUSE3},    {'y', YES},       {'Y', YES},
     {'n', NO},        {'N', NO},        {ESCAPE_KEY, ESCAPE},
-    {'o', SAVE_GAME}, {'O', SAVE_GAME}, {'R', RESET_LEADERBOARD}, {'r', RESET_LEADERBOARD},
+    {'o', SAVE_GAME}, {'O', SAVE_GAME}, {'R', RESET},
+    {'r', RESET},
 };
 
 int getUserAction() {

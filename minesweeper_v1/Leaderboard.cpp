@@ -1,16 +1,16 @@
 #include "Leaderboard.h"
 
 #include <algorithm>
+#include <fstream>
 #include <iomanip>
 #include <iostream>
-#include <fstream>
 
 #include "Leaderboard.h"
+#include "cmanip.h"
 #include "game_model.h"
 #include "global.h"
 #include "main_utils.h"
 #include "scene_manager.h"
-#include "cmanip.h"
 
 const std::string LEADERBOARD_FILE_NAME = "leaderboard.txt";
 const int MAX_TIME = 1e6;
@@ -44,7 +44,8 @@ void loadLeaderboardData() {
   }
 
   for (int i = 0; i < NUM_LEVELS; i++)
-    for (int j = 0; j < NUM_PLAYERS_PER_LEVEL; j++) dataFile >> leaderboard[i][j];
+    for (int j = 0; j < NUM_PLAYERS_PER_LEVEL; j++)
+      dataFile >> leaderboard[i][j];
 
   dataFile.close();
 }
@@ -62,11 +63,11 @@ void updateLeaderboardData() {
 }
 
 void addToLeaderboard(const int& level, const long long& elapsedTime) {
-
   leaderboard[level][NUM_PLAYERS_PER_LEVEL] = elapsedTime;
   std::sort(leaderboard[level], leaderboard[level] + NUM_PLAYERS_PER_LEVEL + 1);
 
-  if (elapsedTime != leaderboard[level][NUM_PLAYERS_PER_LEVEL]) updateLeaderboardData();
+  if (elapsedTime != leaderboard[level][NUM_PLAYERS_PER_LEVEL])
+    updateLeaderboardData();
 }
 
 void displayLeaderboard() {
@@ -84,7 +85,8 @@ void displayLeaderboard() {
 }
 
 void resetLeaderboard() {
-  printCenteredText("Do you want to reset leaderboard (all data will be lost!) ?", 9);
+  printCenteredText(
+      "Do you want to reset leaderboard (all data will be lost!) ?", 9);
   printCenteredText("[Y] Yes / [N] No", 10);
 
   while (true) {
@@ -103,7 +105,7 @@ void resetLeaderboard() {
 
 int Leaderboard() {
   displayLeaderboard();
-  if (getUserAction() == RESET_LEADERBOARD) {
+  if (getUserAction() == RESET) {
     resetLeaderboard();
     getUserAction();
   }

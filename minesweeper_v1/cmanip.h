@@ -44,7 +44,7 @@ enum actionTypes {
   YES,
   NO,
   SAVE_GAME,
-  RESET_LEADERBOARD
+  RESET
 };
 
 void setWindowName(const std::string& name);
