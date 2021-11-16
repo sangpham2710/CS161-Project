@@ -42,7 +42,7 @@ void setupWindow() {
   showConsoleCursor(false);
 }
 
-std::string intToString(const int &number) {
+std::string intToString(const long long &number) {
   std::stringstream stream;
   stream << number;
   return stream.str();

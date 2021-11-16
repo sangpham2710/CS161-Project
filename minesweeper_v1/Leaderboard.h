@@ -10,5 +10,6 @@ bool addToLeaderboard(const int& level, const long long& elapsedTime);
 void resetLeaderboard();
 void displayLeaderboard();
 int Leaderboard();
+void setupLeaderboardDisplay();
 
 #endif  // LEADERBOARD_H_INCLUDED
