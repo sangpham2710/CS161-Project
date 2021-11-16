@@ -83,19 +83,30 @@ bool addToLeaderboard(const int& level, const long long& elapsedTime) {
 }
 
 void displayResetLeaderboard() {
-  printCenteredText(
-    "+-------------------------------------------------------------+",
-    getWindowHeight() / 2 - 1);
-  printCenteredText(
-    "| Do you want to reset leaderboard (all data will be lost!) ? |",
-    getWindowHeight() / 2);
-  printCenteredText(
-    "|                                                             |",
-    getWindowHeight() / 2 + 1);
-  printCenteredText("[Y] Yes / [N] No", getWindowHeight() / 2 + 1);
-  printCenteredText(
-    "+-------------------------------------------------------------+",
-    getWindowHeight() / 2 + 2);
+  printColoredTextWrapper(
+  [&]() {
+    printCenteredText(
+      "+------------------------------------+",
+      getWindowHeight() / 2 - 1);
+    printCenteredText(
+      "|                                    |",
+      getWindowHeight() / 2);
+    printCenteredText(
+      "|                                    |",
+      getWindowHeight() / 2 + 1);
+    printCenteredText(
+      "+------------------------------------+",
+      getWindowHeight() / 2 + 2);
+
+    printCenteredText(
+      "You sure? (all data will be lost!)",
+      getWindowHeight() / 2);
+
+    printCenteredText("[Y] Yes / [N] No", getWindowHeight() / 2 + 1);
+  }, CONSOLE_BACKGROUND_COLOR, RED
+  );
+
+
 }
 
 int handleResetLeaderboard() {
