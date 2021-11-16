@@ -3,7 +3,7 @@
 
 #include "global.h"
 
-void initLeaderboardFile();
+void resetLeaderboardFile();
 void loadLeaderboardData();
 void updateLeaderboardData();
 bool addToLeaderboard(const int& level, const long long& elapsedTime);

@@ -13,7 +13,7 @@
 #include "scene_manager.h"
 
 const std::string LEADERBOARD_FILE_NAME = "leaderboard.txt";
-const int MAX_TIME = 1e6;
+const long long MAX_TIME = (long long)1e18;
 
 // 3 che do
 // 0 0 0 0 0 0 0 0 0 0
@@ -21,7 +21,7 @@ const int MAX_TIME = 1e6;
 // 0 0 0 0 0 0 0 0 0 0
 long long leaderboard[NUM_LEVELS][NUM_PLAYERS_PER_LEVEL + 1];
 
-void initLeaderboardFile() {
+void resetLeaderboardFile() {
   std::ofstream dataFile(LEADERBOARD_FILE_NAME);
 
   for (int level = 0; level < NUM_LEVELS; level++) {
@@ -39,7 +39,7 @@ void loadLeaderboardData() {
   std::ifstream dataFile(LEADERBOARD_FILE_NAME);
 
   if (!dataFile) {
-    initLeaderboardFile();
+    resetLeaderboardFile();
     return;
   }
 
@@ -63,6 +63,7 @@ void updateLeaderboardData() {
 }
 
 bool addToLeaderboard(const int& level, const long long& elapsedTime) {
+  loadLeaderboardData();
   leaderboard[level][NUM_PLAYERS_PER_LEVEL] = elapsedTime;
   std::sort(leaderboard[level], leaderboard[level] + NUM_PLAYERS_PER_LEVEL + 1);
 
@@ -74,8 +75,8 @@ bool addToLeaderboard(const int& level, const long long& elapsedTime) {
 }
 
 void displayLeaderboard() {
+  loadLeaderboardData();
   resetConsoleScreen();
-
   for (int level = 0; level < NUM_LEVELS; level++) {
     for (int player = 0; player < NUM_PLAYERS_PER_LEVEL; player++)
       if (leaderboard[level][player] == MAX_TIME)
@@ -87,30 +88,34 @@ void displayLeaderboard() {
   }
 }
 
-void resetLeaderboard() {
+void displayResetLeaderboard() {
   printCenteredText(
       "Do you want to reset leaderboard (all data will be lost!) ?", 9);
   printCenteredText("[Y] Yes / [N] No", 10);
+}
 
+int handleResetLeaderboard() {
   while (true) {
     int action = getUserAction();
     if (action == YES) {
-      initLeaderboardFile();
-      displayLeaderboard();
-      return;
-    }
-
-    else if (action == NO || action == ESCAPE) {
-      return;
+      resetLeaderboardFile();
+      break;
+    } else if (action == NO || action == ESCAPE) {
+      break;
     }
   }
+  return LEADERBOARD;
 }
 
 int Leaderboard() {
   displayLeaderboard();
-  if (getUserAction() == RESET) {
-    resetLeaderboard();
-    getUserAction();
+  while (true) {
+    int action = getUserAction();
+    if (action == MOUSE1 || action == ESCAPE) {
+      return WELCOME;
+    } else if (action == RESET) {
+      displayResetLeaderboard();
+      return handleResetLeaderboard();
+    }
   }
-  return WELCOME;
 }

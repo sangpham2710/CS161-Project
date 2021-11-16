@@ -1,10 +1,11 @@
 #include "game_view.h"
 
+#include <algorithm>
 #include <iomanip>
 #include <iostream>
 
-// #include "conio.h"
 #include "main_utils.h"
+#define NOMINMAX
 #include "windows.h"
 
 int PADDING_X, PADDING_Y;
@@ -213,6 +214,7 @@ void displayBoardStatus(const std::string &boardStatus, const bool &firstCall) {
 }
 
 void displayTimer(const long long &elapsedTime, const bool &firstCall) {
+  long long displayTime = std::min(999LL, elapsedTime / 1000);
   if (firstCall) {
     setConsoleCursorPosition(
         PADDING_X + BORDER_WIDTH + CELL_WIDTH * boardWidth + BORDER_WIDTH - 10,
@@ -221,7 +223,7 @@ void displayTimer(const long long &elapsedTime, const bool &firstCall) {
     setConsoleCursorPosition(
         PADDING_X + BORDER_WIDTH + CELL_WIDTH * boardWidth + BORDER_WIDTH - 10,
         PADDING_Y + 1);
-    std::cout << "|Time|" << std::setw(3) << elapsedTime / 1000 << "|";
+    std::cout << "|Time|" << std::setw(3) << displayTime << "|";
     setConsoleCursorPosition(
         PADDING_X + BORDER_WIDTH + CELL_WIDTH * boardWidth + BORDER_WIDTH - 10,
         PADDING_Y + 2);
@@ -236,6 +238,6 @@ void displayTimer(const long long &elapsedTime, const bool &firstCall) {
     setConsoleCursorPosition(
         PADDING_X + BORDER_WIDTH + CELL_WIDTH * boardWidth + BORDER_WIDTH - 4,
         PADDING_Y + 1);
-    std::cout << std::setw(3) << elapsedTime / 1000;
+    std::cout << std::setw(3) << displayTime;
   }
 }
