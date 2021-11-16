@@ -154,8 +154,10 @@ int startGame(const int& currentLevel) {
                              std::chrono::high_resolution_clock::now())
                : 0);
       // Update Leaderboard if won
-      if (gameBoard.boardStatus == boardStatusOptions[WIN])
+      if (gameBoard.boardStatus == boardStatusOptions[WIN]) {
         addToLeaderboard(gameBoard.currentLevel, totalElapsedTime);
+        gameBoard.numFlagsLeft = 0;
+      }
     }
 
     // ==================== UPDATE DISPLAY ====================
