@@ -140,6 +140,8 @@ int startGame(const int& currentLevel) {
 
       saveBoard(savingGameBoard);
       gameBoard.boardStatus = "Game saved!";
+    } else if (action == RESET) {
+      return startGame(currentLevel);
     }
 
     // Handle endGame edge cases
