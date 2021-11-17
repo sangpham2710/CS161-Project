@@ -145,7 +145,7 @@ void displayLeaderboard() {
 
   loadLeaderboardData();
   resetConsoleScreen();
-  printCenteredText("LEADERBOARD", PADDING_LB_Y);
+  printCenteredText("Leaderboard", PADDING_LB_Y);
   printCenteredText("Press [Enter] to return back, [R] to reset Leaderboard",
                     PADDING_LB_Y + 1);
 
