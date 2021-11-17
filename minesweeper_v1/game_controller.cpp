@@ -22,6 +22,8 @@ int startGame(const int& currentLevel) {
   GameBoard gameBoard;
   int cursorRow = 0, cursorCol = 0;
   bool isTimerStarted = false;
+  long long totalElapsedTime;
+  bool win = false;
   std::chrono::high_resolution_clock::time_point gameStartTime;
 
   // int numOpenedCells = 0;
@@ -149,7 +151,7 @@ int startGame(const int& currentLevel) {
       // Remove cursor
       cursorRow = -1;
       cursorCol = -1;
-      long long totalElapsedTime =
+      totalElapsedTime =
           gameBoard.elapsedTime +
           (isTimerStarted
                ? getTimeDiff(gameStartTime,
@@ -157,6 +159,7 @@ int startGame(const int& currentLevel) {
                : 0);
       // Update Leaderboard if won
       if (gameBoard.boardStatus == boardStatusOptions[WIN]) {
+        win = true;
         addToLeaderboard(gameBoard.currentLevel, totalElapsedTime);
         gameBoard.numFlagsLeft = 0;
       }
@@ -174,9 +177,27 @@ int startGame(const int& currentLevel) {
                                     std::chrono::high_resolution_clock::now())
                       : 0));
   }
-  getUserAction();
-  resetDisplay();
-  return WELCOME;
+  displayEndGame(win);
+  while (true) {
+    int action = getUserAction();
+    if (action == YES || action == ESCAPE) break;
+  }
+  clearConsole();
+  gameBoard.boardStatus =
+      "[J] to go back to menu" + std::string(10, ' ') + "[R] to restart";
+  displayBoard(gameBoard.playerBoard, cursorRow, cursorCol, true);
+  displayNumFlags(gameBoard.numFlagsLeft, true);
+  displayBoardStatus(gameBoard.boardStatus, true);
+  displayTimer(totalElapsedTime, true);
+  while (true) {
+    int action = getUserAction();
+    if (action == RESET)
+      return startGame(currentLevel);
+    else if (action == MOUSE1 || action == ESCAPE) {
+      resetDisplay();
+      return WELCOME;
+    }
+  }
 }
 
 int timedGetUserAction(const long long& waitTime) {

@@ -19,8 +19,8 @@ const long long MAX_TIME = (long long)1e18;
 
 int PADDING_LB_X, PADDING_LB_Y;
 const int leaderboardWidth =
-  strlen("+------------+--------------+------------+"),
-  leaderboardHeight = 14;
+              strlen("+------------+--------------+------------+"),
+          leaderboardHeight = 14;
 const int headingHeight = 3;
 
 // 3 che do
@@ -84,29 +84,29 @@ bool addToLeaderboard(const int& level, const long long& elapsedTime) {
 
 void displayResetLeaderboard() {
   printColoredTextWrapper(
-  [&]() {
-    printCenteredText(
-      "+------------------------------------+",
-      getWindowHeight() / 2 - 1);
-    printCenteredText(
-      "|                                    |",
-      getWindowHeight() / 2);
-    printCenteredText(
-      "|                                    |",
-      getWindowHeight() / 2 + 1);
-    printCenteredText(
-      "+------------------------------------+",
-      getWindowHeight() / 2 + 2);
+      [&]() {
+        printCenteredText("+" + std::string(40, '=') + "+",
+                          getWindowHeight() / 2 - 3);
+        printCenteredText("|" + std::string(40, ' ') + "|",
+                          getWindowHeight() / 2 - 2);
+        printCenteredText("|" + std::string(40, ' ') + "|",
+                          getWindowHeight() / 2 - 1);
+        printCenteredText("|" + std::string(40, ' ') + "|",
+                          getWindowHeight() / 2);
+        printCenteredText("|" + std::string(40, ' ') + "|",
+                          getWindowHeight() / 2 + 1);
+        printCenteredText("|" + std::string(40, ' ') + "|",
+                          getWindowHeight() / 2 + 2);
+        printCenteredText("+" + std::string(40, '=') + "+",
+                          getWindowHeight() / 2 + 3);
 
-    printCenteredText(
-      "You sure? (all data will be lost!)",
-      getWindowHeight() / 2);
+        printCenteredText("You sure? (all data will be lost!)",
+                          getWindowHeight() / 2 - 1);
 
-    printCenteredText("[Y] Yes / [N] No", getWindowHeight() / 2 + 1);
-  }, CONSOLE_BACKGROUND_COLOR, RED
-  );
-
-
+        printCenteredText("[Y] Yes" + std::string(10, ' ') + "[N] No",
+                          getWindowHeight() / 2 + 1);
+      },
+      CONSOLE_BACKGROUND_COLOR, RED);
 }
 
 int handleResetLeaderboard() {
@@ -136,7 +136,7 @@ int Leaderboard() {
   }
 }
 
-int distanceToCenterOfCell(const int &textSize, const int &cellWidth) {
+int distanceToCenterOfCell(const int& textSize, const int& cellWidth) {
   return (cellWidth - textSize) / 2;
 }
 
@@ -149,48 +149,50 @@ void displayLeaderboard() {
   printCenteredText("Press [Enter] to return back, [R] to reset Leaderboard",
                     PADDING_LB_Y + 1);
 
-  setConsoleCursorPosition(
-    PADDING_LB_X,
-    PADDING_LB_Y + headingHeight);
-  std::cout << "+------------+--------------+------------+" << '\n';
+  setConsoleCursorPosition(PADDING_LB_X, PADDING_LB_Y + headingHeight);
+  std::cout << "+" + std::string(12, '=') + "+" + std::string(14, '=') + "+" +
+                   std::string(12, '=') + "+"
+            << '\n';
 
-  setConsoleCursorPosition(
-    PADDING_LB_X,
-    PADDING_LB_Y + headingHeight + 1);
+  setConsoleCursorPosition(PADDING_LB_X, PADDING_LB_Y + headingHeight + 1);
   std::cout << "|  Beginner  | Intermediate |   Expert   |" << '\n';
 
-  setConsoleCursorPosition(
-    PADDING_LB_X,
-    PADDING_LB_Y + headingHeight + 2);
-  std::cout << "+------------+--------------+------------+" << '\n';
+  setConsoleCursorPosition(PADDING_LB_X, PADDING_LB_Y + headingHeight + 2);
+  std::cout << "+" + std::string(12, '=') + "+" + std::string(14, '=') + "+" +
+                   std::string(12, '=') + "+"
+            << '\n';
 
   for (int i = 0; i < NUM_PLAYERS_PER_LEVEL; i++) {
-    setConsoleCursorPosition(
-      PADDING_LB_X,
-      PADDING_LB_Y + headingHeight + 3 + i);
+    setConsoleCursorPosition(PADDING_LB_X,
+                             PADDING_LB_Y + headingHeight + 3 + i);
     std::cout << "|            |              |            |" << '\n';
   }
 
   setConsoleCursorPosition(
-    PADDING_LB_X,
-    PADDING_LB_Y + headingHeight + 3 + NUM_PLAYERS_PER_LEVEL);
-  std::cout << "+------------+--------------+------------+" << '\n';
+      PADDING_LB_X, PADDING_LB_Y + headingHeight + 3 + NUM_PLAYERS_PER_LEVEL);
+  std::cout << "+" + std::string(12, '=') + "+" + std::string(14, '=') + "+" +
+                   std::string(12, '=') + "+"
+            << '\n';
 
   int totalWidth = 0;
   for (int mode = 0; mode < NUM_LEVELS; mode++) {
     for (int player = 0; player < NUM_PLAYERS_PER_LEVEL; player++) {
       if (leaderboard[mode][player] != MAX_TIME) {
         setConsoleCursorPosition(
-          PADDING_LB_X + distanceToCenterOfCell(intToString(
-              leaderboard[mode][player]).size() + 1, cellWidth[mode]) + totalWidth + 1,
-          PADDING_LB_Y + headingHeight + 3 + player);
+            PADDING_LB_X +
+                distanceToCenterOfCell(
+                    intToString(leaderboard[mode][player]).size() + 1,
+                    cellWidth[mode]) +
+                totalWidth + 1,
+            PADDING_LB_Y + headingHeight + 3 + player);
 
         std::cout << std::fixed << std::setprecision(3)
                   << leaderboard[mode][player] / 1000.0 << " ";
       } else {
         setConsoleCursorPosition(
-          PADDING_LB_X + distanceToCenterOfCell(4, cellWidth[mode]) + totalWidth + 1,
-          PADDING_LB_Y + headingHeight + 3 + player);
+            PADDING_LB_X + distanceToCenterOfCell(4, cellWidth[mode]) +
+                totalWidth + 1,
+            PADDING_LB_Y + headingHeight + 3 + player);
         std::cout << "____";
       }
     }
@@ -203,5 +205,3 @@ void setupLeaderboardDisplay() {
   PADDING_LB_X = (getWindowWidth() - leaderboardWidth) / 2;
   PADDING_LB_Y = (getWindowHeight() - leaderboardHeight - headingHeight) / 2;
 }
-
-

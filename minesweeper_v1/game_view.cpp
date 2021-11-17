@@ -241,3 +241,33 @@ void displayTimer(const long long &elapsedTime, const bool &firstCall) {
     std::cout << std::setw(3) << displayTime;
   }
 }
+
+void displayEndGame(const bool &win) {
+  printColoredTextWrapper(
+      [&]() {
+        printCenteredText("+" + std::string(40, '=') + "+",
+                          getWindowHeight() / 2 - 3);
+        printCenteredText("|" + std::string(40, ' ') + "|",
+                          getWindowHeight() / 2 - 2);
+        printCenteredText("|" + std::string(40, ' ') + "|",
+                          getWindowHeight() / 2 - 1);
+        printCenteredText("|" + std::string(40, ' ') + "|",
+                          getWindowHeight() / 2);
+        printCenteredText("|" + std::string(40, ' ') + "|",
+                          getWindowHeight() / 2 + 1);
+        printCenteredText("|" + std::string(40, ' ') + "|",
+                          getWindowHeight() / 2 + 2);
+        printCenteredText("+" + std::string(40, '=') + "+",
+                          getWindowHeight() / 2 + 3);
+        if (win) {
+          printCenteredText("Congrats, all mines flagged!",
+                            getWindowHeight() / 2 - 1);
+        } else {
+          printCenteredText("Good luck next time :((",
+                            getWindowHeight() / 2 - 1);
+        }
+
+        printCenteredText("[Y] Yes", getWindowHeight() / 2 + 1);
+      },
+      CONSOLE_BACKGROUND_COLOR, win ? GREEN : RED);
+}
