@@ -1,12 +1,35 @@
 #include "Exit.h"
 
 #include "cmanip.h"
+#include "global.h"
 #include "main_utils.h"
 #include "scene_manager.h"
 
 void displayExitPrompt() {
-  printCenteredText("Do you want to close the program ?", 9);
-  printCenteredText("[Y] Yes / [N] No", 10);
+  printColoredTextWrapper(
+      [&]() {
+        printCenteredText("+" + std::string(40, '=') + "+",
+                          getWindowHeight() / 2 - 3);
+        printCenteredText("|" + std::string(40, ' ') + "|",
+                          getWindowHeight() / 2 - 2);
+        printCenteredText("|" + std::string(40, ' ') + "|",
+                          getWindowHeight() / 2 - 1);
+        printCenteredText("|" + std::string(40, ' ') + "|",
+                          getWindowHeight() / 2);
+        printCenteredText("|" + std::string(40, ' ') + "|",
+                          getWindowHeight() / 2 + 1);
+        printCenteredText("|" + std::string(40, ' ') + "|",
+                          getWindowHeight() / 2 + 2);
+        printCenteredText("+" + std::string(40, '=') + "+",
+                          getWindowHeight() / 2 + 3);
+
+        printCenteredText("Do you want to close the program ?",
+                          getWindowHeight() / 2 - 1);
+
+        printCenteredText("[Y] Yes" + std::string(10, ' ') + "[N] No",
+                          getWindowHeight() / 2 + 1);
+      },
+      CONSOLE_BACKGROUND_COLOR, RED);
 }
 
 int handleExit() {
