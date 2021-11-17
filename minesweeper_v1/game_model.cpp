@@ -227,8 +227,8 @@ bool loadSavedGameBoardDataFile() {
   std::ifstream dataFile(GAMEBOARD_FILE_NAME);
   if (!dataFile) return false;
 
-  dataFile >> savedGameBoard.currentLevel >> savedGameBoard.boardHeight >>
-      savedGameBoard.boardWidth >> savedGameBoard.numMines >>
+  dataFile >> savedGameBoard.currentLevel >> savedGameBoard.boardWidth >>
+      savedGameBoard.boardHeight >> savedGameBoard.numMines >>
       savedGameBoard.numFlagsLeft >> savedGameBoard.numOpenedCells >>
       savedGameBoard.elapsedTime;
   if (savedGameBoard.boardWidth == 0 || savedGameBoard.boardHeight == 0)
