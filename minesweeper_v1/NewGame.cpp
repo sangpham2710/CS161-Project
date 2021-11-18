@@ -7,13 +7,42 @@
 #include "main_utils.h"
 #include "scene_manager.h"
 
+int PADDING_LEVEL_X, PADDING_LEVEL_Y;
+
+void setupLevelDisplay(int spacing) {
+  PADDING_LEVEL_Y = (getWindowHeight() - spacing) / 2;
+}
+
+int getLevelPosition() {
+    return PADDING_LEVEL_Y;
+}
+
+void displayLevelHeaderAndFooter() {
+  const int spacing = 1;
+
+  std::vector<std::string> headerText = {
+    R"(  ___    _    __  __  ___  __  __   ___   ___   ___ )",
+    R"( / __|  /_\  |  \/  || __||  \/  | / _ \ |   \ | __|)",
+    R"(| (_ | / _ \ | |\/| || _| | |\/| || (_) || |) || _| )",
+    R"( \___//_/ \_\|_|  |_||___||_|  |_| \___/ |___/ |___|)",
+  };
+
+
+  for (int i = 0; i < headerText.size(); i++)
+    printCenteredText(headerText[i], PADDING_LEVEL_Y - spacing - 1 - headerText.size() + i);
+
+  printCenteredText("Select a difficulty level to challenge yourself!", PADDING_LEVEL_Y - 1 - spacing);
+
+  printCenteredText(R"([J]/[Enter]: Select    [Esc]: Back to Menu)",
+                    PADDING_LEVEL_Y + spacing + 1 + levelOptions.size());
+}
+
 void displayLevelOptions(const int& oldLevelOption) {
-  printCenteredText("SELECT A DIFFICULTY LEVEL TO CHALLENGE YOURSELF", 0);
-  printCenteredText("Press [WASD] to move, [J] to select", 1);
+  displayLevelHeaderAndFooter();
 
   for (int i = 0; i < levelOptions.size(); ++i) {
     setConsoleCursorPosition(
-        getStartPositionOfACenteredText(levelOptions[i].size()), 3 + i);
+        getStartPositionOfACenteredText(levelOptions[i].size()), getLevelPosition() + i);
 
     if (i == oldLevelOption) {
       printColoredTextWrapper([&]() { std::cout << levelOptions[i]; },
@@ -34,7 +63,7 @@ int handleLevelOptions(const int& oldLevelOption) {
     } else if (action == UP) {
       setConsoleCursorPosition(
           getStartPositionOfACenteredText(levelOptions[newLevelOption].size()),
-          3 + newLevelOption);
+          getLevelPosition() + newLevelOption);
 
       std::cout << levelOptions[newLevelOption];
 
@@ -43,14 +72,14 @@ int handleLevelOptions(const int& oldLevelOption) {
           [&]() {
             setConsoleCursorPosition(getStartPositionOfACenteredText(
                                          levelOptions[newLevelOption].size()),
-                                     3 + newLevelOption);
+                                     getLevelPosition() + newLevelOption);
             std::cout << levelOptions[newLevelOption];
           },
           CONSOLE_SELECTED_BACKGROUND_COLOR, CONSOLE_SELECTED_TEXT_COLOR);
     } else if (action == DOWN) {
       setConsoleCursorPosition(
           getStartPositionOfACenteredText(levelOptions[newLevelOption].size()),
-          3 + newLevelOption);
+          getLevelPosition() + newLevelOption);
 
       std::cout << levelOptions[newLevelOption];
 
@@ -60,7 +89,7 @@ int handleLevelOptions(const int& oldLevelOption) {
           [&]() {
             setConsoleCursorPosition(getStartPositionOfACenteredText(
                                          levelOptions[newLevelOption].size()),
-                                     3 + newLevelOption);
+                                     getLevelPosition() + newLevelOption);
             std::cout << levelOptions[newLevelOption];
           },
           CONSOLE_SELECTED_BACKGROUND_COLOR, CONSOLE_SELECTED_TEXT_COLOR);
@@ -75,6 +104,8 @@ int handleLevelOptions(const int& oldLevelOption) {
 int NewGame() {
   static int oldLevelOption = 0;
   resetConsoleScreen();
+  setupLevelDisplay(levelOptions.size());
+
   displayLevelOptions(oldLevelOption);
   int selectedLevel = handleLevelOptions(oldLevelOption);
   if (selectedLevel == -1) return WELCOME;

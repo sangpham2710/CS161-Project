@@ -64,15 +64,17 @@ const struct {
                         {"Expert", 30, 16, 99}};
 
 const std::vector<std::string> levelOptions = {
-    boardLevelsInfo[BEGINNER].name + " | " +
-        intToString(boardLevelsInfo[BEGINNER].numMines) + " mines | " +
+    std::string(2, ' ') +
+    boardLevelsInfo[BEGINNER].name + "   | " +
+        intToString(boardLevelsInfo[BEGINNER].numMines) + " mines |  " +
         intToString(boardLevelsInfo[BEGINNER].width) + "x" +
-        intToString(boardLevelsInfo[BEGINNER].height) + " grid",
+        intToString(boardLevelsInfo[BEGINNER].height) + " grid ",
     boardLevelsInfo[INTERMEDIATE].name + " | " +
         intToString(boardLevelsInfo[INTERMEDIATE].numMines) + " mines | " +
         intToString(boardLevelsInfo[INTERMEDIATE].width) + "x" +
         intToString(boardLevelsInfo[INTERMEDIATE].height) + " grid",
-    boardLevelsInfo[EXPERT].name + " | " +
+    std::string(3, ' ') +
+    boardLevelsInfo[EXPERT].name + "    | " +
         intToString(boardLevelsInfo[EXPERT].numMines) + " mines | " +
         intToString(boardLevelsInfo[EXPERT].width) + "x" +
         intToString(boardLevelsInfo[EXPERT].height) + " grid"};
