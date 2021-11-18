@@ -101,16 +101,17 @@ void updateLeaderboardData() {
   dataFile.close();
 }
 
-bool addToLeaderboard(const int& level, const long long& elapsedTime) {
+int addToLeaderboard(const int& level, const long long& elapsedTime) {
   loadLeaderboardData();
   leaderboard[level][NUM_PLAYERS_PER_LEVEL] = elapsedTime;
   std::sort(leaderboard[level], leaderboard[level] + NUM_PLAYERS_PER_LEVEL + 1);
 
   if (elapsedTime != leaderboard[level][NUM_PLAYERS_PER_LEVEL]) {
     updateLeaderboardData();
-    return true;
+    for (int player = 0; player < NUM_PLAYERS_PER_LEVEL; player++)
+        if (leaderboard[level][player] == elapsedTime) return player + 1;
   } else
-    return false;
+    return -1;
 }
 
 void displayResetLeaderboard() {

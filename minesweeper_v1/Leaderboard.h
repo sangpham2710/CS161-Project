@@ -6,7 +6,7 @@
 void resetLeaderboardFile();
 void loadLeaderboardData();
 void updateLeaderboardData();
-bool addToLeaderboard(const int& level, const long long& elapsedTime);
+int addToLeaderboard(const int& level, const long long& elapsedTime);
 void resetLeaderboard();
 void displayLeaderboard();
 int Leaderboard();
