@@ -143,7 +143,7 @@ int startGame(const int& currentLevel) {
       saveBoard(savingGameBoard);
       gameBoard.boardStatus = "Game saved!";
     } else if (action == RESET) {
-      return startGame(currentLevel);
+      return startGame(gameBoard.currentLevel);
     }
 
     // Handle endGame edge cases
@@ -192,7 +192,7 @@ int startGame(const int& currentLevel) {
   while (true) {
     int action = getUserAction();
     if (action == RESET)
-      return startGame(currentLevel);
+      return startGame(gameBoard.currentLevel);
     else if (action == MOUSE1 || action == ESCAPE) {
       resetDisplay();
       return WELCOME;
