@@ -13,25 +13,23 @@ void setupLevelDisplay(int spacing) {
   PADDING_LEVEL_Y = (getWindowHeight() - spacing) / 2;
 }
 
-int getLevelPosition() {
-    return PADDING_LEVEL_Y;
-}
+int getLevelPosition() { return PADDING_LEVEL_Y; }
 
 void displayLevelHeaderAndFooter() {
   const int spacing = 1;
 
   std::vector<std::string> headerText = {
-    R"(  ___    _    __  __  ___  __  __   ___   ___   ___ )",
-    R"( / __|  /_\  |  \/  || __||  \/  | / _ \ |   \ | __|)",
-    R"(| (_ | / _ \ | |\/| || _| | |\/| || (_) || |) || _| )",
-    R"( \___//_/ \_\|_|  |_||___||_|  |_| \___/ |___/ |___|)",
+      R"(  ___    _    __  __  ___  __  __   ___   ___   ___ )",
+      R"( / __|  /_\  |  \/  || __||  \/  | / _ \ |   \ | __|)",
+      R"(| (_ | / _ \ | |\/| || _| | |\/| || (_) || |) || _| )",
+      R"( \___|/_/ \_\|_|  |_||___||_|  |_| \___/ |___/ |___|)",
   };
-
 
   for (int i = 0; i < headerText.size(); i++)
     printCenteredText(headerText[i], 3 + i);
 
-  printCenteredText("Select a difficulty level to challenge yourself!", 3 + headerText.size());
+  printCenteredText("Select a difficulty level to challenge yourself!",
+                    3 + headerText.size());
 
   printCenteredText(R"([J] Select    [Esc] Back to Menu)",
                     getWindowHeight() - 1 - 1);
@@ -42,7 +40,8 @@ void displayLevelOptions(const int& oldLevelOption) {
 
   for (int i = 0; i < levelOptions.size(); ++i) {
     setConsoleCursorPosition(
-        getStartPositionOfACenteredText(levelOptions[i].size()), getLevelPosition() + i);
+        getStartPositionOfACenteredText(levelOptions[i].size()),
+        getLevelPosition() + i);
 
     if (i == oldLevelOption) {
       printColoredTextWrapper([&]() { std::cout << levelOptions[i]; },

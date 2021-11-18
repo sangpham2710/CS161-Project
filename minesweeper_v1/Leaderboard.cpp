@@ -37,25 +37,24 @@ long long leaderboard[NUM_LEVELS][NUM_PLAYERS_PER_LEVEL + 1];
 
 std::vector<std::string> getLeaderboardHeaderText() {
   return {
-    R"(  _     ___    _    ___   ___  ___  ___   ___    _    ___  ___  )",
-    R"( | |   | __|  /_\  |   \ | __|| _ \| _ ) / _ \  /_\  | _ \|   \ )",
-    R"( | |__ | __| / _ \ | |) || __||   /| _ \| (_) |/ _ \ |   /| |) |)",
-    R"( |____||___|/_/ \_\|___/ |___||_|_\|___/ \___//_/ \_\|_|_\|___/ )",
+      R"( _     ___    _    ___   ___  ___  ___   ___    _    ___  ___  )",
+      R"(| |   | __|  /_\  |   \ | __|| _ \| _ ) / _ \  /_\  | _ \|   \ )",
+      R"(| |__ | _|  / _ \ | |) || _| |   /| _ \| (_) |/ _ \ |   /| |) |)",
+      R"(|____||___|/_/ \_\|___/ |___||_|_\|___/ \___//_/ \_\|_|_\|___/ )",
   };
 }
 
-int getLeaderboardPosition() {
-    return PADDING_LEADERBOARD_Y + 1;
-}
+int getLeaderboardPosition() { return PADDING_LEADERBOARD_Y + 1; }
 
 void displayLeaderboardHeaderAndFooter() {
   std::vector<std::string> headerText = getLeaderboardHeaderText();
   const int spacing = 1;
 
   for (int i = 0; i < headerText.size(); i++)
-    printCenteredText(headerText[i], PADDING_LEADERBOARD_Y - headerText.size() + i);
+    printCenteredText(headerText[i],
+                      PADDING_LEADERBOARD_Y - headerText.size() + i);
 
-  //printCenteredText("Version 1.0", PADDING_LEADERBOARD_Y - spacing);
+  // printCenteredText("Version 1.0", PADDING_LEADERBOARD_Y - spacing);
   printCenteredText(R"([J] Back to Menu    [R] Reset Leaderboard)",
                     getWindowHeight() - 1 - 1);
 }
@@ -109,7 +108,7 @@ int addToLeaderboard(const int& level, const long long& elapsedTime) {
   if (elapsedTime != leaderboard[level][NUM_PLAYERS_PER_LEVEL]) {
     updateLeaderboardData();
     for (int player = 0; player < NUM_PLAYERS_PER_LEVEL; player++)
-        if (leaderboard[level][player] == elapsedTime) return player + 1;
+      if (leaderboard[level][player] == elapsedTime) return player + 1;
   } else
     return -1;
 }
@@ -199,8 +198,8 @@ void displayLeaderboard() {
     std::cout << "|            |              |            |" << '\n';
   }
 
-  setConsoleCursorPosition(
-      PADDING_LEADERBOARD_X, getLeaderboardPosition() + 3 + NUM_PLAYERS_PER_LEVEL);
+  setConsoleCursorPosition(PADDING_LEADERBOARD_X, getLeaderboardPosition() + 3 +
+                                                      NUM_PLAYERS_PER_LEVEL);
   std::cout << "+" + std::string(12, '=') + "+" + std::string(14, '=') + "+" +
                    std::string(12, '=') + "+"
             << '\n';

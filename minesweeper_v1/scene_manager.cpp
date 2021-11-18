@@ -5,7 +5,7 @@
 #include "Leaderboard.h"
 #include "NewGame.h"
 #include "Welcome.h"
-#include "Instruction.h"
+#include "instructions.h"
 
 void startSceneManager() {
   static int currentScene = WELCOME;
@@ -18,7 +18,7 @@ void startSceneManager() {
         currentScene = ContinueGame();
         break;
       case INSTRUCTION:
-        currentScene = Instruction();
+        currentScene = Instructions();
         break;
       case LEADERBOARD:
         currentScene = Leaderboard();
