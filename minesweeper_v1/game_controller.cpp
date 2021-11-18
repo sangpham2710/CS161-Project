@@ -1,11 +1,9 @@
 #include "game_controller.h"
 
 #include <chrono>
-#include <iostream>
 #include <string>
 
 #include "Leaderboard.h"
-#include "NewGame.h"
 #include "cmanip.h"
 #include "conio.h"
 #include "game_model.h"
@@ -33,12 +31,7 @@ int startGame(const int& currentLevel) {
   if (currentLevel != -1) {  // New game
     constructBoard(gameBoard, currentLevel);
   } else {  // Continue game
-    if (!loadSavedGameBoardDataFile()) {
-      std::cout << "No Previous Play Found!" << '\n'
-                << "Press any key to Start a new Game.";
-      getUserAction();
-      return NEW_GAME;
-    }
+    if (!loadSavedGameBoardDataFile()) return -1;
     loadSavedGameBoardData(gameBoard);
   }
 

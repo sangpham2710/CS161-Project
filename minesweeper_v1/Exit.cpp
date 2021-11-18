@@ -23,7 +23,7 @@ void displayExitPrompt() {
         printCenteredText("+" + std::string(40, '=') + "+",
                           getWindowHeight() / 2 + 3);
 
-        printCenteredText("Do you want to close the program ?",
+        printCenteredText("Do you want to close the program?",
                           getWindowHeight() / 2 - 1);
 
         printCenteredText("[Y] Yes" + std::string(10, ' ') + "[N] No",
