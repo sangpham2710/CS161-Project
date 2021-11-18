@@ -25,7 +25,7 @@ int startGame(const int& currentLevel) {
   long long totalElapsedTime;
   bool win = false;
   std::chrono::high_resolution_clock::time_point gameStartTime;
-  int player_rank;
+  int playerRank;
 
   // int numOpenedCells = 0;
   bool endGame = false;
@@ -161,7 +161,7 @@ int startGame(const int& currentLevel) {
       // Update Leaderboard if won
       if (gameBoard.boardStatus == boardStatusOptions[WIN]) {
         win = true;
-        player_rank = addToLeaderboard(gameBoard.currentLevel, totalElapsedTime);
+        playerRank = addToLeaderboard(gameBoard.currentLevel, totalElapsedTime);
         gameBoard.numFlagsLeft = 0;
       }
     }
@@ -178,7 +178,7 @@ int startGame(const int& currentLevel) {
                                     std::chrono::high_resolution_clock::now())
                       : 0));
   }
-  displayEndGame(win);
+  displayEndGame(win, playerRank);
   while (true) {
     int action = getUserAction();
     if (action == YES || action == ESCAPE) break;

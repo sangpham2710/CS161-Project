@@ -14,6 +14,6 @@ void displayNumFlags(const int &numFlags, const bool &firstCall = false);
 void displayBoardStatus(const std::string &boardStatus,
                         const bool &firstCall = false);
 void displayTimer(const long long &elapsedTime, const bool &firstCall = false);
-void displayEndGame(const bool &win);
+void displayEndGame(const bool &win, const int &rank);
 
 #endif  // GAME_VIEW_H_INCLUDED

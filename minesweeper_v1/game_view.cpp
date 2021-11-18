@@ -242,7 +242,7 @@ void displayTimer(const long long &elapsedTime, const bool &firstCall) {
   }
 }
 
-void displayEndGame(const bool &win) {
+void displayEndGame(const bool &win, const int &rank) {
   printColoredTextWrapper(
       [&]() {
         printCenteredText("+" + std::string(40, '=') + "+",
@@ -260,8 +260,14 @@ void displayEndGame(const bool &win) {
         printCenteredText("+" + std::string(40, '=') + "+",
                           getWindowHeight() / 2 + 3);
         if (win) {
-          printCenteredText("Congrats, all mines flagged!",
-                            getWindowHeight() / 2 - 1);
+          if (rank != -1) {
+            printCenteredText(
+                "Congrats, you earned " + intToString(rank)+ "-TH PLACE!",
+                getWindowHeight() / 2 - 1);
+          } else {
+            printCenteredText("Congrats, all mines flagged!",
+                              getWindowHeight() / 2 - 1);
+          }
         } else {
           printCenteredText("Good luck next time :((",
                             getWindowHeight() / 2 - 1);
