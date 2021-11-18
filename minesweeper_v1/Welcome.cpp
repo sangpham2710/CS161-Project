@@ -45,7 +45,7 @@ void displayWelcomeOptions(const int& oldWelcomeOption) {
     printCenteredText(headerText[i], 3 + i);
 
   printCenteredText("Version 1.0", 3 + headerText.size());
-  printCenteredText("[WASD]: Move     [J]: Select",
+  printCenteredText("[WASD] Move     [J] Select",
                     getWindowHeight() - 1 - 1);
 
 

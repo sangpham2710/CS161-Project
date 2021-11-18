@@ -33,7 +33,7 @@ void displayLevelHeaderAndFooter() {
 
   printCenteredText("Select a difficulty level to challenge yourself!", 3 + headerText.size());
 
-  printCenteredText(R"([J]: Select    [Esc]: Back to Menu)",
+  printCenteredText(R"([J] Select    [Esc] Back to Menu)",
                     getWindowHeight() - 1 - 1);
 }
 
