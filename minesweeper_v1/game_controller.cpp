@@ -185,7 +185,7 @@ int startGame(const int& currentLevel) {
   }
   clearConsole();
   gameBoard.boardStatus =
-      "[J] to go back to menu" + std::string(10, ' ') + "[R] to restart";
+      "[J] Back to menu" + std::string(10, ' ') + "[R] Replay";
   displayBoard(gameBoard.playerBoard, cursorRow, cursorCol, true);
   displayNumFlags(gameBoard.numFlagsLeft, true);
   displayBoardStatus(gameBoard.boardStatus, true);
