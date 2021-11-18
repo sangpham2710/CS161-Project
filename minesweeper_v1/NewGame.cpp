@@ -29,12 +29,12 @@ void displayLevelHeaderAndFooter() {
 
 
   for (int i = 0; i < headerText.size(); i++)
-    printCenteredText(headerText[i], PADDING_LEVEL_Y - spacing - 1 - headerText.size() + i);
+    printCenteredText(headerText[i], 3 + i);
 
-  printCenteredText("Select a difficulty level to challenge yourself!", PADDING_LEVEL_Y - 1 - spacing);
+  printCenteredText("Select a difficulty level to challenge yourself!", 3 + headerText.size());
 
-  printCenteredText(R"([J]/[Enter]: Select    [Esc]: Back to Menu)",
-                    PADDING_LEVEL_Y + spacing + 1 + levelOptions.size());
+  printCenteredText(R"([J]: Select    [Esc]: Back to Menu)",
+                    getWindowHeight() - 1 - 1);
 }
 
 void displayLevelOptions(const int& oldLevelOption) {

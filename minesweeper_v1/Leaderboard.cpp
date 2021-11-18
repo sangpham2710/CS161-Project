@@ -56,8 +56,8 @@ void displayLeaderboardHeaderAndFooter() {
     printCenteredText(headerText[i], PADDING_LEADERBOARD_Y - headerText.size() + i);
 
   //printCenteredText("Version 1.0", PADDING_LEADERBOARD_Y - spacing);
-  printCenteredText(R"([J]/[Enter]: Back to Menu    [R]: Reset Leaderboard)",
-                    PADDING_LEADERBOARD_Y + spacing + 1 + leaderboardHeight);
+  printCenteredText(R"([J]: Back to Menu    [R]: Reset Leaderboard)",
+                    getWindowHeight() - 1 - 1);
 }
 
 void resetLeaderboardFile() {

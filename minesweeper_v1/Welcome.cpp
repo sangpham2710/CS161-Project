@@ -42,11 +42,11 @@ void displayWelcomeOptions(const int& oldWelcomeOption) {
 
 
   for (int i = 0; i < headerText.size(); i++)
-    printCenteredText(headerText[i], WELCOME_PADDING_Y - spacing - headerText.size() + i);
+    printCenteredText(headerText[i], 3 + i);
 
-  printCenteredText("Version 1.0", WELCOME_PADDING_Y - spacing);
-  printCenteredText("[WASD]: Move     [J]/[Enter]: Select",
-                    WELCOME_PADDING_Y + spacing + 1 + welcomeOptions.size());
+  printCenteredText("Version 1.0", 3 + headerText.size());
+  printCenteredText("[WASD]: Move     [J]: Select",
+                    getWindowHeight() - 1 - 1);
 
 
   for (int i = 0; i < welcomeOptions.size(); ++i) {
