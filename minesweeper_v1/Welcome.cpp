@@ -9,44 +9,50 @@
 #include "windows.h"
 
 int WELCOME_PADDING_X, WELCOME_PADDING_Y;
-const std::string backplash(1, (char)92);
 
-void setupWelcomeDisplay(int headerHeight, int option, int spacing) {
-  WELCOME_PADDING_Y = (getWindowHeight() - headerHeight - spacing - option) / 2;
+void setupWelcomeDisplay(int option) {
+  WELCOME_PADDING_Y = (getWindowHeight() - option) / 2;
 }
 
-//    std::vector<std::string> headerText = {
-//    "",
-//    "",
-//    "",
-//    "",
-//    };
+//{
+//    R"()",
+//    R"()",
+//    R"()",
+//    R"()",
+//  };
 
 std::vector<std::string> getHeaderText() {
   return {
-    "  __  __ ___ _  _ ___ _____      _____ ___ ___ ___ ___  ",
-    " |  " + backplash + "/  |_ _| " + backplash + "| | __/ __" + backplash + " " + backplash + "    / / __| __| _ " + backplash + " __| _ " + backplash + " ",
-    " | |" + backplash + "/| || || .` | _|" + backplash + "__ " + backplash + backplash + " " + backplash + "/" + backplash + "/ /| _|| _||  _/ _||   / ",
-    " |_|  |_|___|_|" + backplash + "_|___|___/ " + backplash + "_/" + backplash + "_/ |___|___|_| |___|_|_" + backplash + " ",
+    R"(  __  __  ___  _  _  ___  ___ __      __ ___  ___  ___  ___  ___ )",
+    R"( |  \/  ||_ _|| \| || __|/ __|\ \    / /| __|| __|| _ \| __|| _ \)",
+    R"( | |\/| | | | | .` || __|\__ \ \ \/\/ / | __|| __||  _/| __||   /)",
+    R"( |_|  |_||___||_|\_||___||___/  \_/\_/  |___||___||_|  |___||_|_\)",
   };
 }
 
-void displayWelcomeOptions(const int& oldWelcomeOption) {
-  std::vector<std::string> headerText = getHeaderText();
+int getPosition() {
+    return WELCOME_PADDING_Y + 1;
+}
 
-  setupWelcomeDisplay(headerText.size() + 2, welcomeOptions.size(), 2);
+void displayWelcomeOptions(const int& oldWelcomeOption) {
+  setupWelcomeDisplay(welcomeOptions.size());
+
+  std::vector<std::string> headerText = getHeaderText();
+  const int spacing = 1;
+
 
   for (int i = 0; i < headerText.size(); i++)
-    printCenteredText(headerText[i], WELCOME_PADDING_Y + i);
+    printCenteredText(headerText[i], 3 + i);
 
-  printCenteredText("Version 1.0", WELCOME_PADDING_Y + headerText.size());
-  printCenteredText("Press [WASD] to move, [J] to select",
-                    WELCOME_PADDING_Y + 1 + headerText.size());
+  printCenteredText("Version 1.0", 3 + headerText.size());
+  printCenteredText("[WASD] Move     [J] Select",
+                    getWindowHeight() - 1 - 1);
+
 
   for (int i = 0; i < welcomeOptions.size(); ++i) {
     setConsoleCursorPosition(
       getStartPositionOfACenteredText(welcomeOptions[i].size()),
-      WELCOME_PADDING_Y + 3 + headerText.size() + i);
+      getPosition() + i);
 
     if (i == oldWelcomeOption) {
       printColoredTextWrapper([&]() {
@@ -68,7 +74,7 @@ int handleWelcomeOptions(const int& oldWelcomeOption) {
     if (action == UP) {
       setConsoleCursorPosition(getStartPositionOfACenteredText(
                                  welcomeOptions[newWelcomeOption].size()),
-                               WELCOME_PADDING_Y + 3 + headerText.size() + newWelcomeOption);
+                               getPosition() + newWelcomeOption);
 
       std::cout << welcomeOptions[newWelcomeOption];
 
@@ -78,14 +84,14 @@ int handleWelcomeOptions(const int& oldWelcomeOption) {
         setConsoleCursorPosition(
           getStartPositionOfACenteredText(
             welcomeOptions[newWelcomeOption].size()),
-          WELCOME_PADDING_Y + 3 + headerText.size() + newWelcomeOption);
+          getPosition() + newWelcomeOption);
         std::cout << welcomeOptions[newWelcomeOption];
       },
       CONSOLE_SELECTED_BACKGROUND_COLOR, CONSOLE_SELECTED_TEXT_COLOR);
     } else if (action == DOWN) {
       setConsoleCursorPosition(getStartPositionOfACenteredText(
                                  welcomeOptions[newWelcomeOption].size()),
-                               WELCOME_PADDING_Y + 3 + headerText.size() +  + newWelcomeOption);
+                               getPosition() +  + newWelcomeOption);
 
       std::cout << welcomeOptions[newWelcomeOption];
 
@@ -96,7 +102,7 @@ int handleWelcomeOptions(const int& oldWelcomeOption) {
         setConsoleCursorPosition(
           getStartPositionOfACenteredText(
             welcomeOptions[newWelcomeOption].size()),
-          WELCOME_PADDING_Y + 3 + headerText.size() +  + newWelcomeOption);
+          getPosition() +  + newWelcomeOption);
         std::cout << welcomeOptions[newWelcomeOption];
       },
       CONSOLE_SELECTED_BACKGROUND_COLOR, CONSOLE_SELECTED_TEXT_COLOR);

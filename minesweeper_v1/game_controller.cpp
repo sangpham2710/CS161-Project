@@ -25,6 +25,7 @@ int startGame(const int& currentLevel) {
   long long totalElapsedTime;
   bool win = false;
   std::chrono::high_resolution_clock::time_point gameStartTime;
+  int player_rank;
 
   // int numOpenedCells = 0;
   bool endGame = false;
@@ -160,7 +161,7 @@ int startGame(const int& currentLevel) {
       // Update Leaderboard if won
       if (gameBoard.boardStatus == boardStatusOptions[WIN]) {
         win = true;
-        addToLeaderboard(gameBoard.currentLevel, totalElapsedTime);
+        player_rank = addToLeaderboard(gameBoard.currentLevel, totalElapsedTime);
         gameBoard.numFlagsLeft = 0;
       }
     }
@@ -184,7 +185,7 @@ int startGame(const int& currentLevel) {
   }
   clearConsole();
   gameBoard.boardStatus =
-      "[J] to go back to menu" + std::string(10, ' ') + "[R] to restart";
+      "[J] Back to menu" + std::string(10, ' ') + "[R] Replay";
   displayBoard(gameBoard.playerBoard, cursorRow, cursorCol, true);
   displayNumFlags(gameBoard.numFlagsLeft, true);
   displayBoardStatus(gameBoard.boardStatus, true);
