@@ -4,7 +4,7 @@
 #include <string>
 #include <vector>
 
-const std::vector<std::string> welcomeOptions = {"New Game", "Continue Game",
+const std::vector<std::string> welcomeOptions = {"New Game", "Continue Game", "How to Play",
                                                  "Leaderboard", "Exit"};
 
 int Welcome();
