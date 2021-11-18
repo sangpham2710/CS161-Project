@@ -262,7 +262,7 @@ void displayEndGame(const bool &win, const int &rank) {
         if (win) {
           if (rank != -1) {
             printCenteredText(
-                "Congrats, you earned " + intToString(rank)+ "-TH PLACE!",
+                "Congrats, you earned " + intToString(rank) + "-TH PLACE!",
                 getWindowHeight() / 2 - 1);
           } else {
             printCenteredText("Congrats, all mines flagged!",
