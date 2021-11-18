@@ -187,7 +187,7 @@ void revealAllMines(GameBoard &gameBoard, const bool &won) {
   }
 }
 
-const std::string GAMEBOARD_FILE_NAME = "data.txt";
+const std::string GAMEBOARD_FILE_NAME = "board.txt";
 GameBoard savedGameBoard;
 
 void saveBoard(GameBoard &gameBoard) {
