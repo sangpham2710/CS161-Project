@@ -59,6 +59,7 @@
 		<Unit filename="Leaderboard.h">
 			<Option virtualFolder="Scenes/" />
 		</Unit>
+		<Unit filename="Makefile" />
 		<Unit filename="NewGame.cpp">
 			<Option virtualFolder="Scenes/" />
 		</Unit>
