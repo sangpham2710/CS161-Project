@@ -51,8 +51,12 @@
 		<Unit filename="Exit.h">
 			<Option virtualFolder="Scenes/" />
 		</Unit>
-		<Unit filename="Instructions.cpp" />
-		<Unit filename="Instructions.h" />
+		<Unit filename="Instructions.cpp">
+			<Option virtualFolder="Scenes/" />
+		</Unit>
+		<Unit filename="Instructions.h">
+			<Option virtualFolder="Scenes/" />
+		</Unit>
 		<Unit filename="Leaderboard.cpp">
 			<Option virtualFolder="Scenes/" />
 		</Unit>
