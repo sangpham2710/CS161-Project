@@ -38,6 +38,10 @@ The game graphics are simple since they are just the elements shown on the conso
 - `R` : Replay your game.
 - `Esc` : Exit.
 
+## Documentation
+
+- Rules of the game are based on: [Minesweeper Online](https://minesweeper.online/)
+
 ## Screenshots
 
 ![App Screenshot](https://via.placeholder.com/468x300?text=App+Screenshot+Here)
