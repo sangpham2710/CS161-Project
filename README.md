@@ -4,117 +4,41 @@
 This is our project on building a game called Minesweeper by using C++.
 
 
-## Authors
+## Authors :wave:
 
-- [@sangpham2710](https://github.com/sangpham2710)
-- [@doraemonidol](https://github.com/doraemonidol)
+- [@sangpham2710](https://github.com/sangpham2710) - Phạm Văn Tấn Sang - 21125063
+- [@doraemonidol](https://github.com/doraemonidol) - Đặng Hoàng Nhật Hưng - 21125041
 
-## Documentation
+## Features
 
-[Documentation](https://linktodocumentation)
+### Graphics/Textures
+The game graphics are simple since they are just the elements shown on the console. We were planning to renovate it by using some graphic library. However, since this version is working flawlessly and we are in love with its minimalist look, we decided to go with this style.
 
+### Basic Features
+- Drawing the board (including cells, mines and flags).
+- Changing the state of each cell when it is selected.
+- Timer.
+- Functions: `new game`, `change board dimensions`, `select a function from console screen`.
+- Randomize positions of the mines.
+- Receiving new position of the pointer (to select a cell) from console screen.
+- Saving the current state of the board and loading in the next playing session.
+- Saving high scores.
+
+### Remarkable Features
+- Change game board's size corresponding to the current gamemode in order to improve game experience.
+- Prevent the first reveal of mine.
+
+## Hotkeys
+
+- `W` `A` `S` `D` : Move cursor.
+- `J` `Enter` : Select | Reveal a cell.
+- `K` : Reveal all adjacent cells of the current cell.
+- `L` : Flag a cell.
+- `O` : Save your game.
+- `R` : Replay your game.
+- `Esc` : Exit.
 
 ## Screenshots
 
 ![App Screenshot](https://via.placeholder.com/468x300?text=App+Screenshot+Here)
 
-
-## Acknowledgements
-
- - [Awesome Readme Templates](https://awesomeopensource.com/project/elangosundar/awesome-README-templates)
- - [Awesome README](https://github.com/matiassingers/awesome-readme)
- - [How to write a Good readme](https://bulldogjob.com/news/449-how-to-write-a-good-readme-for-your-github-project)
-
-
-## Function Reference
-
-### Game Display
-
-#### Set-up Display 
-
-```c++
-  void setupDisplay(const int &_boardWidth, const int &_boardHeight,
-                    const int &currentLevel);
-```
-
-|   Variable    | Type     | Description                |
-| :------------ | :------- | :------------------------- |
-| `_boardWidth` | `int` | Board's width |
-| `_boardHeight` | `int` | Board's height |
-| `currentLevel` | `int` | Keep track of level to adjust the window's size and font properties |
-
-
----
-#### Next, we divide the play screen into different parts
-- Main Board
-- Number of Flags Left
-- Timer
-- Status Bar.
-
-#### Main Board
-
-```c++
-  void displayBoard(int playerBoard[][MAX_BOARD_SIZE], const int &cursorRow,
-                    const int &cursorCol, const bool &firstCall = false);
-```
-
-|   Variable    | Type     | Description                |
-| :------------ | :------- | :------------------------- |
-| `playerBoard[][MAX_BOARD_SIZE]` | `int` | Board's width |
-| `cursorRow` `and` `cursorCol` | `int` | Cursor's Position |
-| `firstCall` | `bool` | Keep track of level to adjust the window's size and font properties |
-
-This function is used to display the board with opened cells, flagged cells or questioned cells. In short, it displays the information of the board.
-
-#### Number of Flags Left
-
-```c++
-  void displayNumFlags(const int &numFlags, const bool &firstCall = false);
-```
-
-|   Variable    | Type     | Description                |
-| :------------ | :------- | :------------------------- |
-| `numFlags` | `int` | Number of flags left |
-| `firstCall` | `bool` | Keep track of level to adjust the window's size and font properties |
-
-This function is used to display how many flags do player have at the time he plays.
-
-#### Timer
-
-```c++
-  void displayTimer(const long long &elapsedTime, const bool &firstCall = false);
-```
-
-|   Variable    | Type     | Description                |
-| :------------ | :------- | :------------------------- |
-| `elapsedTime` | `long long` | Total time elapsed |
-| `firstCall` | `bool` | Keep track of level to adjust the window's size and font properties |
-
-This function is used to display how many flags do player have at the time he plays.
-
-#### Board Status
-
-```c++
-  void displayBoardStatus(const std::string &boardStatus,
-                          const bool &firstCall = false);
-```
-|   Variable    | Type     | Description                |
-| :------------ | :------- | :------------------------- |
-| `boardStatus` | `string` | The message to show on the screen |
-| `firstCall` | `bool` | Keep track of level to adjust the window's size and font properties |
-
-This function takes a string as input and displays that string to the screen in some form of format. This acts as a message to the players when they do an invalid action in the game. This message is shown under the board.
-
----
-#### Win & Lose Message
-
-```c++
-  void displayEndGame(const bool &win, const int &rank);
-```
-
-| Parameter | Type     | Description                       |
-| :-------- | :------- | :-------------------------------- |
-| `win`      | `bool` | **True** when player wins. **False** when player loses. |
-|`rank`|`int`| Rank of player to display when he wins.
-
-When the game finishes, there are 2 states whether the player wins or loses. This function will show a small message box in the middle of the screen to inform win/lose message and rank if he wins.
