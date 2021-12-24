@@ -45,6 +45,27 @@ The game graphics are simple since they are just the characters printed to the c
 - `R`: Restart your game.
 - `Esc`: Exit current playing game | Go back to menu.
 
+## How To Use
+
+To clone and run this application, you'll need [Git](https://git-scm.com) and [chocolatey](https://chocolatey.org).
+
+```bash
+# Install make command
+$ choco install make
+
+# Clone this repository
+$ git clone https://github.com/sangpham2710/CS161-Project.git
+
+# Go into the repository
+$ cd CS161-Project/minesweeper_v1
+
+# Build the executable
+$ make
+
+# Run the game
+$ bin/Release/minesweeper_v1.exe
+```
+
 ## Documentation
 
 - Rules of the game are based on: [Minesweeper Online](https://minesweeper.online/)
