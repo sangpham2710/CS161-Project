@@ -61,6 +61,7 @@ The game graphics are simple since they are just the characters printed to the c
 
 - Change game's resolution corresponding to the current level to improve user experience.
 - Guarantee that first cell clicked is not a mine.
+- Make our own library for manipulating the console based on the "windows.h" library
 
 ## How to play
 
