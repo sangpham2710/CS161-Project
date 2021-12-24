@@ -9,7 +9,7 @@ This is our Minesweeper clone for the CS161 Final Assignment using only C++ wind
 
 ## How To Use
 
-To clone and run this application, you'll need [Git](https://git-scm.com) and [chocolatey](https://chocolatey.org).
+To clone and run this application, you'll need [Git](https://git-scm.com) and [Chocolatey](https://chocolatey.org).
 
 ```bash
 # Install make command
@@ -36,7 +36,7 @@ $ bin/Release/minesweeper_v1.exe
 
 ### Graphics
 
-The game graphics are simple since they are just the characters printed to the console. We intended to renovate it using some graphic libraries, but since this version is working flawlessly and we are in love with its minimalistic look, we had decided to
+The game's graphics are simple since they are just the characters printed onto the console. We intended to renovate it using some graphic libraries, but since this version is working flawlessly and we are in love with its minimalistic look, we had decided to
 
 ### Basic Features
 
@@ -93,7 +93,7 @@ The game graphics are simple since they are just the characters printed to the c
 
 - Using keyboard (arrow keys) to select a cell.
 - Rendering images.
-- Using struct.
+- Using structs.
 
 ## License
 
