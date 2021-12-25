@@ -2,10 +2,16 @@
 
 This is our Minesweeper clone for the CS161 Final Assignment using only C++ windows.h library.
 
+![image](https://user-images.githubusercontent.com/47299149/147375809-d24436fe-e176-4f62-b4b3-7fbc90dd6372.png)
+
+---
+
 ## Authors :wave:
 
 - 21125063 - Phạm Văn Tấn Sang ([@sangpham2710](https://github.com/sangpham2710))
 - 21125041 - Đặng Hoàng Nhật Hưng ([@doraemonidol](https://github.com/doraemonidol))
+
+---
 
 ## How To Use
 
@@ -28,15 +34,19 @@ $ make
 $ bin/Release/minesweeper_v1.exe
 ```
 
+---
+
 ## Technologies Used
 
 - ["windows.h" library](https://en.wikipedia.org/wiki/Windows.h)
+
+---
 
 ## Features
 
 ### Graphics
 
-The game's graphics are simple since they are just the characters printed onto the console. We intended to renovate it using some graphic libraries, but since this version is working flawlessly and we are in love with its minimalistic look, we had decided to
+The game's graphics are simple since they are just characters printed to the console. We intended to renovate it using some graphics libraries, but since this version is working flawlessly and we are also in love with its minimalistic look, we've come to the decision that this will be our final version :smile:.
 
 ### Basic Features
 
@@ -63,7 +73,9 @@ The game's graphics are simple since they are just the characters printed onto t
 - Guarantee that first cell clicked is not a mine.
 - Make our own library for manipulating the console based on the "windows.h" library
 
-## How to play
+---
+
+## How to Play
 
 - `W`, `A`, `S`, `D`: Move cursor.
 - `J`, `Enter`: Select options | Reveal current cell.
@@ -73,11 +85,20 @@ The game's graphics are simple since they are just the characters printed onto t
 - `R`: Restart your game.
 - `Esc`: Exit current playing game | Go back to menu.
 
+---
+
+## Screenshots
+
+![image](https://user-images.githubusercontent.com/47299149/147375758-7fe57c0b-d3b6-4f88-b93d-2b21aa20122b.png)
+![image](https://user-images.githubusercontent.com/47299149/147375766-3c3ac961-ff60-49f6-b62b-f81c267dc730.png)
+![image](https://user-images.githubusercontent.com/47299149/147375809-d24436fe-e176-4f62-b4b3-7fbc90dd6372.png)
+![image](https://user-images.githubusercontent.com/47299149/147375815-c62fef09-3902-43ae-83e4-00e1d629707e.png)
+
 ## Additional Information
 
-### Requirements
+### Project Requirements
 
-#### Basic features
+#### Basic Features
 
 - Game rules: [Minesweeper Online](https://minesweeper.online/)
 - Drawing the board (including cells, mines and flags).
@@ -89,7 +110,7 @@ The game's graphics are simple since they are just the characters printed onto t
 - Saving the current state of the board and loading in the next playing session.
 - Saving high scores.
 
-#### Other features
+#### Other Features
 
 - Using keyboard (arrow keys) to select a cell.
 - Rendering images.
