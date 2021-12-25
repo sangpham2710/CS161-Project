@@ -94,6 +94,8 @@ The game's graphics are simple since they are just characters printed to the con
 ![image](https://user-images.githubusercontent.com/47299149/147375809-d24436fe-e176-4f62-b4b3-7fbc90dd6372.png)
 ![image](https://user-images.githubusercontent.com/47299149/147375815-c62fef09-3902-43ae-83e4-00e1d629707e.png)
 
+---
+
 ## Additional Information
 
 ### Project Requirements
@@ -115,6 +117,8 @@ The game's graphics are simple since they are just characters printed to the con
 - Using keyboard (arrow keys) to select a cell.
 - Rendering images.
 - Using structs.
+
+---
 
 ## License
 
