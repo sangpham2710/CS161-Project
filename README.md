@@ -2,10 +2,16 @@
 
 This is our Minesweeper clone for the CS161 Final Assignment using only the C++ windows.h library.
 
+![image](https://user-images.githubusercontent.com/47299149/147375809-d24436fe-e176-4f62-b4b3-7fbc90dd6372.png)
+
+---
+
 ## Authors :wave:
 
 - 21125063 - Phạm Văn Tấn Sang ([@sangpham2710](https://github.com/sangpham2710))
 - 21125041 - Đặng Hoàng Nhật Hưng ([@doraemonidol](https://github.com/doraemonidol))
+
+---
 
 ## How To Use
 
@@ -28,14 +34,16 @@ $ make
 $ bin/Release/minesweeper_v1.exe
 ```
 
+---
 ## Technology Used
 
 - ["windows.h" library](https://en.wikipedia.org/wiki/Windows.h)
 
+---
+
 ## Features
 
 ### Graphics
-
 The game's graphics are stylized in ASCII art which is considered to be the appeal of console application games by many.
 
 ### Basic Features
@@ -63,7 +71,9 @@ The game's graphics are stylized in ASCII art which is considered to be the appe
 - Guaranteeing that the first clicked cell is not a mine.
 - Making our own library for manipulating the console based on the "windows.h" library.
 
-## How to play
+---
+
+## How to Play
 
 - `W`, `A`, `S`, `D`: Move cursor.
 - `J`, `Enter`: Select options | Reveal current cell.
@@ -73,9 +83,20 @@ The game's graphics are stylized in ASCII art which is considered to be the appe
 - `R`: Restart current game.
 - `Esc`: Exit current game | Go back to menu.
 
+---
+
+## Screenshots
+
+![image](https://user-images.githubusercontent.com/47299149/147375758-7fe57c0b-d3b6-4f88-b93d-2b21aa20122b.png)
+![image](https://user-images.githubusercontent.com/47299149/147375766-3c3ac961-ff60-49f6-b62b-f81c267dc730.png)
+![image](https://user-images.githubusercontent.com/47299149/147375809-d24436fe-e176-4f62-b4b3-7fbc90dd6372.png)
+![image](https://user-images.githubusercontent.com/47299149/147375815-c62fef09-3902-43ae-83e4-00e1d629707e.png)
+
+---
+
 ## Additional Information
 
-### Requirements
+### Project Requirements
 
 #### Basic Features
 
@@ -90,11 +111,13 @@ The game's graphics are stylized in ASCII art which is considered to be the appe
 - Loading the previously saved board.
 - A leaderboard.
 
-#### Other features
+#### Other Features
 
 - Using the keyboard (arrow keys) to select a cell.
 - Rendering images.
 - Using structs.
+
+---
 
 ## License
 
