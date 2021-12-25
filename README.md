@@ -1,6 +1,6 @@
 # CS161 - Final Project
 
-This is our Minesweeper clone for the CS161 Final Assignment using only C++ windows.h library.
+This is our Minesweeper clone for the CS161 Final Assignment using only the C++ windows.h library.
 
 ![image](https://user-images.githubusercontent.com/47299149/147375809-d24436fe-e176-4f62-b4b3-7fbc90dd6372.png)
 
@@ -35,8 +35,7 @@ $ bin/Release/minesweeper_v1.exe
 ```
 
 ---
-
-## Technologies Used
+## Technology Used
 
 - ["windows.h" library](https://en.wikipedia.org/wiki/Windows.h)
 
@@ -45,33 +44,32 @@ $ bin/Release/minesweeper_v1.exe
 ## Features
 
 ### Graphics
-
-The game's graphics are simple since they are just characters printed to the console. We intended to renovate it using some graphics libraries, but since this version is working flawlessly and we are also in love with its minimalistic look, we've come to the decision that this will be our final version :smile:.
+The game's graphics are stylized in ASCII art which is considered to be the appeal of console application games by many.
 
 ### Basic Features
 
 - Drawing the board (including cells, mines and flags).
-- Changing the cell's state when it is selected.
-- Timer.
+- Changing a cell's state when it is selected.
+- A timer.
 - Game levels.
-- Generate random mines positions.
-- Receiving new position of the pointer (to select a cell) from console screen.
-- Save the current state of the playing board.
-- Load the previously saved board.
-- Leaderboard.
-- Message box to prompt the user.
+- Generating random mines positions.
+- Receiving the new position of the pointer (to select a cell) from the console.
+- Saving the current state of the playing board.
+- Loading the previously saved board.
+- A leaderboard.
+- Message boxes to prompt the user.
 
 #### There are 3 game levels:
 
-- **Beginner:** 9x9 cells, 10 mines
-- **Intermediate:** 16x16 cells, 40 mines
-- **Expert:** 30x16 cells, 99 mines
+- **Beginner:** 9x9 cells, 10 mines.
+- **Intermediate:** 16x16 cells, 40 mines.
+- **Expert:** 30x16 cells, 99 mines.
 
 ### Remarkable Features
 
-- Change game's resolution corresponding to the current level to improve user experience.
-- Guarantee that first cell clicked is not a mine.
-- Make our own library for manipulating the console based on the "windows.h" library
+- Changing the game's resolution corresponding to the current level to improve user experience.
+- Guaranteeing that the first clicked cell is not a mine.
+- Making our own library for manipulating the console based on the "windows.h" library.
 
 ---
 
@@ -82,8 +80,8 @@ The game's graphics are simple since they are just characters printed to the con
 - `K`: Reveal all adjacent cells of the current cell.
 - `L`: Flag current cell.
 - `O`: Save current board.
-- `R`: Restart your game.
-- `Esc`: Exit current playing game | Go back to menu.
+- `R`: Restart current game.
+- `Esc`: Exit current game | Go back to menu.
 
 ---
 
@@ -104,17 +102,18 @@ The game's graphics are simple since they are just characters printed to the con
 
 - Game rules: [Minesweeper Online](https://minesweeper.online/)
 - Drawing the board (including cells, mines and flags).
-- Changing the state of each cell when it is selected.
-- Timer.
-- Functions: new game, change board dimensions, select a function from console screen.
-- Randomize positions of the mines.
-- Receiving new position of the pointer (to select a cell) from console screen.
-- Saving the current state of the board and loading in the next playing session.
-- Saving high scores.
+- Changing a cell's state when it is selected.
+- A timer.
+- Functions: New game, change board dimensions, select a function from console screen.
+- Randomizing the positions of the mines.
+- Receiving the new position of the pointer (to select a cell) from the console.
+- Saving the current state of the playing board.
+- Loading the previously saved board.
+- A leaderboard.
 
 #### Other Features
 
-- Using keyboard (arrow keys) to select a cell.
+- Using the keyboard (arrow keys) to select a cell.
 - Rendering images.
 - Using structs.
 
