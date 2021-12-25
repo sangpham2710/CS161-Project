@@ -35,6 +35,7 @@ $ bin/Release/minesweeper_v1.exe
 ```
 
 ---
+
 ## Technology Used
 
 - ["windows.h" library](https://en.wikipedia.org/wiki/Windows.h)
@@ -44,7 +45,12 @@ $ bin/Release/minesweeper_v1.exe
 ## Features
 
 ### Graphics
-The game's graphics are stylized in ASCII art which is considered to be the appeal of console application games by many.
+
+The graphics are simple since they are just characters printed to the console.
+
+#### Backstory
+
+We intended to renovate it using some graphics libraries. However, since this version is working flawlessly and we are also in love with its minimalistic look, we've come to the decision that this will be our final version :smile:.
 
 ### Basic Features
 
