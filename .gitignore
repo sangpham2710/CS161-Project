@@ -7,7 +7,7 @@ SFML-2.5.1/
 ### CodeBlocks ###
 # specific to CodeBlocks IDE
 *.layout
-*.layout.save
+*.save
 *.depend
 # generated directories
 bin/
